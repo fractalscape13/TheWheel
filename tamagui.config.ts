@@ -51,7 +51,17 @@ export const tokens = {
     $6: 48,  // Add this size
     $8: 64,  // Add this size
     $10: 80, // Add this size
-    true: 16,  },
+    true: 16,  
+  },
+  fontSize: {
+    $1: 12,
+    $2: 14,
+    $3: 16,
+    $4: 20,
+    $5: 24,
+    $6: 32,
+    true: 16,
+  },  
   radius: {
     $1: 4,
     $2: 8,
