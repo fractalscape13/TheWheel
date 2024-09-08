@@ -24,7 +24,7 @@ type HomeProps = {
   toggleTheme: () => void;
 };
 
-const CustomTrack = styled(TouchableOpacity, {
+const CustomTrack = styled(YStack, {
   width: "100%",
   height: 8,
   borderRadius: 10,
