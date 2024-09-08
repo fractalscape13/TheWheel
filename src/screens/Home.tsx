@@ -1,41 +1,55 @@
 import React, { useEffect, useState } from "react";
-import { Button, Text, YStack, Stack, Image, Slider, Input, styled, useTheme } from "tamagui";
+import {
+  Text,
+  YStack,
+  Stack,
+  Image,
+  Slider,
+  Input,
+  styled,
+  useTheme,
+  XStack,
+} from "tamagui";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
+import Button from "../components/Button";
+import { TouchableOpacity } from "react-native";
 
 type HomeProps = {
   toggleTheme: () => void;
 };
 
 const CustomTrack = styled(YStack, {
-  width: '100%',
+  width: "100%",
   height: 8,
   borderRadius: 10,
-  backgroundColor: '#e0e0e0',
-  position: 'relative',
+  backgroundColor: "#e0e0e0",
+  position: "relative",
 });
 
 const CustomThumb = styled(YStack, {
   width: 20,
   height: 20,
   borderRadius: 50,
-  backgroundColor: '#4caf50',
-  position: 'absolute',
-  top: '50%',
+  backgroundColor: "#4caf50",
+  position: "absolute",
+  top: "50%",
   transform: [{ translateY: -10 }],
 });
 
 const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
+  const insets = useSafeAreaInsets();
   const theme = useTheme();
   const themeName = theme?.name?.toString();
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState<boolean | null>(true);
+  const [songName, setSongName] = useState<string | null>(null);
   const [duration, setDuration] = useState<number | null>(0);
   const [position, setPosition] = useState<number | null>(0);
   const [showData, setShowData] = useState(null);
-
-
 
   const onPlaybackStatusUpdate = (status) => {
     if (status.isLoaded) {
@@ -48,65 +62,6 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
     }
   };
 
-  const fetchAndPlaySong = async () => {
-    try {
-      // Adjusted query to target audio mediatype
-      const response = await fetch(
-        "https://archive.org/advancedsearch.php?q=Grateful+Dead+AND+mediatype:audio+AND+year:1972&fl[]=identifier&fl[]=title&rows=1&page=1&output=json"
-      );
-      const data = await response.json();
-      const showId = data.response.docs[0].identifier;
-
-      // Fetch the specific show details to get the audio files
-      const showResponse = await fetch(
-        `https://archive.org/metadata/${showId}`
-      );
-      const showData = await showResponse.json();
-
-      // Try to find an MP3 or other audio file
-      const audioFile = showData.files.find(
-        (file: any) =>
-          (file.format.includes("MP3") ||
-            file.format.includes("FLAC") ||
-            file.format.includes("OGG")) &&
-          file.name.includes("Uncle")
-      );
-
-      if (!audioFile) {
-        console.log("No playable audio file found.");
-        return;
-      }
-
-      // Construct the audio file URL
-      const audioUrl = `https://archive.org/download/${showId}/${audioFile.name}`;
-      console.log("Playing audio file:", audioUrl);
-
-      // Play the audio file
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: audioUrl },
-        { shouldPlay: true }
-      );
-      setSound(sound);
-      sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate); // Listen to playback updates
-
-      // Try to find an image file (prefer PNG or JPEG)
-      const imageFile = showData.files.find(
-        (file: any) =>
-          file.format.includes("JPEG") || file.format.includes("PNG")
-      );
-
-      if (imageFile) {
-        const imageUrl = `https://archive.org/download/${showId}/${imageFile?.name}`;
-        setImageUrl(imageUrl);
-        console.log("Image found:", imageUrl);
-      } else {
-        console.log("No image found for this show.");
-      }
-    } catch (error) {
-      console.error("Error fetching song:", error);
-    }
-  };
-
   const stopAudio = async () => {
     if (sound) {
       await sound.stopAsync();
@@ -115,7 +70,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
       setPosition(0);
       setSound(null);
     }
-  }
+  };
 
   const handleSeek = async (value) => {
     if (sound) {
@@ -126,7 +81,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const millisToMinutesAndSeconds = (millis) => {
     const minutes = Math.floor(millis / 60000);
     const seconds = ((millis % 60000) / 1000).toFixed(0);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   const handlePlayPause = async () => {
@@ -143,7 +98,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const handleSearch = async () => {
     const query = encodeURIComponent(`Grateful Dead ${searchTerm}`);
     const url = `https://archive.org/advancedsearch.php?q=${query}&output=json&rows=5`;
-  
+
     try {
       const response = await fetch(url);
       const data = await response.json();
@@ -155,40 +110,65 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           `https://archive.org/metadata/${showId}`
         );
         const showData = await showResponse.json();
-        setShowData(showData);  // setting show data to local state, not used currently but could be explored
+        setShowData(showData); // setting show data to local state, not used currently but could be explored
         const audioFile = showData.files.find(
           (file: any) =>
-            (file.format.includes("MP3") ||
-              file.format.includes("FLAC") ||
-              file.format.includes("OGG") ||
-              file.format.includes("VBR MP3")
-            )
+            file.format.includes("MP3") ||
+            file.format.includes("FLAC") ||
+            file.format.includes("OGG") ||
+            file.format.includes("VBR MP3")
         );
 
         if (audioFile) {
-          const audioUrl = `https://archive.org/download/${showId}/${audioFile.name}`;   
+          const audioUrl = `https://archive.org/download/${showId}/${audioFile.name}`;
+          setSongName(audioFile.title || result.title);
           const { sound } = await Audio.Sound.createAsync(
             { uri: audioUrl },
             { shouldPlay: true }
           );
           setSound(sound);
-          sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate); 
-          return
+          sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+          return;
         }
       }
     } catch (error) {
-      console.error('Error fetching Grateful Dead song:', error);
+      console.error("Error fetching Grateful Dead song:", error);
     }
-  }
-  
+  };
+
   return (
-    <YStack flex={1} jc="center" ai="center" bg="$background" p="$6">
+    <YStack
+      flex={1}
+      bg="$background"
+      px="$3"
+      pt={insets.top}
+      pb={insets.bottom}
+    >
+      <XStack jc="space-between" ai="center" px="$3" mb="$6">
+        <Input
+          placeholder="Search..."
+          placeholderTextColor="$textPlaceholder"
+          color="$text"
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+          h={40}
+          flex={1}
+          bw={1}
+          br={8}
+          bc="$text"
+          mr="$3"
+        />
+        <TouchableOpacity onPress={handleSearch}>
+          <Ionicons name="search" size={24} color="$textPlaceholder" />
+        </TouchableOpacity>
+      </XStack>
       {sound && (
-        <Stack 
-          w="100%"          
-          jc="center" 
-          ai="center"
-        >
+        <Stack w="100%" jc="center" ai="center">
+          {songName && (
+            <Text color="$text" fontSize={18} my="$3">
+              Now Playing: {songName}
+            </Text>
+          )}
           <Slider
             w="90%"
             defaultValue={[0]}
@@ -205,98 +185,40 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
                 width={`${(position / duration) * 100}%`}
               />
             </CustomTrack>
-            <CustomThumb
-              left={`${(position / duration) * 100}%`}
-            />
+            <CustomThumb left={`${(position / duration) * 100}%`} />
           </Slider>
-          <Text>
-            {millisToMinutesAndSeconds(position)} / {millisToMinutesAndSeconds(duration)}
+          <Text color="$text" mt="$2">
+            {millisToMinutesAndSeconds(position)} /{" "}
+            {millisToMinutesAndSeconds(duration)}
           </Text>
-          <Stack
-            h={50}
-            br="$2"
-            w="90%"
-            my="$3"
-            bg="$secondary"
-            ai="center"
-            jc="center"
+          <Button
+            title={isPlaying ? "Pause" : "Resume"}
             onPress={handlePlayPause}
-          >
-            <Text color="$buttonText">{isPlaying ? "Pause" : "Resume"}</Text>
-          </Stack>
-          <Stack
-            h={50}
-            br="$2"
-            w="90%"
-            my="$3"
-            bg="$secondary"
-            ai="center"
-            jc="center"
+            buttonStyle={{ marginVertical: 12 }}
+          />
+          <Button
+            title="Clear Audio Selection"
             onPress={stopAudio}
-          >
-            <Text color="$buttonText">Clear Audio Selection</Text>
-          </Stack>
+            color="secondary"
+            buttonStyle={{ width: "90%", marginVertical: 12 }}
+          />
         </Stack>
       )}
-      <Input
-        placeholder=""
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-        w={250}
-        h="75"
-        borderWidth={1}
-      />
-      <Text>
-        You typed: {searchTerm}
-      </Text>
-      <Stack
-        h={50}
-        br="$2"
-        w="90%"
-        my="$3"
-        bg="$secondary"
-        ai="center"
-        jc="center"
-        onPress={handleSearch}
-      >
-        <Text color="$buttonText">Search</Text>
-      </Stack>
-      <Text fontWeight="bold" color="$text" mb="$2">
-        The Wheel is Turning
-      </Text>
-      <Stack
-        h={50}
-        br="$2"
-        w="90%"
-        my="$3"
-        bg="$buttonBackground"
-        ai="center"
-        jc="center"
-        onPress={toggleTheme}
-      >
-        <Text color="$buttonText">
-          Toggle to {themeName === "light" ? "Dark" : "Light"} Mode
-        </Text>
-      </Stack>
-      <Stack
-        h={50}
-        br="$2"
-        w="90%"
-        my="$3"
-        bg="$secondary"
-        ai="center"
-        jc="center"
-        onPress={fetchAndPlaySong}
-      >
-        <Text color="$buttonText">Play a Grateful Dead Song from 1972</Text>
-      </Stack>
       {imageUrl && (
         <Image
           source={{ uri: imageUrl }}
-          style={{ width: 300, height: 400, marginTop: 20 }}
+          style={{ width: "90%", height: 200, marginTop: 12 }}
           resizeMode="contain"
         />
       )}
+      <YStack flex={1} justifyContent="flex-end">
+        <Button
+          title={themeName === "light" ? "☀️" : "🌙"}
+          onPress={toggleTheme}
+          textStyle={{ fontSize: 30 }}
+          buttonStyle={{ marginTop: 24 }}
+        />
+      </YStack>
     </YStack>
   );
 };
