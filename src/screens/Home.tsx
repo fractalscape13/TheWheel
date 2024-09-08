@@ -146,10 +146,6 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           );
           setCurrentSong(sound);
           sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
-          Toast.show({
-            type: "success",
-            text1: "The Music Never Stopped",
-          });
           return;
         }
       }

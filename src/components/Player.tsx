@@ -116,7 +116,7 @@ const Player: React.FC<PlayerProps> = ({
     </XStack>
     <Slider
       w="100%"
-      h={50}
+      h={30}
       defaultValue={[0]}
       min={0}
       maxValue={duration || 1}
@@ -124,7 +124,7 @@ const Player: React.FC<PlayerProps> = ({
       onSlideEnd={(val) => handleSeek(val[0])}
     >
       {imageUrl ? (
-        <CustomTrack h={50} position="relative" bg="$trackProgress" mt={10}>
+        <CustomTrack h={30} position="relative" bg="$trackProgress" mt={10}>
           <Image
             h="100%"
             br="$8"
