@@ -1,17 +1,18 @@
 {
   "expo": {
-    "name": "thewheel",
+    "name": "The Wheel",
     "slug": "thewheel",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.with-new-arch"
+      "bundleIdentifier": "com.thewheel.app"
     },
     "android": {
-      "package": "com.example.withnewarch"
+      "package": "com.thewheel.app"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/wheel-icon.png"
     },
+    "icon": "./assets/wheel-icon.png",
     "plugins": [
       [
         "expo-build-properties",
