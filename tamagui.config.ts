@@ -3,25 +3,54 @@ import { createTamagui } from "tamagui";
 export const lightTheme = {
   background: "#FFFFFF",
   text: "#000000",
+  textPlaceholder: "#808080",
   primary: "#FF69B4",
   secondary: "#FFC0CB",
   border: "#E0E0E0",
   buttonBackground: "#FF69B4",
   buttonText: "#FFFFFF",
   inputBackground: "#F9F9F9",
-  inputText: "#000000",
 };
 
 export const darkTheme = {
   background: "#1C1C1C",
   text: "#FF69B4",
+  textPlaceholder: "#FFB0D9",
   primary: "#FF69B4",
   secondary: "#FFC0CB",
   border: "#2A2A2A",
   buttonBackground: "#FF69B4",
   buttonText: "#1C1C1C",
   inputBackground: "#333333",
-  inputText: "#FFFFFF",
+};
+
+export const fonts = {
+  body: {
+    family: "System",
+    weight: {
+      400: "normal",
+      700: "bold",
+    },
+    size: {
+      $1: 12,
+      $2: 14,
+      $3: 16,
+      $4: 20,
+      $5: 24,
+    },
+    lineHeight: {
+      $1: 16,
+      $2: 18,
+      $3: 22,
+      $4: 28,
+      $5: 32,
+    },
+    letterSpacing: {
+      $1: 0,
+      $2: 0.5,
+      $3: 1,
+    },
+  },
 };
 
 export const tokens = {
@@ -121,6 +150,7 @@ export const config = createTamagui({
   },
   tokens,
   shorthands,
+  fonts,
 });
 
 export default config;
