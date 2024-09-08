@@ -10,6 +10,9 @@ export const lightTheme = {
   buttonBackground: "#FF69B4",
   buttonText: "#FFFFFF",
   inputBackground: "#F9F9F9",
+  trackProgress: "#DA9100",
+  trackBg: "#800080",
+  icon: "#000000",
 };
 
 export const darkTheme = {
@@ -22,6 +25,9 @@ export const darkTheme = {
   buttonBackground: "#FF69B4",
   buttonText: "#1C1C1C",
   inputBackground: "#333333",
+  trackProgress: "#DA9100",
+  trackBg: "#800080",
+  icon: "#FF69B4",
 };
 
 export const fonts = {
@@ -59,6 +65,8 @@ export const tokens = {
     secondary: "#FFC0CB",
     background: "#FFFFFF",
     text: "#000000",
+    trackProgress: "#DA9100",
+    trackBg: "#800080",
   },
   space: {
     $1: 3,
