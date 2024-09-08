@@ -28,29 +28,24 @@ const CustomTrack = styled(YStack, {
   width: "100%",
   height: 8,
   borderRadius: 10,
-  opacity: 1,
   backgroundColor: "$text",
   position: "relative",
 });
-
-const currentTrackStyles = {
-  fontSize: "20",
-  color: "goldenrod",
-};
 
 const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const themeName = theme?.name?.toString();
-  const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
+  const [currentSong, setCurrentSong] = useState<Audio.Sound | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
-  const [isPlaying, setIsPlaying] = useState<boolean | null>(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [expandedDetails, setExpandedDetails] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
   const [position, setPosition] = useState<number>(0);
   const [showFileCollection, setShowFileCollection] = useState(null);
   const [showId, setShowId] = useState<number | null>(null);
-  const [currentSong, setCurrentSong] = useState(null);
+  const [currentSongFile, setCurrentSongFile] = useState(null);
   const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState<
     number | null
   >(null);
@@ -61,43 +56,45 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
       setPosition(status.positionMillis);
 
       if (status.didJustFinish) {
-        setIsPlaying(false);
         nextSongAction();
       }
     }
   };
 
   const clearAudioFromStorage = async () => {
-    if (currentSound) {
-      await currentSound.stopAsync();
-      await currentSound.unloadAsync();
+    if (currentSong) {
+      await currentSong.stopAsync();
+      await currentSong.unloadAsync();
       setDuration(0);
       setPosition(0);
-      setCurrentSound(null);
+      setCurrentSong(null);
       setCurrentPlayingSongIndex(null);
     }
   };
 
   const handleSeek = async (value: number) => {
-    if (currentSound) {
-      await currentSound.setPositionAsync(value);
+    if (currentSong) {
+      await currentSong.setPositionAsync(value);
     }
   };
 
   const handlePlayPause = async () => {
-    if (currentSound) {
-      if (isPlaying) {
-        await currentSound.pauseAsync();
+    if (currentSong) {
+      const status = await currentSong.getStatusAsync();
+      if (status.isPlaying) {
+        await currentSong.pauseAsync();
+        setIsPlaying(false);
       } else {
-        await currentSound.playAsync();
+        await currentSong.playAsync();
+        setIsPlaying(true);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
   const handleSearch = async () => {
-    if (currentSound) {
+    if (currentSong) {
       await clearAudioFromStorage();
+      setExpandedDetails(false);
     }
     const query = encodeURIComponent(`Grateful Dead ${searchTerm}`);
     const url = `https://archive.org/advancedsearch.php?q=${query}&output=json&rows=5`;
@@ -138,12 +135,13 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
 
         if (audioFile) {
           const audioUrl = `https://archive.org/download/${showId}/${audioFile.name}`;
-          setCurrentSong(audioFile);
+          setCurrentSongFile(audioFile);
           const { sound } = await Audio.Sound.createAsync(
             { uri: audioUrl },
-            { shouldPlay: true }
+            { shouldPlay: true },
+            (status) => setIsPlaying(status.isLoaded)
           );
-          setCurrentSound(sound);
+          setCurrentSong(sound);
           sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
           Toast.show({
             type: "success",
@@ -159,36 +157,42 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
 
   const previousSongAction = async () => {
     const newIndex = currentPlayingSongIndex - 1;
-    if (currentSound) {
+    if (currentSong) {
       await clearAudioFromStorage();
     }
     const newSelectedSong = showFileCollection[newIndex];
-    setCurrentSong(newSelectedSong);
+    setCurrentSongFile(newSelectedSong);
     const audioUrl = `https://archive.org/download/${showId}/${newSelectedSong.name}`;
     const { sound } = await Audio.Sound.createAsync(
       { uri: audioUrl },
-      { shouldPlay: true }
+      { shouldPlay: true },
+      (status) => setIsPlaying(status.isLoaded)
     );
-    setCurrentSound(sound);
+    setCurrentSong(sound);
     sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
     setCurrentPlayingSongIndex(newIndex);
   };
 
   const nextSongAction = async () => {
     const newIndex = currentPlayingSongIndex + 1;
-    if (currentSound) {
+    if (currentSong) {
       await clearAudioFromStorage();
     }
     const newSelectedSong = showFileCollection[newIndex];
-    setCurrentSong(newSelectedSong);
+    setCurrentSongFile(newSelectedSong);
     const audioUrl = `https://archive.org/download/${showId}/${newSelectedSong.name}`;
     const { sound } = await Audio.Sound.createAsync(
       { uri: audioUrl },
-      { shouldPlay: true }
+      { shouldPlay: true },
+      (status) => setIsPlaying(status.isLoaded)
     );
-    setCurrentSound(sound);
+    setCurrentSong(sound);
     sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
     setCurrentPlayingSongIndex(newIndex);
+  };
+
+  const handleExpandDetails = () => {
+    return setExpandedDetails((prev) => !prev);
   };
 
   return (
@@ -199,7 +203,9 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
       pt={insets.top}
       pb={insets.bottom}
     >
-      <Toast position="bottom" />
+      <YStack w="100%" h="fit-content" z="$2" position="absolute" top={60}>
+        <Toast position="top" />
+      </YStack>
       <XStack jc="space-between" ai="center" px="$3" mb="$6">
         <Input
           placeholder="Search..."
@@ -214,37 +220,101 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           bc="$text"
           mr="$3"
         />
-        <TouchableOpacity onPress={handleSearch}>
-          <Ionicons name="search" size={24} color="$textPlaceholder" />
+        <TouchableOpacity
+          onPress={toggleTheme}
+          style={{ backgroundColor: "#FF69B4", borderRadius: 90, padding: 8, marginRight: 8,}}
+        >
+          <Ionicons name="moon-outline" size={24} color="$icon" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleSearch}
+          style={{ backgroundColor: "#FF69B4", borderRadius: 90, padding: 8 }}
+        >
+          <Ionicons name="search" size={24} color="$icon" />
         </TouchableOpacity>
       </XStack>
-      {(currentSound || showFileCollection) && (
-        <Stack w="100%" jc="center" ai="center">
-          {currentSong && (
-            <Text color="$text" fontSize={18} my="$3">
-              Now Playing: {currentSong?.title || currentSong?.name}
-            </Text>
-          )}
-          {showFileCollection && (
-            <YStack>
-              <XStack ai="center" jc="center" color="$text">
-                <TouchableOpacity onPress={previousSongAction}>
-                  <Ionicons name="arrow-back" size={24} color="white" />
+      {(currentSong || showFileCollection) && (
+        <Stack w="100%" jc="flex-start" ai="center">
+          {currentSongFile && (
+            <YStack w="100%" jc="space-between" ai="center" fd="row">
+              <Text
+                color="$text"
+                fs="$3"
+                my="$3"
+                h="fit-content"
+                mr={10}
+                w="75%"
+                ta="center"
+              >
+                Now Playing: {currentSongFile?.title || currentSongFile?.name}
+              </Text>
+              <XStack jc="flex-start" ai="center" w="25%">
+                <TouchableOpacity
+                  onPress={handleExpandDetails}
+                  style={{
+                    backgroundColor: "#FF69B4",
+                    borderRadius: 90,
+                    padding: 5,
+                    marginRight: 10,
+                  }}
+                >
+                  <Ionicons
+                    name="information-circle-outline"
+                    size={24}
+                    color="$icon"
+                  />
                 </TouchableOpacity>
-                <Text color="$text" padding={15} fontSize="24">
-                  {`${currentPlayingSongIndex + 1} / ${
-                    showFileCollection.length
-                  }`}
-                </Text>
-                <TouchableOpacity onPress={nextSongAction}>
-                  <Ionicons name="arrow-forward" size={24} color="white" />
+                <TouchableOpacity
+                  onPress={handlePlayPause}
+                  style={{
+                    backgroundColor: "#FF69B4",
+                    borderRadius: 90,
+                    padding: 5,
+                  }}
+                >
+                  <Ionicons
+                    name={isPlaying ? "pause" : "play"}
+                    size={24}
+                    color="$icon"
+                  />
                 </TouchableOpacity>
               </XStack>
+            </YStack>
+          )}
+          <Text color="$text" mt="$2">
+            {millisToMinutesAndSeconds(position)} /{" "}
+            {millisToMinutesAndSeconds(duration)}
+          </Text>
+          <XStack ai="center" jc="center" color="#FF69B4">
+            <TouchableOpacity onPress={previousSongAction}>
+              <Ionicons
+                name="chevron-back-circle-outline"
+                size={24}
+                color="#FF69B4"
+              />
+            </TouchableOpacity>
+            <Text color="$icon" padding={15} fs="$5">
+              {`${currentPlayingSongIndex + 1} / ${showFileCollection.length}`}
+            </Text>
+            <TouchableOpacity onPress={nextSongAction}>
+              <Ionicons
+                name="chevron-forward-circle-outline"
+                size={24}
+                color="#FF69B4"
+              />
+            </TouchableOpacity>
+          </XStack>
+          {showFileCollection && expandedDetails && (
+            <YStack ta="center">
               {showFileCollection.map((track, index: number) => (
                 <Text
                   key={track.name}
-                  color="$text"
-                  style={currentSong?.name === track.name && currentTrackStyles}
+                  color={
+                    currentSongFile?.name == track.name
+                      ? "$trackProgress"
+                      : "$text"
+                  }
+                  fs={currentSongFile?.name == track.name ? "$4" : "$1"}
                 >
                   {index + 1}) {track.title || track.name}
                 </Text>
@@ -252,8 +322,9 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
             </YStack>
           )}
           <Slider
-            w="90%"
-            h="30%"
+            w="80%"
+            h="auto"
+            maxH={200}
             defaultValue={[0]}
             min={0}
             maxValue={duration || 1}
@@ -261,55 +332,40 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
             onSlideEnd={(val) => handleSeek(val[0])}
           >
             {imageUrl ? (
-              <>
-                <CustomTrack h="100%" position="relative">
-                  <Image
-                    source={{ uri: imageUrl }}
-                    style={{ height: "100%", borderRadius: 40}}
-                    resizeMode="fill"
-                  />
-                  <YStack
-                    bg="purple"
-                    height="100%"
-                    width={`${(position / duration) * 100}%`}
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    opacity="0.4"
-                  />
-                </CustomTrack>
-              </>
+              <CustomTrack
+                h="100%"
+                position="relative"
+                bg="$trackProgress"
+                mt={10}
+              >
+                <Image
+                  h="100%"
+                  br="$8"
+                  source={{ uri: imageUrl }}
+                  resizeMode="fill"
+                />
+                <YStack
+                  bg="$trackBg"
+                  h="100%"
+                  w={`${(position / duration) * 100}%`}
+                  position="absolute"
+                  top="0"
+                  left="0"
+                  o="0.4"
+                />
+              </CustomTrack>
             ) : (
-              <>
-                <CustomTrack>
-                  <YStack
-                    bg="goldenrod"
-                    height="100%"
-                    width={`${(position / duration) * 100}%`}
-                  />
-                </CustomTrack>
-              </>
+              <CustomTrack>
+                <YStack
+                  bg="$trackProgress"
+                  h="100%"
+                  w={`${(position / duration) * 100}%`}
+                />
+              </CustomTrack>
             )}
           </Slider>
-          <Text color="$text" mt="$2">
-            {millisToMinutesAndSeconds(position)} /{" "}
-            {millisToMinutesAndSeconds(duration)}
-          </Text>
-          <Button
-            title={isPlaying ? "Pause" : "Resume"}
-            onPress={handlePlayPause}
-            buttonStyle={{ marginVertical: 12 }}
-          />
         </Stack>
       )}
-      <YStack flex={1} justifyContent="flex-end">
-        <Button
-          title={themeName === "light" ? "☀️" : "🌙"}
-          onPress={toggleTheme}
-          textStyle={{ fontSize: 30 }}
-          buttonStyle={{ marginTop: 24 }}
-        />
-      </YStack>
     </YStack>
   );
 };
