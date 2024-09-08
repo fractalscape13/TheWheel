@@ -13,38 +13,29 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
-import Button from "../components/Button";
+import Button from "@components/Button";
 import { TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
 
 //Services
-import { millisToMinutesAndSeconds } from "../services/math";
+import { millisToMinutesAndSeconds } from "@services/math";
 
 type HomeProps = {
   toggleTheme: () => void;
 };
 
-const CustomTrack = styled(YStack, {
+const CustomTrack = styled(TouchableOpacity, {
   width: "100%",
   height: 8,
   borderRadius: 10,
-  backgroundColor: "#e0e0e0",
+  opacity: 1,
+  backgroundColor: "$text",
   position: "relative",
-});
-
-const CustomThumb = styled(YStack, {
-  width: 20,
-  height: 20,
-  borderRadius: 50,
-  backgroundColor: "#4caf50",
-  position: "absolute",
-  top: "50%",
-  transform: [{ translateY: -10 }],
 });
 
 const currentTrackStyles = {
   fontSize: "20",
-  color: "gold",
+  color: "goldenrod",
 };
 
 const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
@@ -83,6 +74,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
       setDuration(0);
       setPosition(0);
       setCurrentSound(null);
+      setCurrentPlayingSongIndex(null);
     }
   };
 
@@ -128,6 +120,17 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
         );
         setShowFileCollection(showCollection); // setting show data to local state, not used currently but could be explored
         setShowId(showId);
+
+        const imageFile = showData.files.find((file: any) =>
+          file.format.includes("PNG")
+        );
+
+        if (imageFile) {
+          setImageUrl(
+            `https://archive.org/download/${showId}/${imageFile.name}`
+          );
+        }
+
         const audioFile = showData.files.find(
           (file: any) =>
             file.format.includes("MP3") || file.format.includes("VBR MP3")
@@ -224,15 +227,6 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           )}
           {showFileCollection && (
             <YStack>
-              {showFileCollection.map((track, index: number) => (
-                <Text
-                  key={track.name}
-                  color="$text"
-                  style={currentSong?.name === track.name && currentTrackStyles}
-                >
-                  {index + 1}) {track.title || track.name}
-                </Text>
-              ))}
               <XStack ai="center" jc="center" color="$text">
                 <TouchableOpacity onPress={previousSongAction}>
                   <Ionicons name="arrow-back" size={24} color="white" />
@@ -246,25 +240,56 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
                   <Ionicons name="arrow-forward" size={24} color="white" />
                 </TouchableOpacity>
               </XStack>
+              {showFileCollection.map((track, index: number) => (
+                <Text
+                  key={track.name}
+                  color="$text"
+                  style={currentSong?.name === track.name && currentTrackStyles}
+                >
+                  {index + 1}) {track.title || track.name}
+                </Text>
+              ))}
             </YStack>
           )}
           <Slider
             w="90%"
+            h="30%"
             defaultValue={[0]}
-            value={position}
             min={0}
-            maxValue={duration || 0}
+            maxValue={duration || 1}
             step={1}
-            onValueChangeEnd={(val) => handleSeek(val[0])}
+            onSlideEnd={(val) => handleSeek(val[0])}
           >
-            <CustomTrack>
-              <YStack
-                bg="$secondary"
-                height="100%"
-                width={`${(position / duration) * 100}%`}
-              />
-            </CustomTrack>
-            <CustomThumb left={`${(position / duration) * 100}%`} />
+            {imageUrl ? (
+              <>
+                <CustomTrack h="100%" position="relative">
+                  <Image
+                    source={{ uri: imageUrl }}
+                    style={{ height: "100%", borderRadius: 40}}
+                    resizeMode="fill"
+                  />
+                  <YStack
+                    bg="purple"
+                    height="100%"
+                    width={`${(position / duration) * 100}%`}
+                    position="absolute"
+                    top="0"
+                    left="0"
+                    opacity="0.4"
+                  />
+                </CustomTrack>
+              </>
+            ) : (
+              <>
+                <CustomTrack>
+                  <YStack
+                    bg="goldenrod"
+                    height="100%"
+                    width={`${(position / duration) * 100}%`}
+                  />
+                </CustomTrack>
+              </>
+            )}
           </Slider>
           <Text color="$text" mt="$2">
             {millisToMinutesAndSeconds(position)} /{" "}
@@ -276,13 +301,6 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
             buttonStyle={{ marginVertical: 12 }}
           />
         </Stack>
-      )}
-      {imageUrl && (
-        <Image
-          source={{ uri: imageUrl }}
-          style={{ width: "90%", height: 200, marginTop: 12 }}
-          resizeMode="contain"
-        />
       )}
       <YStack flex={1} justifyContent="flex-end">
         <Button
