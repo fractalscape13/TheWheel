@@ -201,7 +201,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
       pt={insets.top}
       pb={insets.bottom}
     >
-      <XStack jc="space-between" ai="center" px="$3" mb="$6">
+      <XStack jc="space-between" ai="center" mb="$6">
         <Input
           placeholder="Search..."
           placeholderTextColor="$textPlaceholder"
