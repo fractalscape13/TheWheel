@@ -9,12 +9,12 @@ import {
   ScrollView,
 } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
-import { Audio } from "expo-av";
 import { millisToMinutesAndSeconds } from "@services/math";
 import Touchable from "@components/Touchable";
 
 type PlayerProps = {
-  currentSong: Audio.Sound | null;
+  isExpanded: boolean;
+  togglePlayerSize: () => void;
   currentSongFile: any;
   currentPlayingSongIndex: number;
   showFileCollection: any[];
@@ -41,6 +41,8 @@ const CustomTrack = styled(YStack, {
 });
 
 const Player: React.FC<PlayerProps> = ({
+  isExpanded,
+  togglePlayerSize,
   currentSongFile,
   currentPlayingSongIndex,
   showFileCollection,
@@ -57,53 +59,38 @@ const Player: React.FC<PlayerProps> = ({
   previousSongAction,
   nextSongAction,
 }) => (
-  <ScrollView px="$3" py="$3" br={8} bc="$buttonBg" bw={1}>
-    {currentSongFile && (
-      <YStack w="100%" jc="space-between" ai="center" fd="row">
-        <Text
-          color="$text"
-          fs="$3"
-          my="$3"
-          h="fit-content"
-          mr={10}
-          w="75%"
-          ta="center"
-        >
-          Now Playing: {currentSongFile?.title || currentSongFile?.name}
-        </Text>
-        <XStack jc="flex-start" ai="center" w="25%">
-          <Touchable
-            onPress={handleExpandDetails}
-            style={{
-              backgroundColor: theme?.$buttonBg?.val,
-              borderRadius: 90,
-              padding: 5,
-              marginRight: 10,
-            }}
-          >
-            <Ionicons
-              name="information-circle-outline"
-              size={24}
-              color="$icon"
-            />
-          </Touchable>
-          <Touchable
-            onPress={handlePlayPause}
-            style={{
-              backgroundColor: theme?.$buttonBg?.val,
-              borderRadius: 90,
-              padding: 5,
-            }}
-          >
-            <Ionicons
-              name={isPlaying ? "pause" : "play"}
-              size={24}
-              color="$icon"
-            />
-          </Touchable>
-        </XStack>
-      </YStack>
-    )}
+  <YStack
+    px="$3"
+    py="$3"
+    br={8}
+    bc="$buttonBg"
+    bw={1}
+    h={isExpanded ? "100%" : 'auto'}
+  >
+    <XStack jc="space-between" ai="center">
+      <Text color="$text" fs="$3" h="fit-content" w="75%" ta="center">
+        Now Playing: {currentSongFile?.title || currentSongFile?.name}
+      </Text>
+      <Touchable onPress={togglePlayerSize}>
+        <Ionicons
+          name={isExpanded ? "chevron-down-outline" : "chevron-up-outline"}
+          size={24}
+          color={theme.icon.val}
+        />
+      </Touchable>
+    </XStack>
+    <XStack jc="flex-start" ai="center">
+      <Touchable
+        onPress={handlePlayPause}
+        style={{
+          backgroundColor: theme?.$buttonBg?.val,
+          borderRadius: 90,
+          padding: 5,
+        }}
+      >
+        <Ionicons name={isPlaying ? "pause" : "play"} size={24} />
+      </Touchable>
+    </XStack>
     <Text color="$text" mt="$2">
       {millisToMinutesAndSeconds(position)} /{" "}
       {millisToMinutesAndSeconds(duration)}
@@ -112,25 +99,24 @@ const Player: React.FC<PlayerProps> = ({
       <Touchable onPress={previousSongAction}>
         <Ionicons
           name="chevron-back-circle-outline"
-          size={24}
+          size={20}
           color={theme?.$buttonBg?.val}
         />
       </Touchable>
-      <Text color="$icon" padding={15} fs="$5">
-        {`${currentPlayingSongIndex + 1} / ${showFileCollection.length}`}
+      <Text color="$icon" px={15} fs="$3">
+        Track {`${currentPlayingSongIndex + 1} / ${showFileCollection.length}`}
       </Text>
       <Touchable onPress={nextSongAction}>
         <Ionicons
           name="chevron-forward-circle-outline"
-          size={24}
+          size={20}
           color={theme?.$buttonBg?.val}
         />
       </Touchable>
     </XStack>
     <Slider
       w="100%"
-      h="auto"
-      maxH={200}
+      h={50}
       defaultValue={[0]}
       min={0}
       maxValue={duration || 1}
@@ -165,22 +151,28 @@ const Player: React.FC<PlayerProps> = ({
         </CustomTrack>
       )}
     </Slider>
-    {showFileCollection && expandedDetails && (
-      <YStack ta="center" mt="$3">
-        {showFileCollection.map((track, index: number) => (
-          <Text
-            key={track.name}
-            color={
-              currentSongFile?.name == track.name ? "$trackProgress" : "$text"
-            }
-            fs={currentSongFile?.name == track.name ? "$4" : "$1"}
-          >
-            {index + 1}) {track.title || track.name}
-          </Text>
-        ))}
-      </YStack>
+    {isExpanded && (
+      <ScrollView>
+        {showFileCollection && isExpanded && (
+          <YStack ta="center" mt="$3">
+            {showFileCollection.map((track, index: number) => (
+              <Text
+                key={track.name}
+                color={
+                  currentSongFile?.name == track.name
+                    ? "$trackProgress"
+                    : "$text"
+                }
+                fs={currentSongFile?.name == track.name ? "$4" : "$1"}
+              >
+                {index + 1}) {track.title || track.name}
+              </Text>
+            ))}
+          </YStack>
+        )}
+      </ScrollView>
     )}
-  </ScrollView>
+  </YStack>
 );
 
 export default Player;
