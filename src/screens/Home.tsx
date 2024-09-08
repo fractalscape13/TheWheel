@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Text,
   YStack,
@@ -15,6 +15,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import Button from "../components/Button";
 import { TouchableOpacity } from "react-native";
+import Toast from "react-native-toast-message";
+
+//Services
+import { millisToMinutesAndSeconds } from "../services/math";
 
 type HomeProps = {
   toggleTheme: () => void;
@@ -38,64 +42,71 @@ const CustomThumb = styled(YStack, {
   transform: [{ translateY: -10 }],
 });
 
+const currentTrackStyles = {
+  fontSize: "20",
+  color: "gold",
+};
+
 const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const themeName = theme?.name?.toString();
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState<boolean | null>(true);
-  const [songName, setSongName] = useState<string | null>(null);
-  const [duration, setDuration] = useState<number | null>(0);
-  const [position, setPosition] = useState<number | null>(0);
-  const [showData, setShowData] = useState(null);
+  const [duration, setDuration] = useState<number>(0);
+  const [position, setPosition] = useState<number>(0);
+  const [showFileCollection, setShowFileCollection] = useState(null);
+  const [showId, setShowId] = useState<number | null>(null);
+  const [currentSong, setCurrentSong] = useState(null);
+  const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState<
+    number | null
+  >(null);
 
-  const onPlaybackStatusUpdate = (status) => {
+  const onPlaybackStatusUpdate = (status: any) => {
     if (status.isLoaded) {
       setDuration(status.durationMillis);
       setPosition(status.positionMillis);
 
       if (status.didJustFinish) {
         setIsPlaying(false);
+        nextSongAction();
       }
     }
   };
 
-  const stopAudio = async () => {
-    if (sound) {
-      await sound.stopAsync();
-      await sound.unloadAsync();
+  const clearAudioFromStorage = async () => {
+    if (currentSound) {
+      await currentSound.stopAsync();
+      await currentSound.unloadAsync();
       setDuration(0);
       setPosition(0);
-      setSound(null);
+      setCurrentSound(null);
     }
   };
 
-  const handleSeek = async (value) => {
-    if (sound) {
-      await sound.setPositionAsync(value);
+  const handleSeek = async (value: number) => {
+    if (currentSound) {
+      await currentSound.setPositionAsync(value);
     }
-  };
-
-  const millisToMinutesAndSeconds = (millis) => {
-    const minutes = Math.floor(millis / 60000);
-    const seconds = ((millis % 60000) / 1000).toFixed(0);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   const handlePlayPause = async () => {
-    if (sound) {
+    if (currentSound) {
       if (isPlaying) {
-        await sound.pauseAsync();
+        await currentSound.pauseAsync();
       } else {
-        await sound.playAsync();
+        await currentSound.playAsync();
       }
       setIsPlaying(!isPlaying);
     }
   };
 
   const handleSearch = async () => {
+    if (currentSound) {
+      await clearAudioFromStorage();
+    }
     const query = encodeURIComponent(`Grateful Dead ${searchTerm}`);
     const url = `https://archive.org/advancedsearch.php?q=${query}&output=json&rows=5`;
 
@@ -110,30 +121,71 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           `https://archive.org/metadata/${showId}`
         );
         const showData = await showResponse.json();
-        setShowData(showData); // setting show data to local state, not used currently but could be explored
+
+        const showCollection = showData.files.filter(
+          (file) =>
+            file.format.includes("MP3") || file.format.includes("VBR MP3")
+        );
+        setShowFileCollection(showCollection); // setting show data to local state, not used currently but could be explored
+        setShowId(showId);
         const audioFile = showData.files.find(
           (file: any) =>
-            file.format.includes("MP3") ||
-            file.format.includes("FLAC") ||
-            file.format.includes("OGG") ||
-            file.format.includes("VBR MP3")
+            file.format.includes("MP3") || file.format.includes("VBR MP3")
         );
 
         if (audioFile) {
           const audioUrl = `https://archive.org/download/${showId}/${audioFile.name}`;
-          setSongName(audioFile.title || result.title);
+          setCurrentSong(audioFile);
           const { sound } = await Audio.Sound.createAsync(
             { uri: audioUrl },
             { shouldPlay: true }
           );
-          setSound(sound);
+          setCurrentSound(sound);
           sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+          Toast.show({
+            type: "success",
+            text1: "The Music Never Stopped",
+          });
           return;
         }
       }
     } catch (error) {
       console.error("Error fetching Grateful Dead song:", error);
     }
+  };
+
+  const previousSongAction = async () => {
+    const newIndex = currentPlayingSongIndex - 1;
+    if (currentSound) {
+      await clearAudioFromStorage();
+    }
+    const newSelectedSong = showFileCollection[newIndex];
+    setCurrentSong(newSelectedSong);
+    const audioUrl = `https://archive.org/download/${showId}/${newSelectedSong.name}`;
+    const { sound } = await Audio.Sound.createAsync(
+      { uri: audioUrl },
+      { shouldPlay: true }
+    );
+    setCurrentSound(sound);
+    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    setCurrentPlayingSongIndex(newIndex);
+  };
+
+  const nextSongAction = async () => {
+    const newIndex = currentPlayingSongIndex + 1;
+    if (currentSound) {
+      await clearAudioFromStorage();
+    }
+    const newSelectedSong = showFileCollection[newIndex];
+    setCurrentSong(newSelectedSong);
+    const audioUrl = `https://archive.org/download/${showId}/${newSelectedSong.name}`;
+    const { sound } = await Audio.Sound.createAsync(
+      { uri: audioUrl },
+      { shouldPlay: true }
+    );
+    setCurrentSound(sound);
+    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    setCurrentPlayingSongIndex(newIndex);
   };
 
   return (
@@ -144,6 +196,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
       pt={insets.top}
       pb={insets.bottom}
     >
+      <Toast position="bottom" />
       <XStack jc="space-between" ai="center" px="$3" mb="$6">
         <Input
           placeholder="Search..."
@@ -162,12 +215,38 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           <Ionicons name="search" size={24} color="$textPlaceholder" />
         </TouchableOpacity>
       </XStack>
-      {sound && (
+      {(currentSound || showFileCollection) && (
         <Stack w="100%" jc="center" ai="center">
-          {songName && (
+          {currentSong && (
             <Text color="$text" fontSize={18} my="$3">
-              Now Playing: {songName}
+              Now Playing: {currentSong?.title || currentSong?.name}
             </Text>
+          )}
+          {showFileCollection && (
+            <YStack>
+              {showFileCollection.map((track, index: number) => (
+                <Text
+                  key={track.name}
+                  color="$text"
+                  style={currentSong?.name === track.name && currentTrackStyles}
+                >
+                  {index + 1}) {track.title || track.name}
+                </Text>
+              ))}
+              <XStack ai="center" jc="center" color="$text">
+                <TouchableOpacity onPress={previousSongAction}>
+                  <Ionicons name="arrow-back" size={24} color="white" />
+                </TouchableOpacity>
+                <Text color="$text" padding={15} fontSize="24">
+                  {`${currentPlayingSongIndex + 1} / ${
+                    showFileCollection.length
+                  }`}
+                </Text>
+                <TouchableOpacity onPress={nextSongAction}>
+                  <Ionicons name="arrow-forward" size={24} color="white" />
+                </TouchableOpacity>
+              </XStack>
+            </YStack>
           )}
           <Slider
             w="90%"
@@ -195,12 +274,6 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
             title={isPlaying ? "Pause" : "Resume"}
             onPress={handlePlayPause}
             buttonStyle={{ marginVertical: 12 }}
-          />
-          <Button
-            title="Clear Audio Selection"
-            onPress={stopAudio}
-            color="secondary"
-            buttonStyle={{ width: "90%", marginVertical: 12 }}
           />
         </Stack>
       )}
