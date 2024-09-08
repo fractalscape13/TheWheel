@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { TamaguiProvider, Theme } from 'tamagui';
-import { NavigationContainer } from '@react-navigation/native';
-import { useColorScheme } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { TamaguiProvider, Theme } from "tamagui";
+import { NavigationContainer } from "@react-navigation/native";
+import { useColorScheme } from "react-native";
 // import { MMKV } from 'react-native-mmkv';
 // import { APP_THEME } from './src/constants';
-import Navigation from './src/navigation';
-import config from './tamagui.config';
+import Navigation from "./src/navigation";
+import config from "./tamagui.config";
+import Toast from "react-native-toast-message";
+import toastConfig from "@services/toastConfig";
 
 // export const storage = new MMKV();
 
@@ -35,7 +37,7 @@ const App = () => {
   // }, []);
 
   const toggleTheme = () => {
-    const newTheme = appTheme === 'light' ? 'dark' : 'light';
+    const newTheme = appTheme === "light" ? "dark" : "light";
     setAppTheme(newTheme);
     // storage.set(APP_THEME, newTheme);
   };
@@ -47,6 +49,7 @@ const App = () => {
           <NavigationContainer>
             <Navigation toggleTheme={toggleTheme} />
           </NavigationContainer>
+          <Toast config={toastConfig} visibilityTime={4000} />
         </Theme>
       </SafeAreaProvider>
     </TamaguiProvider>
