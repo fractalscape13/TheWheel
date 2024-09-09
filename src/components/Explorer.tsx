@@ -91,8 +91,8 @@ const Explorer: React.FC<ExplorerProps> = ({
           contentContainerStyle={{ paddingBottom: 300 }}
           ref={scrollViewRef}
         >
-          {activeCollection.map((show: Show) => (
-            <Touchable key={show.date} onPress={() => setSelectedShow(show)}>
+          {activeCollection.map((show: Show, index:number) => (
+            <Touchable key={`${show.date}-${index}`} onPress={() => setSelectedShow(show)}>
               <YStack
                 bg="$secondary"
                 px="$3"

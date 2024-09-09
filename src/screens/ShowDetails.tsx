@@ -107,10 +107,8 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
         ) : (
           tracks?.map((track, index) => (
             <Touchable
-              key={track.title}
-              onPress={() =>
-                console.log("Play this audio file-->>>", track.file)
-              }
+              key={`${track.title}-${index}`}
+              onPress={() => console.log("Play this audio file-->>>", track.file)}
             >
               <XStack
                 bg="$buttonBg"
