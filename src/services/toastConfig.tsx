@@ -9,7 +9,6 @@ const toastConfig = {
     <Touchable
       style={styles.container}
       onPress={() => {
-        console.log("Error Toast");
         Toast.hide();
       }}
     >
@@ -21,7 +20,6 @@ const toastConfig = {
     <Touchable
       style={[styles.container, { borderColor: `${"green"}80` }]}
       onPress={() => {
-        console.log("Success Toast");
         Toast.hide();
       }}
     >
@@ -35,7 +33,6 @@ const toastConfig = {
     <Touchable
       style={[styles.container, { borderColor: "blue" }]}
       onPress={() => {
-        console.log("Info Toast");
         Toast.hide();
       }}
     >

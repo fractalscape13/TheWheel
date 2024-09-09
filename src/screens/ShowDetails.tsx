@@ -57,7 +57,6 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
 
     const checkFavorite = async () => {
       const favoriteShow = await SecureStore.getItemAsync(FAVORITE_SHOW);
-      console.log('explorer::', favoriteShow)
       if (favoriteShow && favoriteShow === show.date) {
         setIsFavorited(true);
       }
