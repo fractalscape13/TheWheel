@@ -15,10 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import Touchable from "@components/Touchable";
-import Button from "@components/Button";
 import Explorer from "@components/Explorer";
-import Toast from "react-native-toast-message";
-import { millisToMinutesAndSeconds } from "@services/math";
 import Player from "@components/Player";
 
 type HomeProps = {
@@ -200,27 +197,27 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
 
   const toggleExploreView = () => {
     setExpandedDetails(false);
-    setExploreViewActive(prevValue => !prevValue);
-  }
+    setExploreViewActive((prevValue) => !prevValue);
+  };
 
   const glowingButtonStyles = {
     backgroundColor: theme?.$buttonBg?.val,
     borderRadius: 90,
     padding: 8,
     marginRight: 8,
-    shadowColor: '#fff', 
-    shadowOffset: { width: 0, height: 0 }, 
-    shadowOpacity: 0.8, 
-    shadowRadius: 8,   
+    shadowColor: "#fff",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
     elevation: 20,
-  }
+  };
 
   const normalButtonStyles = {
     backgroundColor: theme?.$buttonBg?.val,
     borderRadius: 90,
     padding: 8,
     marginRight: 8,
-  }
+  };
 
   return (
     <YStack
@@ -273,7 +270,14 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
         </Touchable>
       </XStack>
       {(currentSong || showFileCollection) && (
-        <YStack position="absolute" bottom={insets.bottom} left={12} right={12} zIndex={10} top={isPlayerExpanded ? insets.top + 60 :  undefined}>
+        <YStack
+          position="absolute"
+          bottom={insets.bottom}
+          left={12}
+          right={12}
+          zIndex={10}
+          top={isPlayerExpanded ? insets.top + 60 : undefined}
+        >
           <Player
             isExpanded={isPlayerExpanded}
             togglePlayerSize={togglePlayerSize}
@@ -295,9 +299,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           />
         </YStack>
       )}
-      {exploreViewActive && (
-        <Explorer />
-      )}
+      {exploreViewActive && <Explorer />}
     </YStack>
   );
 };

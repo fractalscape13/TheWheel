@@ -1,4 +1,4 @@
-export const years = [
+const years = [
   1965,
   1966,
   1967,
@@ -32,7 +32,7 @@ export const years = [
   1995,
 ];
 
-export const showCollection65 = [
+const showCollection1965 = [
   {
     date: "1965-01-01",
     venue: "Menlo College",
@@ -110,7 +110,7 @@ export const showCollection65 = [
   },
 ];
 
-export const showCollection66 = [
+const showCollection1966 = [
   {
     date: "1966-01-01",
     venue: "Beaver Hall",
@@ -523,7 +523,7 @@ export const showCollection66 = [
   },
 ];
 
-export const showCollection67 = [
+const showCollection1967 = [
   {
     date: "1967-01-04",
     venue: "R.C.A. Studio A",
@@ -851,7 +851,7 @@ export const showCollection67 = [
   },
 ];
 
-export const showCollection68 = [
+const showCollection1968 = [
   {
     date: "1968-01-17",
     venue: "Carousel Ballroom",
@@ -1514,7 +1514,7 @@ export const showCollection68 = [
   },
 ];
 
-export const showCollection69 = [
+const showCollection1969 = [
   {
     date: "1969-01-02",
     venue: "Fillmore West",
@@ -2272,7 +2272,7 @@ export const showCollection69 = [
   },
 ];
 
-export const showCollection70 = [
+const showCollection1970 = [
   {
     date: "1970-01-02",
     venue: "Fillmore East",
@@ -3030,7 +3030,7 @@ export const showCollection70 = [
   },
 ];
 
-export const showCollection71 = [
+const showCollection1971 = [
   {
     date: "1971-01-21",
     venue: "Freeborn Hall, U. Of California",
@@ -3493,7 +3493,7 @@ export const showCollection71 = [
   },
 ];
 
-export const showCollection72 = [
+const showCollection1972 = [
   {
     date: "1972-01-02",
     venue: "Winterland Arena",
@@ -3941,7 +3941,7 @@ export const showCollection72 = [
   },
 ];
 
-export const showCollection73 = [
+const showCollection1973 = [
   {
     date: "1973-02-09",
     venue: "Roscoe Maples Pavilion",
@@ -4324,7 +4324,7 @@ export const showCollection73 = [
   },
 ];
 
-export const showCollection74 = [
+const showCollection1974 = [
   {
     date: "1974-02-22",
     venue: "Winterland Arena",
@@ -4537,7 +4537,7 @@ export const showCollection74 = [
   },
 ];
 
-export const showCollection75 = [
+const showCollection1975 = [
   {
     date: "1975-03-23",
     venue: "Kezar Stadium",
@@ -4560,7 +4560,7 @@ export const showCollection75 = [
   },
 ];
 
-export const showCollection76 = [
+const showCollection1976 = [
   {
     date: "1976-06-03",
     venue: "Paramount Theater",
@@ -4768,7 +4768,7 @@ export const showCollection76 = [
   },
 ];
 
-export const showCollection77 = [
+const showCollection1977 = [
   {
     date: "1977-02-26",
     venue: "Swing Auditorium",
@@ -5071,7 +5071,7 @@ export const showCollection77 = [
   },
 ];
 
-export const showCollection78 = [
+const showCollection1978 = [
   {
     date: "1978-01-06",
     venue: "Swing Auditorium",
@@ -5484,7 +5484,7 @@ export const showCollection78 = [
   },
 ];
 
-export const showCollection79 = [
+const showCollection1979 = [
   {
     date: "1979-01-05",
     venue: "The Spectrum",
@@ -5862,7 +5862,7 @@ export const showCollection79 = [
   },
 ];
 
-export const showCollection80 = [
+const showCollection1980 = [
   {
     date: "1980-01-13",
     venue: "Oakland Coliseum Stadium",
@@ -6300,7 +6300,7 @@ export const showCollection80 = [
   },
 ];
 
-export const showCollection81 = [
+const showCollection1981 = [
   {
     date: "1981-02-26",
     venue: "Uptown Theater",
@@ -6733,7 +6733,7 @@ export const showCollection81 = [
   },
 ];
 
-export const showCollection82 = [
+const showCollection1982 = [
   {
     date: "1982-02-16",
     venue: "Warfield Theater",
@@ -7046,7 +7046,7 @@ export const showCollection82 = [
   },
 ];
 
-export const showCollection83 = [
+const showCollection1983 = [
   {
     date: "1983-03-25",
     venue: "Compton Terrace Amphitheater",
@@ -7379,7 +7379,7 @@ export const showCollection83 = [
   },
 ];
 
-export const showCollection84 = [
+const showCollection1984 = [
   {
     date: "1984-03-28",
     venue: "Marin County Veteran's Auditorium",
@@ -7702,7 +7702,7 @@ export const showCollection84 = [
   },
 ];
 
-export const showCollection85 = [
+const showCollection1985 = [
   {
     date: "1985-02-18",
     venue: "Henry J. Kaiser Convention Center",
@@ -8065,7 +8065,7 @@ export const showCollection85 = [
   },
 ];
 
-export const showCollection86 = [
+const showCollection1986 = [
   {
     date: "1986-02-08",
     venue: "Henry J. Kaiser Convention Center",
@@ -8298,7 +8298,7 @@ export const showCollection86 = [
   },
 ];
 
-export const showCollection87 = [
+const showCollection1987 = [
   {
     date: "1987-01-28",
     venue: "San Francisco Civic",
@@ -8731,7 +8731,7 @@ export const showCollection87 = [
   },
 ];
 
-export const showCollection88 = [
+const showCollection1988 = [
   {
     date: "1988-02-13",
     venue: "Henry J. Kaiser Auditorium",
@@ -9134,7 +9134,7 @@ export const showCollection88 = [
   },
 ];
 
-export const showCollection89 = [
+const showCollection1989 = [
   {
     date: "1989-02-05",
     venue: "Henry J. Kaiser Convention Center",
@@ -9502,7 +9502,7 @@ export const showCollection89 = [
   },
 ];
 
-export const showCollection90 = [
+const showCollection1990 = [
   {
     date: "1990-02-25",
     venue: "Oakland Coliseum Arena",
@@ -9875,7 +9875,7 @@ export const showCollection90 = [
   },
 ];
 
-export const showCollection91 = [
+const showCollection1991 = [
   {
     date: "1991-02-19",
     venue: "Oakland Coliseum Stadium",
@@ -10263,7 +10263,7 @@ export const showCollection91 = [
   },
 ];
 
-export const showCollection92 = [
+const showCollection1992 = [
   {
     date: "1992-02-22",
     venue: "Oakland Coliseum Arena",
@@ -10541,7 +10541,7 @@ export const showCollection92 = [
   },
 ];
 
-export const showCollection93 = [
+const showCollection1993 = [
   {
     date: "1993-01-24",
     venue: "Oakland Coliseum Arena",
@@ -10964,7 +10964,7 @@ export const showCollection93 = [
   },
 ];
 
-export const showCollection94 = [
+const showCollection1994 = [
   {
     date: "1994-03-04",
     venue: "Blockbuster Desert Sky Pavillion",
@@ -11377,7 +11377,7 @@ export const showCollection94 = [
   },
 ];
 
-export const showCollection95 = [
+const showCollection1995 = [
   {
     date: "1995-02-19",
     venue: "Delta Center",
@@ -11614,3 +11614,40 @@ export const showCollection95 = [
     location: "Chicago, IL",
   },
 ];
+
+module.exports = {
+  years,
+  collectionSelection: {
+    showCollection1965,
+    showCollection1966,
+    showCollection1967,
+    showCollection1968,
+    showCollection1969,
+    showCollection1970,
+    showCollection1971,
+    showCollection1972,
+    showCollection1973,
+    showCollection1974,
+    showCollection1975,
+    showCollection1976,
+    showCollection1977,
+    showCollection1978,
+    showCollection1979,
+    showCollection1980,
+    showCollection1981,
+    showCollection1982,
+    showCollection1983,
+    showCollection1984,
+    showCollection1985,
+    showCollection1986,
+    showCollection1987,
+    showCollection1988,
+    showCollection1989,
+    showCollection1990,
+    showCollection1991,
+    showCollection1992,
+    showCollection1993,
+    showCollection1994,
+    showCollection1995,
+  },
+};
