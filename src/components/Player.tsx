@@ -3,13 +3,12 @@ import {
   Text,
   YStack,
   XStack,
-  Image,
   Slider,
   styled,
   ScrollView,
 } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
-import { millisToMinutesAndSeconds } from "@services/math";
+import { millisToMinutesAndSeconds } from "@services/utils";
 import Touchable from "@components/Touchable";
 
 type PlayerProps = {
@@ -30,6 +29,7 @@ type PlayerProps = {
   handleExpandDetails: () => void;
   previousSongAction: () => Promise<void>;
   nextSongAction: () => Promise<void>;
+  bottomInset: number;
 };
 
 const CustomTrack = styled(YStack, {
@@ -58,10 +58,13 @@ const Player: React.FC<PlayerProps> = ({
   handleExpandDetails,
   previousSongAction,
   nextSongAction,
+  bottomInset,
 }) => (
   <YStack
-    px="$3"
+    bg="$background"
+    px="$4"
     py="$3"
+    pb={!isExpanded && bottomInset}
     h={isExpanded ? "100%" : "auto"}
   >
     <XStack jc="space-between" ai="center">
@@ -127,7 +130,7 @@ const Player: React.FC<PlayerProps> = ({
       </CustomTrack>
     </Slider>
     {isExpanded && (
-      <ScrollView>
+      <ScrollView contentContainerStyle={{paddingBottom: 100}}>
         {showFileCollection && isExpanded && (
           <YStack ta="center" mt="$3">
             {showFileCollection.map((track, index: number) => (

@@ -1,13 +1,22 @@
-import { Text, YStack, useTheme, ScrollView, Stack} from "tamagui";
-import React, { useMemo, useState } from "react";
+import { Text, YStack, useTheme, ScrollView, XStack } from "tamagui";
+import React, { useMemo, useRef } from "react";
 import { years, collectionSelection } from "@services/dataValidationUtils";
 import Touchable from "@components/Touchable";
-import { Ionicons } from "@expo/vector-icons";
+import { formatDate } from "@services/utils";
+import { Show } from "../types";
 
-type ExplorerProps = {};
+type ExplorerProps = {
+  setSelectedShow: (show: Show) => void;
+  setSelectedYear: (year: number) => void;
+  selectedYear: number | null;
+};
 
-const Explorer: React.FC<ExplorerProps> = ({}) => {
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+const Explorer: React.FC<ExplorerProps> = ({
+  setSelectedShow,
+  setSelectedYear,
+  selectedYear,
+}) => {
+  const scrollViewRef = useRef<ScrollView>(null);
   const theme = useTheme();
   const activeCollection = useMemo(() => {
     if (selectedYear && collectionSelection) {
@@ -16,43 +25,74 @@ const Explorer: React.FC<ExplorerProps> = ({}) => {
     }
     return null;
   }, [selectedYear]);
-
+  const handleSelectYear = (year: number) => {
+    setSelectedYear(year);
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ y: 0, animated: false });
+    }
+  };
   return (
-    <YStack w="100%" h="100%">
-      <Touchable onPress={() => setSelectedYear(null)} >
-        <Stack ai="center" jc="flex-start" flexDirection="row" >
-            {selectedYear && <Ionicons name="arrow-back-outline" size={40} color="#FF69B4" />}
-            <Text color="$text" fs="$5">
-                Explore By Year
-            </Text>
-        </Stack>
-      </Touchable>
-      {!selectedYear && (
-        <ScrollView horizontal>
-          {years.map((year: number) => (
-            <Touchable
-              key={year}
-              ai="center"
-              jc="flex-start"
-              w="100%"
-              onPress={() => setSelectedYear(year)}
-              children={
-                <Text fs="$5" color="$text" bg="$secondary" o={0.9} padding={20} mr={5}>
-                  {year}
-                </Text>
-              }
-            />
-          ))}
-        </ScrollView>
-      )}
+    <YStack>
+      <Text color="$text" fs="$3" mb="$2">
+        Select Year
+      </Text>
+      <ScrollView
+        horizontal
+        contentContainerStyle={{ paddingLeft: 24, marginBottom: 8 }}
+      >
+        {years.map((year: number) => (
+          <Touchable
+            key={year}
+            style={{
+              backgroundColor: theme?.$buttonBg?.val,
+              borderRadius: 8,
+              marginRight: 6,
+            }}
+            onPress={() => handleSelectYear(year)}
+            children={
+              <Text fs="$3" fw="bold" py="$2" px="$4">
+                {year}
+              </Text>
+            }
+          />
+        ))}
+      </ScrollView>
       {activeCollection && (
-        <ScrollView>
-          {activeCollection.map((show) => (
-            <Text
-              color="$text"
-              key={show.date}
-              fs="$1"
-            >{`${show.date} - ${show.venue} - ${show.location}`}</Text>
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 300 }}
+          ref={scrollViewRef}
+        >
+          {activeCollection.map((show: Show) => (
+            <Touchable onPress={() => setSelectedShow(show)}>
+              <YStack
+                key={show.date}
+                bg="$secondary"
+                px="$3"
+                py="$2"
+                mb="$3"
+                br="$3"
+                shadowColor="$shadowColor"
+                shadowRadius={3}
+                shadowOpacity={0.2}
+              >
+                <Text fs="$3" mb="$1" fw="bold">
+                  {formatDate(show.date)}
+                </Text>
+                <XStack jc="space-between" ai="center" maxW="100%">
+                  <Text
+                    fs="$2"
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    maxW="100%"
+                  >
+                    {show.venue}
+                  </Text>
+                  <Text fs="$2" ml="$2" numberOfLines={1} ellipsizeMode="tail">
+                    {show.location}
+                  </Text>
+                </XStack>
+              </YStack>
+            </Touchable>
           ))}
         </ScrollView>
       )}

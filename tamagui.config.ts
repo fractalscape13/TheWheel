@@ -116,8 +116,10 @@ export const tokens = {
 export const shorthands = {
   mx: "marginHorizontal",
   my: "marginVertical",
+  p: "padding",
   px: "paddingHorizontal",
   py: "paddingVertical",
+  m: "margin",
   mt: "marginTop",
   mb: "marginBottom",
   ml: "marginLeft",

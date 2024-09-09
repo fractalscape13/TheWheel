@@ -17,6 +17,8 @@ import { Audio } from "expo-av";
 import Touchable from "@components/Touchable";
 import Explorer from "@components/Explorer";
 import Player from "@components/Player";
+import ShowDetails from "./ShowDetails";
+import { Show } from "../types";
 
 type HomeProps = {
   toggleTheme: () => void;
@@ -39,7 +41,9 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [expandedDetails, setExpandedDetails] = useState<boolean>(false);
-  const [exploreViewActive, setExploreViewActive] = useState<boolean>(false);
+  const [exploreViewActive, setExploreViewActive] = useState<boolean>(true);
+  const [selectedShow, setSelectedShow] = useState<Show | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [duration, setDuration] = useState<number>(0);
   const [position, setPosition] = useState<number>(0);
   const [showFileCollection, setShowFileCollection] = useState(null);
@@ -98,7 +102,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
     if (currentSong) {
       await clearAudioFromStorage();
       setExpandedDetails(false);
-      setExploreViewActive(false);
+      // setExploreViewActive(false);
     }
     const query = encodeURIComponent(`Grateful Dead ${searchTerm}`);
     const url = `https://archive.org/advancedsearch.php?q=${query}&output=json&rows=5`;
@@ -195,29 +199,29 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
     return setExpandedDetails((prev) => !prev);
   };
 
-  const toggleExploreView = () => {
-    setExpandedDetails(false);
-    setExploreViewActive((prevValue) => !prevValue);
-  };
+  // const toggleExploreView = () => {
+  //   setExpandedDetails(false);
+  //   setExploreViewActive((prevValue) => !prevValue);
+  // };
 
-  const glowingButtonStyles = {
-    backgroundColor: theme?.$buttonBg?.val,
-    borderRadius: 90,
-    padding: 8,
-    marginRight: 8,
-    shadowColor: "#fff",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
-    elevation: 20,
-  };
+  // const glowingButtonStyles = {
+  //   backgroundColor: theme?.$buttonBg?.val,
+  //   borderRadius: 90,
+  //   padding: 8,
+  //   marginLeft: 8,
+  //   shadowColor: "#fff",
+  //   shadowOffset: { width: 0, height: 0 },
+  //   shadowOpacity: 0.8,
+  //   shadowRadius: 8,
+  //   elevation: 20,
+  // };
 
-  const normalButtonStyles = {
-    backgroundColor: theme?.$buttonBg?.val,
-    borderRadius: 90,
-    padding: 8,
-    marginRight: 8,
-  };
+  // const normalButtonStyles = {
+  //   backgroundColor: theme?.$buttonBg?.val,
+  //   borderRadius: 90,
+  //   padding: 8,
+  //   marginLeft: 8,
+  // };
 
   return (
     <YStack
@@ -227,56 +231,77 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
       pt={insets.top}
       pb={insets.bottom}
     >
-      <XStack jc="space-between" ai="center" mb="$6">
-        <Input
-          placeholder="Search..."
-          placeholderTextColor="$textPlaceholder"
-          color="$text"
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-          h={40}
-          flex={1}
-          bw={1}
-          br={8}
-          bc="$text"
-          mr="$3"
+      {exploreViewActive && (
+        <>
+          <XStack jc="space-between" ai="center" mb="$6">
+            <Input
+              placeholder="Search..."
+              placeholderTextColor="$textPlaceholder"
+              color="$text"
+              value={searchTerm}
+              onChangeText={setSearchTerm}
+              h={40}
+              flex={1}
+              bw={1}
+              br={8}
+              bc="$text"
+              mr="$3"
+            />
+            <Touchable
+              onPress={handleSearch}
+              style={{
+                backgroundColor: theme?.$buttonBg?.val,
+                borderRadius: 90,
+                padding: 8,
+              }}
+            >
+              <Ionicons name="search" size={24} color="$icon" />
+            </Touchable>
+            {/* <Touchable
+      onPress={toggleExploreView}
+      style={exploreViewActive ? glowingButtonStyles : normalButtonStyles}
+    >
+      <Ionicons name="planet-outline" size={24} color="$icon" />
+    </Touchable> */}
+            {/* <Touchable
+      onPress={toggleTheme}
+      style={{
+        backgroundColor: theme?.$buttonBg?.val,
+        borderRadius: 90,
+        padding: 8,
+        marginRight: 8,
+      }}
+    >
+      <Ionicons name="moon-outline" size={24} color="$icon" />
+    </Touchable> */}
+          </XStack>
+          <Explorer
+            setSelectedShow={(show) => {
+              setSelectedShow(show);
+              setExploreViewActive(false);
+            }}
+            setSelectedYear={setSelectedYear}
+            selectedYear={selectedYear}
+          />
+        </>
+      )}
+      {selectedShow && !exploreViewActive && (
+        <ShowDetails
+          show={selectedShow}
+          onClose={() => {
+            setSelectedShow(null);
+            setExploreViewActive(true);
+          }}
         />
-        <Touchable
-          onPress={toggleExploreView}
-          style={exploreViewActive ? glowingButtonStyles : normalButtonStyles}
-        >
-          <Ionicons name="planet-outline" size={24} color="$icon" />
-        </Touchable>
-        <Touchable
-          onPress={toggleTheme}
-          style={{
-            backgroundColor: theme?.$buttonBg?.val,
-            borderRadius: 90,
-            padding: 8,
-            marginRight: 8,
-          }}
-        >
-          <Ionicons name="moon-outline" size={24} color="$icon" />
-        </Touchable>
-        <Touchable
-          onPress={handleSearch}
-          style={{
-            backgroundColor: theme?.$buttonBg?.val,
-            borderRadius: 90,
-            padding: 8,
-          }}
-        >
-          <Ionicons name="search" size={24} color="$icon" />
-        </Touchable>
-      </XStack>
+      )}
       {(currentSong || showFileCollection) && (
         <YStack
           position="absolute"
-          bottom={insets.bottom}
-          left={12}
-          right={12}
+          bottom={0}
+          left={0}
+          right={0}
           zIndex={10}
-          top={isPlayerExpanded ? insets.top + 60 : undefined}
+          top={isPlayerExpanded ? insets.top : undefined}
         >
           <Player
             isExpanded={isPlayerExpanded}
@@ -296,10 +321,10 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
             handleExpandDetails={handleExpandDetails}
             previousSongAction={previousSongAction}
             nextSongAction={nextSongAction}
+            bottomInset={insets.bottom}
           />
         </YStack>
       )}
-      {exploreViewActive && <Explorer />}
     </YStack>
   );
 };
