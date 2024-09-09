@@ -4,3 +4,9 @@ export interface Show {
   venue: string;
   tracks?: { title: string }[];
 }
+
+export interface Track {
+  title: string;
+  length: string;
+  file: string;
+};
