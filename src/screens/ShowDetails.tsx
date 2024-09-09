@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { ScrollView, Text, YStack, XStack } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
+import * as SecureStore from "expo-secure-store";
 import { formatDate } from "@services/utils";
 import Touchable from "@components/Touchable";
 import { Show, Track } from "../types";
+import { FAVORITE_SHOW } from "../constants";
 
 type ShowDetailsProps = {
   onClose: () => void;
@@ -14,6 +16,8 @@ type ShowDetailsProps = {
 const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
   const [tracks, setTracks] = useState<Track[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isFavorited, setIsFavorited] = useState<boolean>(false);
+
   useEffect(() => {
     const fetchShowByDateAndVenue = async (
       showDate: string,
@@ -24,7 +28,6 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
       );
       const url = `https://archive.org/advancedsearch.php?q=${query}&output=json&rows=1`;
       try {
-        // this api call takes too long and returns too much data we don't need
         const response = await fetch(url);
         const data = await response.json();
         const results = data?.response?.docs;
@@ -52,15 +55,44 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
       }
     };
 
+    const checkFavorite = async () => {
+      const favoriteShow = await SecureStore.getItemAsync(FAVORITE_SHOW);
+      console.log('explorer::', favoriteShow)
+      if (favoriteShow && favoriteShow === show.date) {
+        setIsFavorited(true);
+      }
+    };
+
     if (show?.date && show?.venue) {
       fetchShowByDateAndVenue(show.date, show.venue);
+      checkFavorite();
     }
   }, [show]);
+
+  const toggleFavorite = async () => {
+    if (isFavorited) {
+      await SecureStore.deleteItemAsync(FAVORITE_SHOW);
+      setIsFavorited(false);
+    } else {
+      await SecureStore.setItemAsync(FAVORITE_SHOW, show.date);
+      setIsFavorited(true);
+    }
+  };
+
   return (
     <YStack>
-      <Touchable onPress={onClose} hitSlop={15}>
-        <Ionicons name="arrow-back" size={24} color="white" />
-      </Touchable>
+      <XStack jc="space-between" ai="center">
+        <Touchable onPress={onClose} hitSlop={15}>
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </Touchable>
+        <Touchable onPress={toggleFavorite} hitSlop={15}>
+          <Ionicons
+            name={isFavorited ? "heart" : "heart-outline"}
+            size={24}
+            color={isFavorited ? "white" : "white"}
+          />
+        </Touchable>
+      </XStack>
       <Text fs="$5" fw="bold" color="$text" ta="center" mb="$2">
         {formatDate(show.date)}
       </Text>
@@ -76,7 +108,9 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
           tracks?.map((track, index) => (
             <Touchable
               key={track.title}
-              onPress={() => console.log("Play this audio file-->>>", track.file)}
+              onPress={() =>
+                console.log("Play this audio file-->>>", track.file)
+              }
             >
               <XStack
                 bg="$buttonBg"

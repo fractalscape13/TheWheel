@@ -8,12 +8,9 @@ import Explorer from "@components/Explorer";
 import Player from "@components/Player";
 import ShowDetails from "./ShowDetails";
 import { Show } from "../types";
+import * as SecureStore from 'expo-secure-store';
 
-type HomeProps = {
-  toggleTheme: () => void;
-};
-
-const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
+const Home = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const [isPlayerExpanded, setIsPlayerExpanded] = useState<boolean>(false);
