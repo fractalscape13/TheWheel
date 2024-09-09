@@ -1,16 +1,5 @@
 import React, { useState } from "react";
-import {
-  Text,
-  YStack,
-  Stack,
-  Image,
-  Slider,
-  Input,
-  styled,
-  XStack,
-  useTheme,
-  ScrollView,
-} from "tamagui";
+import { YStack, Input, XStack, useTheme } from "tamagui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
@@ -23,14 +12,6 @@ import { Show } from "../types";
 type HomeProps = {
   toggleTheme: () => void;
 };
-
-const CustomTrack = styled(YStack, {
-  width: "100%",
-  height: 8,
-  borderRadius: 10,
-  backgroundColor: "$text",
-  position: "relative",
-});
 
 const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const insets = useSafeAreaInsets();
@@ -198,30 +179,6 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const handleExpandDetails = () => {
     return setExpandedDetails((prev) => !prev);
   };
-
-  // const toggleExploreView = () => {
-  //   setExpandedDetails(false);
-  //   setExploreViewActive((prevValue) => !prevValue);
-  // };
-
-  // const glowingButtonStyles = {
-  //   backgroundColor: theme?.$buttonBg?.val,
-  //   borderRadius: 90,
-  //   padding: 8,
-  //   marginLeft: 8,
-  //   shadowColor: "#fff",
-  //   shadowOffset: { width: 0, height: 0 },
-  //   shadowOpacity: 0.8,
-  //   shadowRadius: 8,
-  //   elevation: 20,
-  // };
-
-  // const normalButtonStyles = {
-  //   backgroundColor: theme?.$buttonBg?.val,
-  //   borderRadius: 90,
-  //   padding: 8,
-  //   marginLeft: 8,
-  // };
 
   return (
     <YStack
