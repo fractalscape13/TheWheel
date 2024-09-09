@@ -65,7 +65,7 @@ const Player: React.FC<PlayerProps> = ({
     br={8}
     bc="$buttonBg"
     bw={1}
-    h={isExpanded ? "100%" : 'auto'}
+    h={isExpanded ? "100%" : "auto"}
   >
     <XStack jc="space-between" ai="center">
       <Text color="$text" fs="$3" h="fit-content" w="75%" ta="center">
@@ -86,15 +86,16 @@ const Player: React.FC<PlayerProps> = ({
           backgroundColor: theme?.$buttonBg?.val,
           borderRadius: 90,
           padding: 5,
+          marginRight: 10,
         }}
       >
         <Ionicons name={isPlaying ? "pause" : "play"} size={24} />
       </Touchable>
-    </XStack>
     <Text color="$text" mt="$2">
       {millisToMinutesAndSeconds(position)} /{" "}
       {millisToMinutesAndSeconds(duration)}
     </Text>
+    </XStack>
     <XStack ai="center" jc="center">
       <Touchable onPress={previousSongAction}>
         <Ionicons
@@ -123,33 +124,13 @@ const Player: React.FC<PlayerProps> = ({
       step={1}
       onSlideEnd={(val) => handleSeek(val[0])}
     >
-      {imageUrl ? (
-        <CustomTrack position="relative" bg="$trackProgress" mt={10} h="100%">
-          <Image
-            h="100%"
-            br="$8"
-            source={{ uri: imageUrl }}
-            resizeMode="fill"
-          />
-          <YStack
-            bg="$trackBg"
-            h="100%"
-            w={`${(position / duration) * 100}%`}
-            position="absolute"
-            top="0"
-            left="0"
-            o="0.4"
-          />
-        </CustomTrack>
-      ) : (
-        <CustomTrack>
-          <YStack
-            bg="$trackProgress"
-            h="100%"
-            w={`${(position / duration) * 100}%`}
-          />
-        </CustomTrack>
-      )}
+      <CustomTrack>
+        <YStack
+          bg="$trackProgress"
+          h="100%"
+          w={`${(position / duration) * 100}%`}
+        />
+      </CustomTrack>
     </Slider>
     {isExpanded && (
       <ScrollView>
