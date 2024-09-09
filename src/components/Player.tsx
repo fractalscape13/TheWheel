@@ -62,16 +62,23 @@ const Player: React.FC<PlayerProps> = ({
   <YStack
     px="$3"
     py="$3"
-    br={8}
-    bc="$buttonBg"
-    bw={1}
-    h={isExpanded ? "100%" : 'auto'}
+    h={isExpanded ? "100%" : "auto"}
   >
     <XStack jc="space-between" ai="center">
+      <Touchable
+        onPress={handlePlayPause}
+        style={{
+          backgroundColor: theme?.$buttonBg?.val,
+          borderRadius: 99,
+          padding: 6,
+        }}
+      >
+        <Ionicons name={isPlaying ? "pause" : "play"} size={20} />
+      </Touchable>
       <Text color="$text" fs="$3" h="fit-content" w="75%" ta="center">
-        Now Playing: {currentSongFile?.title || currentSongFile?.name}
+        {currentSongFile?.title || currentSongFile?.name}
       </Text>
-      <Touchable onPress={togglePlayerSize}>
+      <Touchable onPress={togglePlayerSize} hitSlop={15}>
         <Ionicons
           name={isExpanded ? "chevron-down-outline" : "chevron-up-outline"}
           size={24}
@@ -79,18 +86,7 @@ const Player: React.FC<PlayerProps> = ({
         />
       </Touchable>
     </XStack>
-    <XStack jc="flex-start" ai="center">
-      <Touchable
-        onPress={handlePlayPause}
-        style={{
-          backgroundColor: theme?.$buttonBg?.val,
-          borderRadius: 90,
-          padding: 5,
-        }}
-      >
-        <Ionicons name={isPlaying ? "pause" : "play"} size={24} />
-      </Touchable>
-    </XStack>
+    <XStack jc="flex-start" ai="center"></XStack>
     <Text color="$text" mt="$2">
       {millisToMinutesAndSeconds(position)} /{" "}
       {millisToMinutesAndSeconds(duration)}
@@ -99,7 +95,7 @@ const Player: React.FC<PlayerProps> = ({
       <Touchable onPress={previousSongAction}>
         <Ionicons
           name="chevron-back-circle-outline"
-          size={20}
+          size={24}
           color={theme?.$buttonBg?.val}
         />
       </Touchable>
@@ -109,7 +105,7 @@ const Player: React.FC<PlayerProps> = ({
       <Touchable onPress={nextSongAction}>
         <Ionicons
           name="chevron-forward-circle-outline"
-          size={20}
+          size={24}
           color={theme?.$buttonBg?.val}
         />
       </Touchable>
@@ -127,7 +123,6 @@ const Player: React.FC<PlayerProps> = ({
         <CustomTrack h={30} position="relative" bg="$trackProgress" mt={10}>
           <Image
             h="100%"
-            br="$8"
             source={{ uri: imageUrl }}
             resizeMode="fill"
           />
@@ -163,7 +158,8 @@ const Player: React.FC<PlayerProps> = ({
                     ? "$trackProgress"
                     : "$text"
                 }
-                fs={currentSongFile?.name == track.name ? "$4" : "$1"}
+                fs="$3"
+                mt="$1"
               >
                 {index + 1}) {track.title || track.name}
               </Text>
