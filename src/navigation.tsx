@@ -5,10 +5,8 @@ import Home from "./screens/Home";
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => (
-  <Stack.Navigator initialRouteName="Home">
-    <Stack.Screen name="Home" options={{ headerShown: false }}>
-      {() => <Home />}
-    </Stack.Screen>
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Home" component={Home} />
   </Stack.Navigator>
 );
 

@@ -8,7 +8,6 @@ import Explorer from "@components/Explorer";
 import Player from "@components/Player";
 import ShowDetails from "./ShowDetails";
 import { Show } from "../types";
-import * as SecureStore from 'expo-secure-store';
 
 const Home = () => {
   const insets = useSafeAreaInsets();
