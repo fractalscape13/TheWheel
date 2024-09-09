@@ -127,11 +127,6 @@ const showCollection1966 = [
     location: "San Francisco, CA",
   },
   {
-    date: "1966-01-08",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
     date: "1966-01-13",
     venue: "The Matrix",
     location: "San Francisco, CA",
