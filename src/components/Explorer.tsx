@@ -44,7 +44,8 @@ const Explorer: React.FC<ExplorerProps> = ({
           <Touchable
             key={year}
             style={{
-              backgroundColor: theme?.$buttonBg?.val,
+              backgroundColor:
+                year === selectedYear ? "white" : theme?.$buttonBg?.val,
               borderRadius: 8,
               marginRight: 6,
             }}
