@@ -86,7 +86,6 @@ const Player: React.FC<PlayerProps> = ({
         />
       </Touchable>
     </XStack>
-    <XStack jc="flex-start" ai="center"></XStack>
     <Text color="$text" mt="$2">
       {millisToMinutesAndSeconds(position)} /{" "}
       {millisToMinutesAndSeconds(duration)}
@@ -119,32 +118,13 @@ const Player: React.FC<PlayerProps> = ({
       step={1}
       onSlideEnd={(val) => handleSeek(val[0])}
     >
-      {imageUrl ? (
-        <CustomTrack h={30} position="relative" bg="$trackProgress" mt={10}>
-          <Image
-            h="100%"
-            source={{ uri: imageUrl }}
-            resizeMode="fill"
-          />
-          <YStack
-            bg="$trackBg"
-            h="100%"
-            w={`${(position / duration) * 100}%`}
-            position="absolute"
-            top="0"
-            left="0"
-            o="0.4"
-          />
-        </CustomTrack>
-      ) : (
-        <CustomTrack>
-          <YStack
-            bg="$trackProgress"
-            h="100%"
-            w={`${(position / duration) * 100}%`}
-          />
-        </CustomTrack>
-      )}
+      <CustomTrack>
+        <YStack
+          bg="$trackProgress"
+          h="100%"
+          w={`${(position / duration) * 100}%`}
+        />
+      </CustomTrack>
     </Slider>
     {isExpanded && (
       <ScrollView>

@@ -15,8 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import Touchable from "@components/Touchable";
-import Toast from "react-native-toast-message";
-import { millisToMinutesAndSeconds } from "@services/math";
+import Explorer from "@components/Explorer";
 import Player from "@components/Player";
 
 type HomeProps = {
@@ -40,6 +39,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [expandedDetails, setExpandedDetails] = useState<boolean>(false);
+  const [exploreViewActive, setExploreViewActive] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
   const [position, setPosition] = useState<number>(0);
   const [showFileCollection, setShowFileCollection] = useState(null);
@@ -98,6 +98,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
     if (currentSong) {
       await clearAudioFromStorage();
       setExpandedDetails(false);
+      setExploreViewActive(false);
     }
     const query = encodeURIComponent(`Grateful Dead ${searchTerm}`);
     const url = `https://archive.org/advancedsearch.php?q=${query}&output=json&rows=5`;
@@ -194,6 +195,30 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
     return setExpandedDetails((prev) => !prev);
   };
 
+  const toggleExploreView = () => {
+    setExpandedDetails(false);
+    setExploreViewActive((prevValue) => !prevValue);
+  };
+
+  const glowingButtonStyles = {
+    backgroundColor: theme?.$buttonBg?.val,
+    borderRadius: 90,
+    padding: 8,
+    marginRight: 8,
+    shadowColor: "#fff",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
+    elevation: 20,
+  };
+
+  const normalButtonStyles = {
+    backgroundColor: theme?.$buttonBg?.val,
+    borderRadius: 90,
+    padding: 8,
+    marginRight: 8,
+  };
+
   return (
     <YStack
       flex={1}
@@ -217,6 +242,12 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           mr="$3"
         />
         <Touchable
+          onPress={toggleExploreView}
+          style={exploreViewActive ? glowingButtonStyles : normalButtonStyles}
+        >
+          <Ionicons name="planet-outline" size={24} color="$icon" />
+        </Touchable>
+        <Touchable
           onPress={toggleTheme}
           style={{
             backgroundColor: theme?.$buttonBg?.val,
@@ -239,7 +270,14 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
         </Touchable>
       </XStack>
       {(currentSong || showFileCollection) && (
-        <YStack position="absolute" bottom={insets.bottom} left={12} right={12} zIndex={10} top={isPlayerExpanded ? insets.top + 60 :  undefined}>
+        <YStack
+          position="absolute"
+          bottom={insets.bottom}
+          left={12}
+          right={12}
+          zIndex={10}
+          top={isPlayerExpanded ? insets.top + 60 : undefined}
+        >
           <Player
             isExpanded={isPlayerExpanded}
             togglePlayerSize={togglePlayerSize}
@@ -261,6 +299,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           />
         </YStack>
       )}
+      {exploreViewActive && <Explorer />}
     </YStack>
   );
 };
