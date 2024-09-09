@@ -75,7 +75,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
         ) : (
           tracks?.map((track, index) => (
             <Touchable
-              key={track.title}
+              key={`${track.title}-${index}`}
               onPress={() => console.log("Play this audio file-->>>", track.file)}
             >
               <XStack

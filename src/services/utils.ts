@@ -5,7 +5,8 @@ export const millisToMinutesAndSeconds = (millis: number) => {
 };
 
 export const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
+  const [year, month, day] = dateString.split("-").map(Number); 
+  const date = new Date(Date.UTC(year, month - 1, (day + 1)));
   return date.toLocaleDateString(undefined, {
     year: "numeric",
     month: "long",
