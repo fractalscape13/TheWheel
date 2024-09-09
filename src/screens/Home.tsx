@@ -9,11 +9,7 @@ import Player from "@components/Player";
 import ShowDetails from "./ShowDetails";
 import { Show } from "../types";
 
-type HomeProps = {
-  toggleTheme: () => void;
-};
-
-const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
+const Home = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const [isPlayerExpanded, setIsPlayerExpanded] = useState<boolean>(false);
