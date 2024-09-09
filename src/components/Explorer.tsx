@@ -38,7 +38,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       </Text>
       <ScrollView
         horizontal
-        contentContainerStyle={{ paddingLeft: 24, marginBottom: 8 }}
+        contentContainerStyle={{ paddingLeft: 24, marginBottom: 12 }}
       >
         {years.map((year: number) => (
           <Touchable

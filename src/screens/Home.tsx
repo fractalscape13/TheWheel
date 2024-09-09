@@ -233,7 +233,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
     >
       {exploreViewActive && (
         <>
-          <XStack jc="space-between" ai="center" mb="$6">
+          <XStack jc="space-between" ai="center" mb="$3">
             <Input
               placeholder="Search..."
               placeholderTextColor="$textPlaceholder"
