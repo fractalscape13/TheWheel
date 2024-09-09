@@ -86,7 +86,8 @@ const Player: React.FC<PlayerProps> = ({
           backgroundColor: theme?.$buttonBg?.val,
           borderRadius: 90,
           padding: 5,
-          marginRight: 10,
+          margin: 10,
+          marginBottom: 5,
         }}
       >
         <Ionicons name={isPlaying ? "pause" : "play"} size={24} />
