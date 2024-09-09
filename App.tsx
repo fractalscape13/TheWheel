@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TamaguiProvider, Theme } from "tamagui";
 import { NavigationContainer } from "@react-navigation/native";
-import { useColorScheme } from "react-native";
 // import { MMKV } from 'react-native-mmkv';
 // import { APP_THEME } from './src/constants';
 import Navigation from "./src/navigation";
@@ -25,9 +24,7 @@ import toastConfig from "@services/toastConfig";
 // };
 
 const App = () => {
-  const systemTheme = useColorScheme();
-  // const [appTheme, setAppTheme] = useState(setInitialTheme(systemTheme));
-  const [appTheme, setAppTheme] = useState(systemTheme);
+  const [appTheme, setAppTheme] = useState("dark");
 
   // useEffect(() => {
   //   const storedTheme = getStoredTheme();

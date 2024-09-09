@@ -36,6 +36,7 @@ const CustomTrack = styled(YStack, {
 const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const [isPlayerExpanded, setIsPlayerExpanded] = useState<boolean>(false);
   const [currentSong, setCurrentSong] = useState<Audio.Sound | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
@@ -50,6 +51,10 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
   const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState<
     number | null
   >(null);
+
+  const togglePlayerSize = () => {
+    setIsPlayerExpanded((prev) => !prev);
+  };
 
   const onPlaybackStatusUpdate = (status: any) => {
     if (status.isLoaded) {
@@ -145,10 +150,6 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
           );
           setCurrentSong(sound);
           sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
-          Toast.show({
-            type: "success",
-            text1: "The Music Never Stopped",
-          });
           return;
         }
       }
@@ -229,7 +230,7 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
       pt={insets.top}
       pb={insets.bottom}
     >
-      <XStack jc="space-between" ai="center" px="$3" mb="$6">
+      <XStack jc="space-between" ai="center" mb="$6">
         <Input
           placeholder="Search..."
           placeholderTextColor="$textPlaceholder"
@@ -272,23 +273,27 @@ const Home: React.FC<HomeProps> = ({ toggleTheme }) => {
         </Touchable>
       </XStack>
       {(currentSong || showFileCollection) && (
-        <Player
-          currentSongFile={currentSongFile}
-          currentPlayingSongIndex={currentPlayingSongIndex}
-          showFileCollection={showFileCollection}
-          duration={duration}
-          position={position}
-          isPlaying={isPlaying}
-          expandedDetails={expandedDetails}
-          theme={theme}
-          showId={showId}
-          imageUrl={imageUrl}
-          handleSeek={handleSeek}
-          handlePlayPause={handlePlayPause}
-          handleExpandDetails={handleExpandDetails}
-          previousSongAction={previousSongAction}
-          nextSongAction={nextSongAction}
-        />
+        <YStack position="absolute" bottom={insets.bottom} left={12} right={12} zIndex={10} top={isPlayerExpanded ? insets.top + 60 :  undefined}>
+          <Player
+            isExpanded={isPlayerExpanded}
+            togglePlayerSize={togglePlayerSize}
+            currentSongFile={currentSongFile}
+            currentPlayingSongIndex={currentPlayingSongIndex}
+            showFileCollection={showFileCollection}
+            duration={duration}
+            position={position}
+            isPlaying={isPlaying}
+            expandedDetails={expandedDetails}
+            theme={theme}
+            showId={showId}
+            imageUrl={imageUrl}
+            handleSeek={handleSeek}
+            handlePlayPause={handlePlayPause}
+            handleExpandDetails={handleExpandDetails}
+            previousSongAction={previousSongAction}
+            nextSongAction={nextSongAction}
+          />
+        </YStack>
       )}
       {exploreViewActive && (
         <Explorer />

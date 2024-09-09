@@ -1,11 +1,12 @@
 import React from "react";
-import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Text, StyleSheet, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
+import Touchable from "@components/Touchable";
 
 const toastConfig = {
   error: ({ text1 }: any) => (
-    <TouchableOpacity
+    <Touchable
       style={styles.container}
       onPress={() => {
         console.log("Error Toast");
@@ -14,10 +15,10 @@ const toastConfig = {
     >
       <Ionicons name="warning-outline" size={24} color="red" />
       <Text style={styles.text}>{text1}</Text>
-    </TouchableOpacity>
+    </Touchable>
   ),
   success: ({ text1 }: any) => (
-    <TouchableOpacity
+    <Touchable
       style={[styles.container, { borderColor: `${"green"}80` }]}
       onPress={() => {
         console.log("Success Toast");
@@ -28,10 +29,10 @@ const toastConfig = {
         <Ionicons name="checkmark-circle-outline" size={24} color="green" />
       </View>
       <Text style={styles.text}>{text1}</Text>
-    </TouchableOpacity>
+    </Touchable>
   ),
   info: ({ text1 }: any) => (
-    <TouchableOpacity
+    <Touchable
       style={[styles.container, { borderColor: "blue" }]}
       onPress={() => {
         console.log("Info Toast");
@@ -40,7 +41,7 @@ const toastConfig = {
     >
       <Ionicons name="information-circle-outline" size={24} color="blue" />
       <Text style={styles.text}>{text1}</Text>
-    </TouchableOpacity>
+    </Touchable>
   ),
 };
 
