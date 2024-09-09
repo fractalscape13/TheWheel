@@ -4,13 +4,7 @@ import { ScrollView, Text, YStack, XStack } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDate } from "@services/utils";
 import Touchable from "@components/Touchable";
-import { Show } from "../types";
-
-type Track = {
-  title: string;
-  length: string;
-  file: string;
-};
+import { Show, Track } from "../types";
 
 type ShowDetailsProps = {
   onClose: () => void;
@@ -20,7 +14,6 @@ type ShowDetailsProps = {
 const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
   const [tracks, setTracks] = useState<Track[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
   useEffect(() => {
     const fetchShowByDateAndVenue = async (
       showDate: string,
@@ -63,7 +56,6 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
       fetchShowByDateAndVenue(show.date, show.venue);
     }
   }, [show]);
-
   return (
     <YStack>
       <Touchable onPress={onClose} hitSlop={15}>
@@ -84,7 +76,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
           tracks?.map((track, index) => (
             <Touchable
               key={track.title}
-              onPress={() => console.log("Audio file:", track.file)}
+              onPress={() => console.log("Play this audio file-->>>", track.file)}
             >
               <XStack
                 bg="$buttonBg"
