@@ -1053,22 +1053,7 @@ const showCollection1968 = [
     location: "New York City, NY",
   },
   {
-    date: "1968-05-07",
-    venue: "Electric Circus",
-    location: "New York City, NY",
-  },
-  {
     date: "1968-05-08",
-    venue: "Electric Circus",
-    location: "New York City, NY",
-  },
-  {
-    date: "1968-05-08",
-    venue: "Electric Circus",
-    location: "New York City, NY",
-  },
-  {
-    date: "1968-05-09",
     venue: "Electric Circus",
     location: "New York City, NY",
   },
@@ -1138,16 +1123,6 @@ const showCollection1968 = [
     location: "New York City, NY",
   },
   {
-    date: "1968-06-14",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1968-06-15",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
     date: "1968-06-15",
     venue: "Fillmore East",
     location: "New York City, NY",
@@ -1158,17 +1133,17 @@ const showCollection1968 = [
     location: "San Francisco, CA",
   },
   {
+    date: "1968-07-01",
+    venue: "King's Beach Bowl",
+    location: "Lake Tahoe, CA",
+  },
+  {
     date: "1968-07-11",
     venue: "Shrine Auditorium",
     location: "Los Angeles, CA",
   },
   {
     date: "1968-07-12",
-    venue: "King's Beach Bowl",
-    location: "Lake Tahoe, CA",
-  },
-  {
-    date: "1968-07-01",
     venue: "King's Beach Bowl",
     location: "Lake Tahoe, CA",
   },
@@ -1546,11 +1521,6 @@ const showCollection1969 = [
     location: "Santa Barbara, CA",
   },
   {
-    date: "1969-01-18",
-    venue: "",
-    location: "",
-  },
-  {
     date: "1969-01-20",
     venue: "Pacific High Recording",
     location: "San Mateo, CA",
@@ -1559,6 +1529,7 @@ const showCollection1969 = [
     date: "1969-01-24",
     venue: "Avalon Ballroom",
     location: "San Francisco, CA",
+    
   },
   {
     date: "1969-01-25",
@@ -1611,22 +1582,7 @@ const showCollection1969 = [
     location: "Pittsburgh, PA",
   },
   {
-    date: "1969-02-07",
-    venue: "Stanley Theater",
-    location: "Pittsburgh, PA",
-  },
-  {
     date: "1969-02-11",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-02-11",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-02-12",
     venue: "Fillmore East",
     location: "New York City, NY",
   },
@@ -1812,11 +1768,6 @@ const showCollection1969 = [
   },
   {
     date: "1969-05-03",
-    venue: "Sierra College",
-    location: "Rocklin, CA",
-  },
-  {
-    date: "1969-05-03",
     venue: "Winterland Arena",
     location: "San Francisco, CA",
   },
@@ -1921,16 +1872,6 @@ const showCollection1969 = [
     location: "New York City, NY",
   },
   {
-    date: "1969-06-20",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-06-21",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
     date: "1969-06-21",
     venue: "Fillmore East",
     location: "New York City, NY",
@@ -1974,11 +1915,6 @@ const showCollection1969 = [
     date: "1969-07-07",
     venue: "Piedmont Park",
     location: "Atlanta, GA",
-  },
-  {
-    date: "1969-07-08",
-    venue: "Rock Pile",
-    location: "Toronto, CA",
   },
   {
     date: "1969-07-08",
@@ -2071,16 +2007,6 @@ const showCollection1969 = [
     location: "New York City, NY",
   },
   {
-    date: "1969-09-26",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-09-27",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
     date: "1969-09-27",
     venue: "Fillmore East",
     location: "New York City, NY",
@@ -2091,22 +2017,7 @@ const showCollection1969 = [
     location: "New York City, NY",
   },
   {
-    date: "1969-09-29",
-    venue: "Cafe au Go Go",
-    location: "New York City, NY",
-  },
-  {
     date: "1969-09-30",
-    venue: "Cafe au Go Go",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-09-30",
-    venue: "Cafe au Go Go",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-10-01",
     venue: "Cafe au Go Go",
     location: "New York City, NY",
   },
@@ -4320,16 +4231,6 @@ const showCollection1973 = [
 ];
 
 const showCollection1974 = [
-  {
-    date: "1974-02-22",
-    venue: "Winterland Arena",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1974-02-22",
-    venue: "Winterland Arena",
-    location: "San Francisco, CA",
-  },
   {
     date: "1974-02-22",
     venue: "Winterland Arena",
