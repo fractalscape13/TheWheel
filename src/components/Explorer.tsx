@@ -11,6 +11,7 @@ type ExplorerProps = {
   setSelectedShow: (show: Show) => void;
   setSelectedYear: (year: number | null) => void;
   selectedYear: number | null;
+  isLoading: boolean;
 };
 
 const Explorer: React.FC<ExplorerProps> = ({
@@ -91,8 +92,11 @@ const Explorer: React.FC<ExplorerProps> = ({
           contentContainerStyle={{ paddingBottom: 300 }}
           ref={scrollViewRef}
         >
-          {activeCollection.map((show: Show, index:number) => (
-            <Touchable key={`${show.date}-${index}`} onPress={() => setSelectedShow(show)}>
+          {activeCollection.map((show: Show, index: number) => (
+            <Touchable
+              key={`${show.date}-${index}`}
+              onPress={() => setSelectedShow(show)}
+            >
               <YStack
                 bg="$secondary"
                 px="$3"

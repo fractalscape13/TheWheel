@@ -13,6 +13,7 @@ type PlayerProps = {
   duration: number;
   position: number;
   isPlaying: boolean;
+  isLoading: boolean;
   expandedDetails: boolean;
   theme: any;
   showId: number | null;
@@ -130,9 +131,7 @@ const Player: React.FC<PlayerProps> = ({
               <Text
                 key={track.name}
                 color={
-                  currentSongFile?.name == track.name
-                    ? "$trackProgress"
-                    : "$text"
+                  currentPlayingSongIndex === index ? "$trackProgress" : "$text"
                 }
                 fs="$3"
                 mt="$1"
