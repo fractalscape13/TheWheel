@@ -26,12 +26,9 @@ const Player: React.FC = () => {
     duration,
     position,
     isPlaying,
-    expandedDetails,
     showId,
-    imageUrl,
     handleSeek,
     handlePlayPause,
-    handleExpandDetails,
     previousSongAction,
     nextSongAction,
   } = usePlayer();
@@ -40,12 +37,11 @@ const Player: React.FC = () => {
     <YStack
       bg="$background"
       px="$4"
-      py="$3"
       pt={isExpanded && insets.top}
       pb={!isExpanded && insets.bottom}
       h={isExpanded ? "100%" : "auto"}
     >
-      <XStack jc="space-between" ai="center">
+      <XStack jc="space-between" ai="center" pt="$2">
         <Touchable
           onPress={handlePlayPause}
           style={{

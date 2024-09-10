@@ -1,9 +1,32 @@
 import React, { createContext, useState, useContext } from "react";
 import { Audio } from "expo-av";
 
-const PlayerContext = createContext(null);
+type PlayerContextType = {
+  isPlaying: boolean;
+  isLoading: boolean;
+  isExpanded: boolean;
+  togglePlayerSize: () => void;
+  duration: number;
+  position: number;
+  currentSongFile: any;
+  currentPlayingSongIndex: number;
+  showFileCollection: any[];
+  showId: string | null;
+  handleSeek: (value: number) => Promise<void>;
+  handlePlayPause: () => Promise<void>;
+  nextSongAction: () => Promise<void>;
+  previousSongAction: () => Promise<void>;
+  loadAudioAndPlay: (trackDownloadSlug: string) => Promise<void>;
+  clearAudioFromStorage: () => Promise<void>;
+  setShowFileCollection: (files: any[]) => void;
+  setShowId: (id: string | null) => void;
+  setCurrentPlayingSongIndex: (index: number) => void;
+  setCurrentSongFile: (file: any | null) => void;
+};
 
-export const PlayerProvider = ({ children }: {children: any}) => {
+const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
+
+export const PlayerProvider = ({ children }: { children: any }) => {
   const [currentSong, setCurrentSong] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

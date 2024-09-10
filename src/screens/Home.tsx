@@ -17,7 +17,6 @@ const Home = ({ navigation }: { navigation: any }) => {
   } = usePlayer();
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
-
   const handleSelectedTrack = async (
     locatedTrackIndex: number,
     tracks: any[],
@@ -36,7 +35,6 @@ const Home = ({ navigation }: { navigation: any }) => {
     setShowFileCollection(restructuredTrackMap);
     await loadAudioAndPlay(audioUrl);
   };
-
   return (
     <YStack
       flex={1}
