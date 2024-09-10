@@ -5,27 +5,18 @@ import { Ionicons } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
 import { formatDate } from "@services/utils";
 import Touchable from "@components/Touchable";
-import { Show, Track } from "../types";
-import { FAVORITE_SHOW } from "../constants";
+import { Track } from "../types";
+import { FAVORITE_SHOWS } from "../constants";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ShowDetailsProps = {
-  onClose: () => void;
-  onSelectTrack: (
-    locatedTrackIndex: number,
-    tracks: any,
-    audioUrl: string,
-    showId: string
-  ) => void;
-  show: Show;
-  isLoading: boolean;
+  route: any;
+  navigation: any;
 };
 
-const ShowDetails: React.FC<ShowDetailsProps> = ({
-  onClose,
-  onSelectTrack,
-  show,
-  isLoading,
-}) => {
+const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
+  const { show, onSelectTrack, isLoading = false } = route.params;
+  const insets = useSafeAreaInsets();
   const [tracks, setTracks] = useState<Track[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
@@ -36,7 +27,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({
 
   const handleTrackLoad = (trackFile: string) => {
     if (!isLoading) {
-      const locatedTrackIndex = tracks.findIndex(
+      const locatedTrackIndex = tracks?.findIndex(
         (track) => track["file"] === trackFile
       );
       const audioUrl = `https://archive.org/download/${showId}/${tracks[locatedTrackIndex].file}`;
@@ -84,10 +75,13 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({
     };
 
     const checkFavorite = async () => {
-      const favoriteShow = await SecureStore.getItemAsync(FAVORITE_SHOW);
-      console.log("explorer::", favoriteShow);
-      if (favoriteShow && favoriteShow === show.date) {
-        setIsFavorited(true);
+      const favoriteShowsString = await SecureStore.getItemAsync(
+        FAVORITE_SHOWS
+      );
+      if (favoriteShowsString) {
+        const favoriteShows = JSON.parse(favoriteShowsString);
+        const isFavorited = favoriteShows.includes(show.date);
+        setIsFavorited(isFavorited);
       }
     };
 
@@ -98,25 +92,40 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({
   }, [show]);
 
   const toggleFavorite = async () => {
-    if (isFavorited) {
-      await SecureStore.deleteItemAsync(FAVORITE_SHOW);
-      setIsFavorited(false);
-    } else {
-      await SecureStore.setItemAsync(FAVORITE_SHOW, show.date);
-      setIsFavorited(true);
+    try {
+      const favoriteShowsString = await SecureStore.getItemAsync(
+        FAVORITE_SHOWS
+      );
+      let favoriteShows: string[] = favoriteShowsString
+        ? JSON.parse(favoriteShowsString)
+        : [];
+
+      if (isFavorited) {
+        favoriteShows = favoriteShows.filter((date) => date !== show.date);
+        setIsFavorited(false);
+      } else {
+        favoriteShows.push(show.date);
+        setIsFavorited(true);
+      }
+      await SecureStore.setItemAsync(
+        FAVORITE_SHOWS,
+        JSON.stringify(favoriteShows)
+      );
+    } catch (error) {
+      console.error("Error updating favorite shows:", error);
     }
   };
 
   return (
-    <YStack>
+    <YStack pt={insets.top} bg="$background" flex={1} px="$3">
       <XStack jc="space-between" ai="center">
-        <Touchable onPress={onClose} hitSlop={15}>
-          <Ionicons name="arrow-back" size={24} color="white" />
+        <Touchable onPress={() => navigation.goBack()} hitSlop={15}>
+          <Ionicons name="arrow-back" size={28} color="white" />
         </Touchable>
         <Touchable onPress={toggleFavorite} hitSlop={15}>
           <Ionicons
             name={isFavorited ? "heart" : "heart-outline"}
-            size={24}
+            size={28}
             color={isFavorited ? "white" : "white"}
           />
         </Touchable>

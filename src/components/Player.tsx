@@ -1,30 +1,10 @@
 import React from "react";
-import { Text, YStack, XStack, Slider, styled, ScrollView } from "tamagui";
+import { Text, YStack, XStack, Slider, styled, ScrollView, useTheme } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 import { millisToMinutesAndSeconds } from "@services/utils";
 import Touchable from "@components/Touchable";
-
-type PlayerProps = {
-  isExpanded: boolean;
-  togglePlayerSize: () => void;
-  currentSongFile: any;
-  currentPlayingSongIndex: number;
-  showFileCollection: any[];
-  duration: number;
-  position: number;
-  isPlaying: boolean;
-  isLoading: boolean;
-  expandedDetails: boolean;
-  theme: any;
-  showId: number | null;
-  imageUrl: string | null;
-  handleSeek: (value: number) => Promise<void>;
-  handlePlayPause: () => Promise<void>;
-  handleExpandDetails: () => void;
-  previousSongAction: () => Promise<void>;
-  nextSongAction: () => Promise<void>;
-  bottomInset: number;
-};
+import { usePlayer } from "../context/PlayerContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CustomTrack = styled(YStack, {
   width: "100%",
@@ -34,116 +14,120 @@ const CustomTrack = styled(YStack, {
   position: "relative",
 });
 
-const Player: React.FC<PlayerProps> = ({
-  isExpanded,
-  togglePlayerSize,
-  currentSongFile,
-  currentPlayingSongIndex,
-  showFileCollection,
-  duration,
-  position,
-  isPlaying,
-  expandedDetails,
-  theme,
-  showId,
-  imageUrl,
-  handleSeek,
-  handlePlayPause,
-  handleExpandDetails,
-  previousSongAction,
-  nextSongAction,
-  bottomInset,
-}) => (
-  <YStack
-    bg="$background"
-    px="$4"
-    py="$3"
-    pb={!isExpanded && bottomInset}
-    h={isExpanded ? "100%" : "auto"}
-  >
-    <XStack jc="space-between" ai="center">
-      <Touchable
-        onPress={handlePlayPause}
-        style={{
-          backgroundColor: theme?.$buttonBg?.val,
-          borderRadius: 99,
-          padding: 6,
-        }}
-      >
-        <Ionicons name={isPlaying ? "pause" : "play"} size={20} />
-      </Touchable>
-      <Text color="$text" fs="$3" h="fit-content" w="75%" ta="center">
-        {currentSongFile?.title || currentSongFile?.name}
-      </Text>
-      <Touchable onPress={togglePlayerSize} hitSlop={15}>
-        <Ionicons
-          name={isExpanded ? "chevron-down-outline" : "chevron-up-outline"}
-          size={24}
-          color={theme.icon.val}
-        />
-      </Touchable>
-    </XStack>
-    <XStack ai="center" jc="center">
-      <Touchable onPress={previousSongAction}>
-        <Ionicons
-          name="chevron-back-circle-outline"
-          size={24}
-          color={theme?.$buttonBg?.val}
-        />
-      </Touchable>
-      <Text color="$icon" px={15} fs="$3">
-        Track {`${currentPlayingSongIndex + 1} / ${showFileCollection.length}`}
-      </Text>
-      <Touchable onPress={nextSongAction}>
-        <Ionicons
-          name="chevron-forward-circle-outline"
-          size={24}
-          color={theme?.$buttonBg?.val}
-        />
-      </Touchable>
-    </XStack>
-    <Text color="$text" mt="$1" ta="center">
-      {millisToMinutesAndSeconds(position)} /{" "}
-      {millisToMinutesAndSeconds(duration)}
-    </Text>
-    <Slider
-      w="100%"
-      my="$3"
-      defaultValue={[0]}
-      min={0}
-      maxValue={duration || 1}
-      step={1}
-      onSlideEnd={(val) => handleSeek(val[0])}
+const Player: React.FC = () => {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets()
+  const {
+    isExpanded,
+    togglePlayerSize,
+    currentSongFile,
+    currentPlayingSongIndex,
+    showFileCollection,
+    duration,
+    position,
+    isPlaying,
+    showId,
+    handleSeek,
+    handlePlayPause,
+    previousSongAction,
+    nextSongAction,
+  } = usePlayer();
+  if (!currentSongFile) return null;
+  return (
+    <YStack
+      bg="$background"
+      px="$4"
+      pt={isExpanded && insets.top}
+      pb={!isExpanded && insets.bottom}
+      h={isExpanded ? "100%" : "auto"}
     >
-      <CustomTrack>
-        <YStack
-          bg="$trackProgress"
-          h="100%"
-          w={`${(position / duration) * 100}%`}
-        />
-      </CustomTrack>
-    </Slider>
-    {isExpanded && (
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {showFileCollection && isExpanded && (
-          <YStack ta="center" mt="$3">
-            {showFileCollection.map((track, index: number) => (
-              <Text
-                key={track.name}
-                color={
-                  currentPlayingSongIndex === index ? "$trackProgress" : "$text"
-                }
-                fs="$3"
-                mt="$1"
-              >
-                {index + 1}) {track.title || track.name}
-              </Text>
-            ))}
-          </YStack>
-        )}
-      </ScrollView>
-    )}
-  </YStack>
-);
+      <XStack jc="space-between" ai="center" pt="$2">
+        <Touchable
+          onPress={handlePlayPause}
+          style={{
+            backgroundColor: theme?.$buttonBg?.val,
+            borderRadius: 99,
+            padding: 6,
+          }}
+        >
+          <Ionicons name={isPlaying ? "pause" : "play"} size={20} />
+        </Touchable>
+        <Text color="$text" fs="$3" h="fit-content" w="75%" ta="center">
+          {currentSongFile?.title || currentSongFile?.name}
+        </Text>
+        <Touchable onPress={togglePlayerSize} hitSlop={15}>
+          <Ionicons
+            name={isExpanded ? "chevron-down-outline" : "chevron-up-outline"}
+            size={24}
+            color={theme?.$icon?.val}
+          />
+        </Touchable>
+      </XStack>
+      <XStack ai="center" jc="center">
+        <Touchable onPress={previousSongAction}>
+          <Ionicons
+            name="chevron-back-circle-outline"
+            size={24}
+            color={theme?.$buttonBg?.val}
+          />
+        </Touchable>
+        <Text color="$icon" px={15} fs="$3">
+          Track{" "}
+          {`${currentPlayingSongIndex + 1} / ${showFileCollection.length}`}
+        </Text>
+        <Touchable onPress={nextSongAction}>
+          <Ionicons
+            name="chevron-forward-circle-outline"
+            size={24}
+            color={theme?.$buttonBg?.val}
+          />
+        </Touchable>
+      </XStack>
+      <Text color="$text" mt="$1" ta="center">
+        {millisToMinutesAndSeconds(position)} /{" "}
+        {millisToMinutesAndSeconds(duration)}
+      </Text>
+      <Slider
+        w="100%"
+        my="$3"
+        defaultValue={[0]}
+        min={0}
+        maxValue={duration || 1}
+        step={1}
+        onSlideEnd={(val) => handleSeek(val[0])}
+      >
+        <CustomTrack>
+          <YStack
+            bg="$trackProgress"
+            h="100%"
+            w={`${(position / duration) * 100}%`}
+          />
+        </CustomTrack>
+      </Slider>
+      {isExpanded && (
+        <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+          {showFileCollection && isExpanded && (
+            <YStack ta="center" mt="$3">
+              {showFileCollection.map((track, index: number) => (
+                <Text
+                  key={track.name}
+                  color={
+                    currentPlayingSongIndex === index
+                      ? "$trackProgress"
+                      : "$text"
+                  }
+                  fs="$3"
+                  mt="$1"
+                >
+                  {index + 1}) {track.title || track.name}
+                </Text>
+              ))}
+            </YStack>
+          )}
+        </ScrollView>
+      )}
+    </YStack>
+  );
+};
 
 export default Player;

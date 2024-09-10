@@ -5,30 +5,50 @@ import Touchable from "@components/Touchable";
 import { formatDate } from "@services/utils";
 import { Show } from "../types";
 import * as SecureStore from "expo-secure-store";
-import { FAVORITE_SHOW } from "../constants";
+import { FAVORITE_SHOWS } from "../constants";
 
 type ExplorerProps = {
-  setSelectedShow: (show: Show) => void;
+  goToShow: (show: Show | null) => void;
   setSelectedYear: (year: number | null) => void;
   selectedYear: number | null;
   isLoading: boolean;
+  searchTerm: string | undefined;
 };
 
 const Explorer: React.FC<ExplorerProps> = ({
-  setSelectedShow,
+  goToShow,
   setSelectedYear,
   selectedYear,
+  searchTerm,
 }) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const theme = useTheme();
-  const [favoriteShow, setFavoriteShow] = useState<Show | null>(null);
+  const [favoriteShows, setFavoriteShows] = useState<Show[]>([]);
+  const filterShows = (shows: Show[]) => {
+    if (searchTerm && searchTerm.length > 0) {
+      return shows.filter(
+        (show) =>
+          show.venue.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          show.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          show.date.includes(searchTerm)
+      );
+    }
+    return shows;
+  };
   const activeCollection = useMemo(() => {
     if (selectedYear && collectionSelection) {
       const key = `showCollection${selectedYear}`;
-      return collectionSelection[key] || null;
+      const shows = collectionSelection[key] || [];
+      return filterShows(shows);
     }
     return null;
-  }, [selectedYear]);
+  }, [selectedYear, searchTerm]);
+  const filteredFavoriteShows = useMemo(() => {
+    if (favoriteShows && searchTerm) {
+      return filterShows(favoriteShows);
+    }
+    return favoriteShows;
+  }, [favoriteShows, searchTerm]);
   const handleSelectYear = (year: number) => {
     if (year === selectedYear) {
       setSelectedYear(null);
@@ -40,25 +60,30 @@ const Explorer: React.FC<ExplorerProps> = ({
     }
   };
   useEffect(() => {
-    const fetchFavoriteShow = async () => {
-      const favoriteShowDate = await SecureStore.getItemAsync(FAVORITE_SHOW);
-      if (favoriteShowDate) {
-        let foundShow: Show | null = null;
+    const fetchFavoriteShows = async () => {
+      const favoriteShowDatesString = await SecureStore.getItemAsync(
+        FAVORITE_SHOWS
+      );
+      if (favoriteShowDatesString) {
+        const favoriteShowDates = JSON.parse(favoriteShowDatesString);
+        const foundShows: Show[] = [];
         for (const year in collectionSelection) {
           const showsInYear = collectionSelection[year];
-          foundShow = showsInYear.find(
-            (show: Show) => show.date === favoriteShowDate
-          );
-          if (foundShow) break;
+          favoriteShowDates.forEach((date: string) => {
+            const foundShow = showsInYear.find(
+              (show: Show) => show.date === date
+            );
+            if (foundShow) foundShows.push(foundShow);
+          });
         }
-        if (foundShow) {
-          setFavoriteShow(foundShow);
+        if (foundShows.length > 0) {
+          setFavoriteShows(foundShows);
         } else {
-          console.error("Favorite show not found in collectionSelection.");
+          console.error("No favorite shows found in collectionSelection.");
         }
       }
     };
-    fetchFavoriteShow();
+    fetchFavoriteShows();
   }, []);
   return (
     <YStack>
@@ -95,7 +120,7 @@ const Explorer: React.FC<ExplorerProps> = ({
           {activeCollection.map((show: Show, index: number) => (
             <Touchable
               key={`${show.date}-${index}`}
-              onPress={() => setSelectedShow(show)}
+              onPress={() => goToShow(show)}
             >
               <YStack
                 bg="$secondary"
@@ -127,40 +152,45 @@ const Explorer: React.FC<ExplorerProps> = ({
             </Touchable>
           ))}
         </ScrollView>
-      ) : favoriteShow ? (
+      ) : filteredFavoriteShows?.length > 0 ? (
         <YStack>
           <Text fs="$3" fw="bold" my="$2" color="$text">
             Favorites
           </Text>
-          <Touchable onPress={() => setSelectedShow(favoriteShow)}>
-            <YStack
-              bg="$secondary"
-              px="$3"
-              py="$2"
-              mb="$3"
-              br="$3"
-              shadowColor="$shadowColor"
-              shadowRadius={3}
-              shadowOpacity={0.2}
+          {filteredFavoriteShows.map((show, index) => (
+            <Touchable
+              onPress={() => goToShow(show)}
+              key={`${index}-${show.date}`}
             >
-              <Text fs="$3" mb="$1" fw="bold">
-                {formatDate(favoriteShow.date)}
-              </Text>
-              <XStack jc="space-between" ai="center" maxW="100%">
-                <Text
-                  fs="$2"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  maxW="100%"
-                >
-                  {favoriteShow.venue}
+              <YStack
+                bg="$secondary"
+                px="$3"
+                py="$2"
+                mb="$3"
+                br="$3"
+                shadowColor="$shadowColor"
+                shadowRadius={3}
+                shadowOpacity={0.2}
+              >
+                <Text fs="$3" mb="$1" fw="bold">
+                  {formatDate(show.date)}
                 </Text>
-                <Text fs="$2" ml="$2" numberOfLines={1} ellipsizeMode="tail">
-                  {favoriteShow.location}
-                </Text>
-              </XStack>
-            </YStack>
-          </Touchable>
+                <XStack jc="space-between" ai="center" maxW="100%">
+                  <Text
+                    fs="$2"
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    maxW="100%"
+                  >
+                    {show.venue}
+                  </Text>
+                  <Text fs="$2" ml="$2" numberOfLines={1} ellipsizeMode="tail">
+                    {show.location}
+                  </Text>
+                </XStack>
+              </YStack>
+            </Touchable>
+          ))}
         </YStack>
       ) : (
         <Text color="$text" fs="$3" mt="$3">
