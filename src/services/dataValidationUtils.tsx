@@ -2276,11 +2276,6 @@ const showCollection1970 = [
   },
   {
     date: "1970-02-07",
-    venue: "Pacific High Recording",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1970-02-07",
     venue: "Fillmore West",
     location: "San Francisco, CA",
   },
@@ -2358,11 +2353,6 @@ const showCollection1970 = [
     date: "1970-03-17",
     venue: "Kleinhans Music Hall",
     location: "Buffalo, NY",
-  },
-  {
-    date: "1970-03-20",
-    venue: "Capitol Theater",
-    location: "Port Chester, NY",
   },
   {
     date: "1970-03-20",
@@ -2560,11 +2550,6 @@ const showCollection1970 = [
     location: "Port Chester, NY",
   },
   {
-    date: "1970-06-24",
-    venue: "Capitol Theater",
-    location: "Port Chester, NY",
-  },
-  {
     date: "1970-06-27",
     venue: "Canadian National Exhibition Hall",
     location: "Toronto, CA",
@@ -2606,11 +2591,6 @@ const showCollection1970 = [
   },
   {
     date: "1970-07-14",
-    venue: "Euphoria Ballroom",
-    location: "San Rafael, CA",
-  },
-  {
-    date: "1970-07-16",
     venue: "Euphoria Ballroom",
     location: "San Rafael, CA",
   },
@@ -2725,11 +2705,6 @@ const showCollection1970 = [
     location: "Minneapolis, MN",
   },
   {
-    date: "1970-10-18",
-    venue: "Tyrone Guthrie Theatre",
-    location: "Minneapolis, MN",
-  },
-  {
     date: "1970-10-23",
     venue: "McDonough Arena, Georgetown U.",
     location: "Washington, DC",
@@ -2745,16 +2720,6 @@ const showCollection1970 = [
     location: "Stony Brook, NY",
   },
   {
-    date: "1970-10-30",
-    venue: "Gym, S.U.N.Y.",
-    location: "Stony Brook, NY",
-  },
-  {
-    date: "1970-10-31",
-    venue: "Gym, S.U.N.Y.",
-    location: "Stony Brook, NY",
-  },
-  {
     date: "1970-10-31",
     venue: "Gym, S.U.N.Y.",
     location: "Stony Brook, NY",
@@ -2766,16 +2731,6 @@ const showCollection1970 = [
   },
   {
     date: "1970-11-06",
-    venue: "Capitol Theater",
-    location: "Port Chester, NY",
-  },
-  {
-    date: "1970-11-06",
-    venue: "Capitol Theater",
-    location: "Port Chester, NY",
-  },
-  {
-    date: "1970-11-07",
     venue: "Capitol Theater",
     location: "Port Chester, NY",
   },
@@ -2828,11 +2783,6 @@ const showCollection1970 = [
     date: "1970-11-20",
     venue: "The Palestra, U. Of Rochester",
     location: "Rochester, NY",
-  },
-  {
-    date: "1970-11-21",
-    venue: "WBCN Studios",
-    location: "Boston, MA",
   },
   {
     date: "1970-11-21",
@@ -2910,24 +2860,9 @@ const showCollection1970 = [
     location: "El Monte, CA",
   },
   {
-    date: "1970-12-27",
-    venue: "KPPC Studios",
-    location: "Pasadena, CA",
-  },
-  {
     date: "1970-12-28",
     venue: "Legion Stadium",
     location: "El Monte, CA",
-  },
-  {
-    date: "1970-12-28",
-    venue: "Legion Stadium",
-    location: "El Monte, CA",
-  },
-  {
-    date: "1970-12-31",
-    venue: "Winterland Arena",
-    location: "San Francisco, CA",
   },
   {
     date: "1970-12-31",
