@@ -10,13 +10,39 @@ import { FAVORITE_SHOW } from "../constants";
 
 type ShowDetailsProps = {
   onClose: () => void;
+  onSelectTrack: (
+    locatedTrackIndex: number,
+    tracks: any,
+    audioUrl: string,
+    showId: string
+  ) => void;
   show: Show;
+  isLoading: boolean;
 };
 
-const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
+const ShowDetails: React.FC<ShowDetailsProps> = ({
+  onClose,
+  onSelectTrack,
+  show,
+  isLoading,
+}) => {
   const [tracks, setTracks] = useState<Track[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
+  const [showId, setShowId] = useState<string | null>(null);
+  const [showDataCollection, setShowDataCollection] = useState<any | null>(
+    null
+  );
+
+  const handleTrackLoad = (trackFile: string) => {
+    if (!isLoading) {
+      const locatedTrackIndex = tracks.findIndex(
+        (track) => track["file"] === trackFile
+      );
+      const audioUrl = `https://archive.org/download/${showId}/${tracks[locatedTrackIndex].file}`;
+      onSelectTrack(locatedTrackIndex, tracks, audioUrl, showId);
+    }
+  };
 
   useEffect(() => {
     const fetchShowByDateAndVenue = async (
@@ -33,10 +59,12 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
         const results = data?.response?.docs;
         if (results && results.length > 0) {
           const showId = results[0].identifier;
+          setShowId(showId);
           const showResponse = await fetch(
             `https://archive.org/metadata/${showId}`
           );
           const showData = await showResponse.json();
+          setShowDataCollection(showData);
           const audioTracks = showData?.files
             ?.filter((file: any) => file.format.includes("MP3"))
             .map((file: any) => ({
@@ -106,8 +134,9 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ onClose, show }) => {
         ) : (
           tracks?.map((track, index) => (
             <Touchable
+              disabled={isLoading}
               key={`${track.title}-${index}`}
-              onPress={() => console.log("Play this audio file-->>>", track.file)}
+              onPress={() => handleTrackLoad(track.file)}
             >
               <XStack
                 bg="$buttonBg"

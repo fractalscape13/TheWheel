@@ -12,23 +12,25 @@ import { Show } from "../types";
 const Home = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isPlayerExpanded, setIsPlayerExpanded] = useState<boolean>(false);
   const [currentSong, setCurrentSong] = useState<Audio.Sound | null>(null);
+  const [duration, setDuration] = useState<number>(0);
+  const [position, setPosition] = useState<number>(0);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [expandedDetails, setExpandedDetails] = useState<boolean>(false);
   const [exploreViewActive, setExploreViewActive] = useState<boolean>(true);
   const [selectedShow, setSelectedShow] = useState<Show | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [duration, setDuration] = useState<number>(0);
-  const [position, setPosition] = useState<number>(0);
   const [showFileCollection, setShowFileCollection] = useState(null);
-  const [showId, setShowId] = useState<number | null>(null);
+  const [showId, setShowId] = useState<string | null>(null);
   const [currentSongFile, setCurrentSongFile] = useState(null);
-  const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState<
-    number | null
-  >(null);
+  const [
+    currentPlayingSongIndex,
+    setCurrentPlayingSongIndex,
+  ] = useState<number>(0);
 
   const togglePlayerSize = () => {
     setIsPlayerExpanded((prev) => !prev);
@@ -36,6 +38,7 @@ const Home = () => {
 
   const onPlaybackStatusUpdate = (status: any) => {
     if (status.isLoaded) {
+      setIsLoading(false);
       setDuration(status.durationMillis);
       setPosition(status.positionMillis);
 
@@ -45,6 +48,17 @@ const Home = () => {
     }
   };
 
+  const loadAudioAndPlay = async (trackDownloadSlug: string) => {
+    const { sound } = await Audio.Sound.createAsync(
+      { uri: trackDownloadSlug },
+      { shouldPlay: true },
+      (status) => setIsPlaying(status.isLoaded)
+    );
+    setCurrentSong(sound);
+    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    return;
+  };
+
   const clearAudioFromStorage = async () => {
     if (currentSong) {
       await currentSong.stopAsync();
@@ -52,13 +66,13 @@ const Home = () => {
       setDuration(0);
       setPosition(0);
       setCurrentSong(null);
-      setCurrentPlayingSongIndex(null);
+      return;
     }
   };
 
   const handleSeek = async (value: number) => {
     if (currentSong) {
-      await currentSong.setPositionAsync(value);
+      return await currentSong.setPositionAsync(value);
     }
   };
 
@@ -67,15 +81,42 @@ const Home = () => {
       const status = await currentSong.getStatusAsync();
       if (status.isPlaying) {
         await currentSong.pauseAsync();
-        setIsPlaying(false);
+        return setIsPlaying(false);
       } else {
         await currentSong.playAsync();
-        setIsPlaying(true);
+        return setIsPlaying(true);
       }
     }
   };
 
+  const handleSelectedTrack = async (
+    locatedTrackIndex: number,
+    tracks: {},
+    audioUrl: string,
+    showId: string
+  ) => {
+    setIsLoading(true);
+    setCurrentPlayingSongIndex(locatedTrackIndex);
+    if (currentSong) {
+      await clearAudioFromStorage();
+      setExpandedDetails(false);
+    }
+    setShowId(showId);
+    setCurrentSongFile(tracks[locatedTrackIndex]);
+    const restructuredTrackMap = tracks.map((track) => {
+      return {
+        name: track.file,
+        file: track.file,
+        length: track.length,
+        title: track.title,
+      };
+    });
+    setShowFileCollection(restructuredTrackMap);
+    return await loadAudioAndPlay(audioUrl);
+  };
+
   const handleSearch = async () => {
+    setIsLoading(true);
     if (currentSong) {
       await clearAudioFromStorage();
       setExpandedDetails(false);
@@ -102,7 +143,6 @@ const Home = () => {
         );
         setShowFileCollection(showCollection); // setting show data to local state, not used currently but could be explored
         setShowId(showId);
-
         const imageFile = showData.files.find((file: any) =>
           file.format.includes("PNG")
         );
@@ -120,15 +160,12 @@ const Home = () => {
 
         if (audioFile) {
           const audioUrl = `https://archive.org/download/${showId}/${audioFile.name}`;
+          await loadAudioAndPlay(audioUrl);
           setCurrentSongFile(audioFile);
-          const { sound } = await Audio.Sound.createAsync(
-            { uri: audioUrl },
-            { shouldPlay: true },
-            (status) => setIsPlaying(status.isLoaded)
-          );
-          setCurrentSong(sound);
-          sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
-          return;
+          setCurrentPlayingSongIndex(0);
+
+          return; // this return statement ends the loop (through the retrieved shows and plays the first)
+          // removing this return will loop through all retrieved shows (if we need to assign priority to certain sources this can be leveraged)
         }
       }
     } catch (error) {
@@ -137,6 +174,10 @@ const Home = () => {
   };
 
   const previousSongAction = async () => {
+    if (currentPlayingSongIndex === 0) {
+      return;
+    }
+    setIsLoading(true);
     const newIndex = currentPlayingSongIndex - 1;
     if (currentSong) {
       await clearAudioFromStorage();
@@ -144,17 +185,17 @@ const Home = () => {
     const newSelectedSong = showFileCollection[newIndex];
     setCurrentSongFile(newSelectedSong);
     const audioUrl = `https://archive.org/download/${showId}/${newSelectedSong.name}`;
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: audioUrl },
-      { shouldPlay: true },
-      (status) => setIsPlaying(status.isLoaded)
-    );
-    setCurrentSong(sound);
-    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    await loadAudioAndPlay(audioUrl);
     setCurrentPlayingSongIndex(newIndex);
   };
 
   const nextSongAction = async () => {
+    if (currentPlayingSongIndex === showFileCollection?.length - 1) {
+      // for now this action is disabled
+      // eventually this will trigger the 'next album' to play as this means this is the final track in a show
+      return;
+    }
+    setIsLoading(true);
     const newIndex = currentPlayingSongIndex + 1;
     if (currentSong) {
       await clearAudioFromStorage();
@@ -162,13 +203,7 @@ const Home = () => {
     const newSelectedSong = showFileCollection[newIndex];
     setCurrentSongFile(newSelectedSong);
     const audioUrl = `https://archive.org/download/${showId}/${newSelectedSong.name}`;
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: audioUrl },
-      { shouldPlay: true },
-      (status) => setIsPlaying(status.isLoaded)
-    );
-    setCurrentSong(sound);
-    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    await loadAudioAndPlay(audioUrl);
     setCurrentPlayingSongIndex(newIndex);
   };
 
@@ -201,6 +236,7 @@ const Home = () => {
               mr="$3"
             />
             <Touchable
+              disabled={isLoading}
               onPress={handleSearch}
               style={{
                 backgroundColor: theme?.$buttonBg?.val,
@@ -229,6 +265,7 @@ const Home = () => {
     </Touchable> */}
           </XStack>
           <Explorer
+            isLoading={isLoading}
             setSelectedShow={(show) => {
               setSelectedShow(show);
               setExploreViewActive(false);
@@ -240,11 +277,13 @@ const Home = () => {
       )}
       {selectedShow && !exploreViewActive && (
         <ShowDetails
+          isLoading={isLoading}
           show={selectedShow}
           onClose={() => {
             setSelectedShow(null);
             setExploreViewActive(true);
           }}
+          onSelectTrack={handleSelectedTrack}
         />
       )}
       {(currentSong || showFileCollection) && (
@@ -265,6 +304,7 @@ const Home = () => {
             duration={duration}
             position={position}
             isPlaying={isPlaying}
+            isLoading={isLoading}
             expandedDetails={expandedDetails}
             theme={theme}
             showId={showId}
