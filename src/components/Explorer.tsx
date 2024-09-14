@@ -67,7 +67,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       if (favoriteShowDatesString) {
         const favoriteShowDates = JSON.parse(favoriteShowDatesString);
         const foundShows: Show[] = [];
-        for (const year in collectionSelection) {
+        collectionSelection.forEach((year: number, index:number)  => {
           const showsInYear = collectionSelection[year];
           favoriteShowDates.forEach((date: string) => {
             const foundShow = showsInYear.find(
@@ -75,7 +75,7 @@ const Explorer: React.FC<ExplorerProps> = ({
             );
             if (foundShow) foundShows.push(foundShow);
           });
-        }
+        });
         if (foundShows.length > 0) {
           setFavoriteShows(foundShows);
         } else {
