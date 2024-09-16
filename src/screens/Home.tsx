@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePlayer } from "../context/PlayerContext";
 import Explorer from "@components/Explorer";
 import SearchBar from "@components/SearchBar";
+import { Show } from "../types";
 
 const Home = ({ navigation }: { navigation: any }) => {
   const insets = useSafeAreaInsets();
@@ -11,6 +12,7 @@ const Home = ({ navigation }: { navigation: any }) => {
     isLoading,
     setShowFileCollection,
     setShowId,
+    setShow,
     loadAudioAndPlay,
     setCurrentPlayingSongIndex,
     setCurrentSongFile,
@@ -21,10 +23,12 @@ const Home = ({ navigation }: { navigation: any }) => {
     locatedTrackIndex: number,
     tracks: any[],
     audioUrl: string,
-    showId: string
+    showId: string,
+    show: Show,
   ) => {
     setCurrentPlayingSongIndex(locatedTrackIndex);
     setShowId(showId);
+    setShow(show);
     setCurrentSongFile(tracks[locatedTrackIndex]);
     const restructuredTrackMap = tracks.map((track) => ({
       name: track.file,

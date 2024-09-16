@@ -4,12 +4,12 @@ export const millisToMinutesAndSeconds = (millis: number) => {
   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 };
 
-export const formatDate = (dateString: string) => {
+export const formatDate = (dateString: string, abbreviated?: boolean) => {
   const [year, month, day] = dateString.split("-").map(Number); 
   const date = new Date(Date.UTC(year, month - 1, (day + 1)));
   return date.toLocaleDateString(undefined, {
     year: "numeric",
-    month: "long",
+    month: abbreviated ? "short" : "long",
     day: "numeric",
   });
 };

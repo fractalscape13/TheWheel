@@ -16,7 +16,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
   isLoading,
 }) => {
   const theme = useTheme();
-
   return (
     <XStack jc="space-between" ai="center" mb="$3">
       <XStack ai="center" flex={1} bw={1} br={8} bc="$text" h={40} px="$2">

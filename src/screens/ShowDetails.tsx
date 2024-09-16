@@ -31,7 +31,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
         (track) => track["file"] === trackFile
       );
       const audioUrl = `https://archive.org/download/${showId}/${tracks[locatedTrackIndex].file}`;
-      onSelectTrack(locatedTrackIndex, tracks, audioUrl, showId);
+      onSelectTrack(locatedTrackIndex, tracks, audioUrl, showId, show);
     }
   };
 
