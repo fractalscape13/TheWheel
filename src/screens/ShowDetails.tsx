@@ -36,13 +36,8 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    const fetchShowByDateAndVenue = async (
-      showDate: string,
-      showVenue: string
-    ) => {
-      const query = encodeURIComponent(
-        `Grateful Dead AND date:${showDate} AND venue:"${showVenue}"`
-      );
+    const fetchShowByDate = async (showDate: string) => {
+      const query = encodeURIComponent(`Grateful Dead AND date:${showDate}"`);
       const url = `https://archive.org/advancedsearch.php?q=${query}&output=json&rows=1`;
       try {
         const response = await fetch(url);
@@ -85,8 +80,8 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
       }
     };
 
-    if (show?.date && show?.venue) {
-      fetchShowByDateAndVenue(show.date, show.venue);
+    if (show?.date) {
+      fetchShowByDate(show?.date);
       checkFavorite();
     }
   }, [show]);
