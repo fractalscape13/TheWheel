@@ -81,7 +81,7 @@ const Player: React.FC = () => {
           />
         </Touchable>
         <Text color="$icon" px={15} fs="$3">
-          {`${currentPlayingSongIndex + 1} / ${showFileCollection.length}`}{" "}
+          {`${currentPlayingSongIndex + 1} / ${showFileCollection.length}`}
         </Text>
         <Touchable onPress={nextSongAction}>
           <Ionicons
