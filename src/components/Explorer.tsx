@@ -102,10 +102,14 @@ const Explorer: React.FC<ExplorerProps> = ({
                 year === selectedYear ? "white" : theme?.$buttonBg?.val,
               borderRadius: 8,
               marginRight: 6,
+              height: 30,
+              width: 60,
+              alignItems: "center",
+              justifyContent: "center",
             }}
             onPress={() => handleSelectYear(year)}
             children={
-              <Text fs="$3" fw="bold" py="$2" px="$4">
+              <Text fs="$3" fw="bold">
                 {year}
               </Text>
             }

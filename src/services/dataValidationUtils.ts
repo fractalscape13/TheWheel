@@ -33,54 +33,54 @@ const years = [
 ];
 
 const showCollection1965 = [
-  {
-    date: "1965-01-01",
-    venue: "Menlo College",
-    location: "Menlo Park, CA",
-  },
-  {
-    date: "1965-05-05",
-    venue: "Magoo's Pizza Parlor",
-    location: "Menlo Park, CA",
-  },
-  {
-    date: "1965-05-12",
-    venue: "Magoo's Pizza Parlor",
-    location: "Menlo Park, CA",
-  },
-  {
-    date: "1965-05-27",
-    venue: "Magoo's Pizza Parlor",
-    location: "Menlo Park, CA",
-  },
-  {
-    date: "1965-06-18",
-    venue: "Frenchy's",
-    location: "Hayward, CA",
-  },
-  {
-    date: "1965-08-01",
-    venue: "Fireside Club",
-    location: "San Mateo, CA",
-  },
-  {
-    date: "1965-08-02",
-    venue: "Big Al's Gas House",
-    location: "Redwood City, CA",
-  },
-  {
-    date: "1965-08-03",
-    venue: "Cinnamon A Go Go",
-    location: "Redwood City, CA",
-  },
-  {
-    date: "1965-09-01",
-    venue: "In Room",
-    location: "Belmont, CA",
-  },
+  // {
+  //   date: "1965-01-01",
+  //   venue: "Menlo College",
+  //   location: "Menlo Park, CA",
+  // },
+  // {
+  //   date: "1965-05-05",
+  //   venue: "Magoo's Pizza Parlor",
+  //   location: "Menlo Park, CA",
+  // },
+  // {
+  //   date: "1965-05-12",
+  //   venue: "Magoo's Pizza Parlor",
+  //   location: "Menlo Park, CA",
+  // },
+  // {
+  //   date: "1965-05-27",
+  //   venue: "Magoo's Pizza Parlor",
+  //   location: "Menlo Park, CA",
+  // },
+  // {
+  //   date: "1965-06-18",
+  //   venue: "Frenchy's",
+  //   location: "Hayward, CA",
+  // },
+  // {
+  //   date: "1965-08-01",
+  //   venue: "Fireside Club",
+  //   location: "San Mateo, CA",
+  // },
+  // {
+  //   date: "1965-08-02",
+  //   venue: "Big Al's Gas House",
+  //   location: "Redwood City, CA",
+  // },
+  // {
+  //   date: "1965-08-03",
+  //   venue: "Cinnamon A Go Go",
+  //   location: "Redwood City, CA",
+  // },
+  // {
+  //   date: "1965-09-01",
+  //   venue: "In Room",
+  //   location: "Belmont, CA",
+  // },
   {
     date: "1965-11-01",
-    venue: "Pierre's",
+    venue: "various",
     location: "San Francisco, CA",
   },
   {
@@ -88,117 +88,127 @@ const showCollection1965 = [
     venue: "Golden Gate Studios",
     location: "San Francisco, CA",
   },
-  {
-    date: "1965-12-04",
-    venue: "Big Nig's House",
-    location: "San Jose, CA",
-  },
-  {
-    date: "1965-12-10",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1965-12-11",
-    venue: "Muir Beach Lodge",
-    location: "Muir Beach, CA",
-  },
-  {
-    date: "1965-12-18",
-    venue: "The Big Beat Club",
-    location: "Palo Alto, CA",
-  },
+  // {
+  //   date: "1965-12-04",
+  //   venue: "Big Nig's House",
+  //   location: "San Jose, CA",
+  // },
+  // {
+  //   date: "1965-12-10",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1965-12-11",
+  //   venue: "Muir Beach Lodge",
+  //   location: "Muir Beach, CA",
+  // },
+  // {
+  //   date: "1965-12-18",
+  //   venue: "The Big Beat Club",
+  //   location: "Palo Alto, CA",
+  // },
 ];
 
 const showCollection1966 = [
   {
     date: "1966-01-01",
-    venue: "Beaver Hall",
-    location: "Portland, OR",
+    venue: "Viola Lee Blues Reahearsals",
+    location: "?, CA",
   },
-  {
-    date: "1966-01-07",
-    venue: "The Matrix",
-    location: "San Francisco, CA",
-  },
+  // {
+  //   date: "1966-01-07",
+  //   venue: "The Matrix",
+  //   location: "San Francisco, CA",
+  // },
   {
     date: "1966-01-08",
     venue: "Fillmore Auditorium",
     location: "San Francisco, CA",
   },
+  // {
+  //   date: "1966-01-13",
+  //   venue: "The Matrix",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-01-14",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-01-15",
+  //   venue: "The Matrix",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-01-16",
+  //   venue: "The Matrix",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-01-22",
+  //   venue: "Longshoreman's Hall",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-01-23",
+  //   venue: "Longshoreman's Hall",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-01-28",
+  //   venue: "The Matrix",
+  //   location: "San Francisco, CA",
+  // },
   {
-    date: "1966-01-13",
-    venue: "The Matrix",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-01-14",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-01-15",
-    venue: "The Matrix",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-01-16",
-    venue: "The Matrix",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-01-22",
-    venue: "Longshoreman's Hall",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-01-23",
-    venue: "Longshoreman's Hall",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-01-28",
-    venue: "The Matrix",
+    date: "1966-01-29",
+    venue: "Sound City Recording Studios",
     location: "San Francisco, CA",
   },
   {
     date: "1966-01-29",
-    venue: "Sound City Acid Test",
+    venue: "363 6th Street",
     location: "San Francisco, CA",
   },
   {
-    date: "1966-01-29",
-    venue: "The Matrix",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-05-02",
+    date: "1966-02-05",
     venue: "The Questing Beast",
     location: "Berkeley, CA",
   },
-  {
-    date: "1966-06-02",
-    venue: "Northridge Unitarian Church",
-    location: "Los Angeles, CA",
-  },
+  // {
+  //   date: "1966-02-06",
+  //   venue: "Northridge Unitarian Church",
+  //   location: "Los Angeles, CA",
+  // },
   {
     date: "1966-02-12",
     venue: "Youth Opportunities Center",
     location: "Compton, CA",
   },
+  // {
+  //   date: "1966-02-23",
+  //   venue: "Unknown Venue",
+  //   location: "Unknown",
+  // },
+  // {
+  //   date: "1966-02-25",
+  //   venue: "Ivar Theater",
+  //   location: "Los Angeles, CA",
+  // },
+  // {
+  //   date: "1966-03-03",
+  //   venue: "A.I.A.A. Hall",
+  //   location: "Los Angeles, CA",
+  // },
   {
-    date: "1966-02-23",
-    venue: "Unknown Venue",
-    location: "Unknown",
+    date: "1966-03-09",
+    venue: "unknown",
+    location: "unknown, unknown",
   },
   {
-    date: "1966-02-25",
-    venue: "Ivar Theater",
-    location: "Los Angeles, CA",
-  },
-  {
-    date: "1966-03-03",
-    venue: "A.I.A.A. Hall",
+    date: "1966-03-10",
+    venue: "Unknown",
     location: "Los Angeles, CA",
   },
   {
@@ -207,315 +217,325 @@ const showCollection1966 = [
     location: "Los Angeles, CA",
   },
   {
+    date: "1966-03-12",
+    venue: "Various",
+    location: "???, CA",
+  },
+  {
     date: "1966-03-19",
     venue: "Carthay Studios",
     location: "Los Angeles, CA",
   },
   {
     date: "1966-03-25",
-    venue: "Trouper's Club",
+    venue: "Trouper's Hall",
     location: "Los Angeles, CA",
   },
-  {
-    date: "1966-04-22",
-    venue: "Longshoreman's Hall",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-04-23",
-    venue: "Longshoreman's Hall",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-04-24",
-    venue: "Longshoreman's Hall",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-05-07",
-    venue: "Harmon Gym, U. Of California",
-    location: "Berkeley, CA",
-  },
-  {
-    date: "1966-05-14",
-    venue: "Veterans Memorial Hall",
-    location: "Berkeley, CA",
-  },
+  // {
+  //   date: "1966-04-22",
+  //   venue: "Longshoreman's Hall",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-04-23",
+  //   venue: "Longshoreman's Hall",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-04-24",
+  //   venue: "Longshoreman's Hall",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-05-07",
+  //   venue: "Harmon Gym, U. Of California",
+  //   location: "Berkeley, CA",
+  // },
+  // {
+  //   date: "1966-05-14",
+  //   venue: "Veterans Memorial Hall",
+  //   location: "Berkeley, CA",
+  // },
   {
     date: "1966-05-19",
     venue: "Avalon Ballroom",
     location: "San Francisco, CA",
   },
-  {
-    date: "1966-05-22",
-    venue: "Rancho Otompali",
-    location: "Novato, CA",
-  },
-  {
-    date: "1966-05-25",
-    venue: "Unknown Venue",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-05-28",
-    venue: "Avalon Ballroom",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-05-29",
-    venue: "California Hall",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-06-01",
-    venue: "U. Of Ca. Medical Center",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-06-01",
-    venue: "Speedway Meadows G. Gate Park",
-    location: "San Francisco, CA",
-  },
+  // {
+  //   date: "1966-05-22",
+  //   venue: "Rancho Otompali",
+  //   location: "Novato, CA",
+  // },
+  // {
+  //   date: "1966-05-25",
+  //   venue: "Unknown Venue",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-05-28",
+  //   venue: "Avalon Ballroom",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-05-29",
+  //   venue: "California Hall",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-06-01",
+  //   venue: "U. Of Ca. Medical Center",
+  //   location: "San Francisco, CA",
+  // },
   {
     date: "1966-06-01",
-    venue: "Pauley Ballroom, U. California",
-    location: "Berkeley, CA",
-  },
-  {
-    date: "1966-06-03",
-    venue: "Fillmore Auditorium",
+    venue: "Unknown",
     location: "San Francisco, CA",
   },
+  // {
+  //   date: "1966-06-01",
+  //   venue: "Pauley Ballroom, U. California",
+  //   location: "Berkeley, CA",
+  // },
+  // {
+  //   date: "1966-06-03",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-06-04",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-06-10",
+  //   venue: "Avalon Ballroom",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-06-11",
+  //   venue: "Avalon Ballroom",
+  //   location: "San Francisco, CA",
+  // },
   {
-    date: "1966-06-04",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-06-10",
-    venue: "Avalon Ballroom",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-06-11",
-    venue: "Avalon Ballroom",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-06-17",
-    venue: "Veterans Memorial Hall",
+    date: "1966-06-15",
+    venue: "Various",
     location: "San Jose, CA",
   },
-  {
-    date: "1966-06-18",
-    venue: "Veterans Memorial Hall",
-    location: "San Jose, CA",
-  },
-  {
-    date: "1966-07-03",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-07-08",
-    venue: "Santa Venetia Armory",
-    location: "San Rafael, CA",
-  },
-  {
-    date: "1966-07-09",
-    venue: "Santa Venetia Armory",
-    location: "San Rafael, CA",
-  },
-  {
-    date: "1966-07-14",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-07-15",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-07-16",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-07-17",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-07-29",
-    venue: "P.N.E. Garden Auditorium",
-    location: "Vancouver B.C., CA",
-  },
-  {
-    date: "1966-07-30",
-    venue: "P.N.E. Garden Auditorium",
-    location: "Vancouver B.C., CA",
-  },
-  {
-    date: "1966-07-31",
-    venue: "P.N.E. Garden Auditorium",
-    location: "Vancouver B.C., CA",
-  },
-  {
-    date: "1966-08-05",
-    venue: "Afterthought",
-    location: "Vancouver B.C., CA",
-  },
-  {
-    date: "1966-08-06",
-    venue: "Afterthought",
-    location: "Vancouver B.C., CA",
-  },
-  {
-    date: "1966-08-07",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-08-12",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-08-13",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-08-19",
-    venue: "Avalon Ballroom",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-08-20",
-    venue: "Avalon Ballroom",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-09-10",
-    venue: "Longshoreman's Hall",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-09-11",
-    venue: "Longshoreman's Hall",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-09-17",
-    venue: "Winterland",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-09-18",
-    venue: "Winterland",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-09-30",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-10-01",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-10-07",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-10-08",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-10-15",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-10-16",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-10-21",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-10-22",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-11-04",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-11-05",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-11-11",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-11-12",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-11-19",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-11-20",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-12-02",
-    venue: "Winterland",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-12-03",
-    venue: "Winterland",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-12-10",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-12-11",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-12-17",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1966-12-18",
-    venue: "Fillmore Auditorium",
-    location: "San Francisco, CA",
-  },
+  // {
+  //   date: "1966-06-17",
+  //   venue: "Veterans Memorial Hall",
+  //   location: "San Jose, CA",
+  // },
+  // {
+  //   date: "1966-06-18",
+  //   venue: "Veterans Memorial Hall",
+  //   location: "San Jose, CA",
+  // },
+  // {
+  //   date: "1966-07-03",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-07-08",
+  //   venue: "Santa Venetia Armory",
+  //   location: "San Rafael, CA",
+  // },
+  // {
+  //   date: "1966-07-09",
+  //   venue: "Santa Venetia Armory",
+  //   location: "San Rafael, CA",
+  // },
+  // {
+  //   date: "1966-07-14",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-07-15",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-07-16",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-07-17",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-07-29",
+  //   venue: "P.N.E. Garden Auditorium",
+  //   location: "Vancouver B.C., CA",
+  // },
+  // {
+  //   date: "1966-07-30",
+  //   venue: "P.N.E. Garden Auditorium",
+  //   location: "Vancouver B.C., CA",
+  // },
+  // {
+  //   date: "1966-07-31",
+  //   venue: "P.N.E. Garden Auditorium",
+  //   location: "Vancouver B.C., CA",
+  // },
+  // {
+  //   date: "1966-08-05",
+  //   venue: "Afterthought",
+  //   location: "Vancouver B.C., CA",
+  // },
+  // {
+  //   date: "1966-08-06",
+  //   venue: "Afterthought",
+  //   location: "Vancouver B.C., CA",
+  // },
+  // {
+  //   date: "1966-08-07",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-08-12",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-08-13",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-08-19",
+  //   venue: "Avalon Ballroom",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-08-20",
+  //   venue: "Avalon Ballroom",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-09-10",
+  //   venue: "Longshoreman's Hall",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-09-11",
+  //   venue: "Longshoreman's Hall",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-09-17",
+  //   venue: "Winterland",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-09-18",
+  //   venue: "Winterland",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-09-30",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-10-01",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-10-07",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-10-08",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-10-15",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-10-16",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-10-21",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-10-22",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-11-04",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-11-05",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-11-11",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-11-12",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-11-19",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-11-20",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-12-02",
+  //   venue: "Winterland",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-12-03",
+  //   venue: "Winterland",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-12-10",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-12-11",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-12-17",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
+  // {
+  //   date: "1966-12-18",
+  //   venue: "Fillmore Auditorium",
+  //   location: "San Francisco, CA",
+  // },
 ];
 
 const showCollection1967 = [
