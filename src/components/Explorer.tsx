@@ -94,7 +94,7 @@ const Explorer: React.FC<ExplorerProps> = ({
         horizontal
         contentContainerStyle={{ paddingLeft: 18, marginBottom: 12 }}
       >
-        {years.map((year: number) => (
+        {years?.map((year: number) => (
           <Touchable
             key={year}
             style={{
@@ -109,7 +109,7 @@ const Explorer: React.FC<ExplorerProps> = ({
             }}
             onPress={() => handleSelectYear(year)}
             children={
-              <Text fs="$3" fw="bold">
+              <Text fs="$3" fw="bold" color={year === selectedYear ?  "black" : "white"}>
                 {year}
               </Text>
             }
@@ -156,50 +156,53 @@ const Explorer: React.FC<ExplorerProps> = ({
             </Touchable>
           ))}
         </ScrollView>
-      ) : filteredFavoriteShows?.length > 0 ? (
-        <YStack>
-          <Text fs="$3" fw="bold" my="$2" color="$text">
-            Favorites
-          </Text>
-          {filteredFavoriteShows.map((show, index) => (
-            <Touchable
-              onPress={() => goToShow(show)}
-              key={`${index}-${show.date}`}
-            >
-              <YStack
-                bg="$secondary"
-                px="$3"
-                py="$2"
-                mb="$3"
-                br="$3"
-                shadowColor="$shadowColor"
-                shadowRadius={3}
-                shadowOpacity={0.2}
-              >
-                <Text fs="$3" mb="$1" fw="bold">
-                  {formatDate(show.date)}
-                </Text>
-                <XStack jc="space-between" ai="center" maxW="100%">
-                  <Text
-                    fs="$2"
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    maxW="100%"
-                  >
-                    {show.venue}
-                  </Text>
-                  <Text fs="$2" ml="$2" numberOfLines={1} ellipsizeMode="tail">
-                    {show.location}
-                  </Text>
-                </XStack>
-              </YStack>
-            </Touchable>
-          ))}
-        </YStack>
       ) : (
-        <Text color="$text" fs="$3" mt="$3">
-          You can't go back and you can't stand still
-        </Text>
+        filteredFavoriteShows?.length > 0 && (
+          <YStack>
+            <Text fs="$3" fw="bold" my="$2" color="$text">
+              Favorites
+            </Text>
+            {filteredFavoriteShows.map((show, index) => (
+              <Touchable
+                onPress={() => goToShow(show)}
+                key={`${index}-${show.date}`}
+              >
+                <YStack
+                  bg="$secondary"
+                  px="$3"
+                  py="$2"
+                  mb="$3"
+                  br="$3"
+                  shadowColor="$shadowColor"
+                  shadowRadius={3}
+                  shadowOpacity={0.2}
+                >
+                  <Text fs="$3" mb="$1" fw="bold">
+                    {formatDate(show.date)}
+                  </Text>
+                  <XStack jc="space-between" ai="center" maxW="100%">
+                    <Text
+                      fs="$2"
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      maxW="100%"
+                    >
+                      {show.venue}
+                    </Text>
+                    <Text
+                      fs="$2"
+                      ml="$2"
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {show.location}
+                    </Text>
+                  </XStack>
+                </YStack>
+              </Touchable>
+            ))}
+          </YStack>
+        )
       )}
     </YStack>
   );

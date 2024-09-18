@@ -18,7 +18,7 @@ const CustomTrack = styled(YStack, {
   width: "100%",
   height: 8,
   borderRadius: 10,
-  backgroundColor: "$text",
+  backgroundColor: "$trackBg",
   position: "relative",
 });
 
@@ -43,27 +43,23 @@ const Player: React.FC = () => {
   if (!currentSongFile) return null;
   return (
     <YStack
-      bg="$background"
+      bg="$bg2"
       px="$4"
       pt={isExpanded && insets.top}
       pb={!isExpanded && insets.bottom}
       h={isExpanded ? "100%" : "auto"}
     >
       <XStack jc="space-between" ai="center" pt="$2">
-        <Touchable
-          onPress={handlePlayPause}
-          hitSlop={10}
-          style={{
-            backgroundColor: theme?.$buttonBg?.val,
-            borderRadius: 99,
-            padding: 6,
-          }}
-        >
-          <Ionicons name={isPlaying ? "pause" : "play"} size={20} />
-        </Touchable>
-        <Text color="$text" fs="$4" w="75%" ta="center">
-          {currentSongFile?.title || currentSongFile?.name}
-        </Text>
+        <XStack>
+          {!isExpanded && (
+            <Text color="$text">
+              {show?.date && formatDate(show?.date, true)}{" - "}
+            </Text>
+          )}
+          <Text color="$text" fs="$2">
+            {currentSongFile?.title || currentSongFile?.name}
+          </Text>
+        </XStack>
         <Touchable onPress={togglePlayerSize} hitSlop={15}>
           <Ionicons
             name={isExpanded ? "chevron-down-outline" : "chevron-up-outline"}
@@ -72,39 +68,42 @@ const Player: React.FC = () => {
           />
         </Touchable>
       </XStack>
-      <XStack ai="center" jc="center">
+      <XStack ai="center" jc="space-evenly">
         <Touchable onPress={previousSongAction}>
           <Ionicons
             name="chevron-back-circle-outline"
-            size={24}
-            color={theme?.$buttonBg?.val}
+            size={28}
+            color={theme?.$primary?.val}
           />
         </Touchable>
-        <Text color="$icon" px={15} fs="$3">
-          {`${currentPlayingSongIndex + 1} / ${showFileCollection.length}`}
-        </Text>
+        <Touchable
+          onPress={handlePlayPause}
+          hitSlop={10}
+          style={{
+            backgroundColor: theme?.$primary?.val,
+            borderRadius: 99,
+            padding: 6,
+            marginBottom: 4,
+          }}
+        >
+          <Ionicons name={isPlaying ? "pause" : "play"} size={20} />
+        </Touchable>
         <Touchable onPress={nextSongAction}>
           <Ionicons
             name="chevron-forward-circle-outline"
-            size={24}
-            color={theme?.$buttonBg?.val}
+            size={28}
+            color={theme?.$primary?.val}
           />
         </Touchable>
       </XStack>
-      <XStack jc="center" mt="$1">
-        {!isExpanded && (
-          <Text color="$text" ta="center" position="absolute" left={0}>
-            {show?.date && formatDate(show?.date, true)}
-          </Text>
-        )}
-        <Text color="$text">
-          {millisToMinutesAndSeconds(position)} /{" "}
-          {millisToMinutesAndSeconds(duration)}
-        </Text>
-      </XStack>
+      <Text color="$text" fs="$1" alignSelf="center" mb="$1">
+        {millisToMinutesAndSeconds(position)} /{" "}
+        {millisToMinutesAndSeconds(duration)}
+      </Text>
       <Slider
         w="100%"
-        my="$3"
+        mt="$1"
+        mb="$3"
         defaultValue={[0]}
         min={0}
         maxValue={duration || 1}
@@ -124,8 +123,11 @@ const Player: React.FC = () => {
           <Text fs="$5" fw="bold" color="$text" ta="center" my="$3">
             {formatDate(show?.date)}
           </Text>
+          <Text fs="$3" fw="600" color="$text" ta="center">
+            {show?.venue}
+          </Text>
           <Text fs="$3" fw="600" color="$text" ta="center" mb="$3">
-            {show?.venue} - {show?.location}
+            {show?.location}
           </Text>
           {showFileCollection && (
             <YStack ta="center" mt="$3">
