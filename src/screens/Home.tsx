@@ -42,7 +42,7 @@ const Home = ({ navigation }: { navigation: any }) => {
   return (
     <YStack
       flex={1}
-      bg="$background"
+      bg="$bg"
       px="$3"
       pt={insets.top}
       pb={insets.bottom}

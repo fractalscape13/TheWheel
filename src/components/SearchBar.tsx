@@ -23,6 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           placeholder="Filter by city or venue..."
           placeholderTextColor="$textPlaceholder"
           color="$text"
+          style={{backgroundColor: theme?.bg?.val}}
           value={searchTerm}
           onChangeText={setSearchTerm}
           flex={1}

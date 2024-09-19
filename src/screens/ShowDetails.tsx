@@ -112,7 +112,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
   };
 
   return (
-    <YStack pt={insets.top} bg="$background" flex={1} px="$3">
+    <YStack pt={insets.top} bg="$bg" flex={1} px="$3">
       <XStack jc="space-between" ai="center">
         <Touchable onPress={() => navigation.goBack()} hitSlop={15}>
           <Ionicons name="arrow-back" size={28} color="white" />
@@ -128,8 +128,11 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
       <Text fs="$5" fw="bold" color="$text" ta="center" mb="$2">
         {formatDate(show.date)}
       </Text>
+      <Text fs="$3" color="$text" ta="center">
+        {show.venue}
+      </Text>
       <Text fs="$3" color="$text" ta="center" mb="$3">
-        {show.venue} - {show.location}
+        {show.location}
       </Text>
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {loading ? (
@@ -144,7 +147,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
               onPress={() => handleTrackLoad(track.file)}
             >
               <XStack
-                bg="$buttonBg"
+                bg="$secondary"
                 px="$3"
                 py="$2"
                 mb="$2"
