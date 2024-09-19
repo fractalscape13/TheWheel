@@ -2,6 +2,7 @@ import React from "react";
 import { XStack, Input, View, useTheme } from "tamagui";
 import { ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Touchable from "./Touchable";
 
 type SearchBarProps = {
   searchTerm: string | undefined;
@@ -17,20 +18,39 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const theme = useTheme();
   return (
     <XStack jc="space-between" ai="center" mb="$3">
-      <Input
-        placeholder="Filter by city or venue..."
-        placeholderTextColor="$textPlaceholder"
-        color="$text"
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-        h={40}
-        flex={1}
-        bw={1}
-        br={8}
-        bc="$text"
-        mr="$3"
-      />
-      <View ai="center" jc="center" br={99} h={30} w={30} bg="transparent">
+      <XStack ai="center" flex={1} bw={1} br={8} bc="$text" h={40} px="$2">
+        <Input
+          placeholder="Filter by city or venue..."
+          placeholderTextColor="$textPlaceholder"
+          color="$text"
+          style={{backgroundColor: theme?.bg?.val}}
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+          flex={1}
+          bw={0}
+        />
+        {searchTerm ? (
+          <Touchable
+            onPress={() => setSearchTerm("")}
+            style={{ marginLeft: 5 }}
+          >
+            <Ionicons
+              name="close-circle"
+              size={24}
+              color={theme?.$buttonBg?.val}
+            />
+          </Touchable>
+        ) : null}
+      </XStack>
+      <View
+        ai="center"
+        jc="center"
+        br={99}
+        h={30}
+        w={30}
+        bg="transparent"
+        ml="$2"
+      >
         {isLoading ? (
           <ActivityIndicator color="white" />
         ) : (

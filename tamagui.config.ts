@@ -1,31 +1,34 @@
 import { createTamagui } from "tamagui";
 
 export const lightTheme = {
-  background: "#FFFFFF",
-  text: "#000000",
-  textPlaceholder: "#808080",
-  primary: "#FF69B4",
-  secondary: "#FFC0CB",
-  border: "#E0E0E0",
-  buttonBg: "#FF69B4",
-  buttonText: "#FFFFFF",
-  trackProgress: "#DA9100",
-  trackBg: "#800080",
-  icon: "#000000",
+  bg: "#FFFFFF",                // White background
+  bg2: "#F0F0F0",               // Slightly darker background for contrast
+  text: "#000000",              // Black text for readability
+  textPlaceholder: "#808080",   // Gray for placeholders
+  border: "#E0E0E0",            // Light gray for borders
+  buttonBg: "#00B0FF",          // Cyan button background
+  buttonText: "#FFFFFF",        // White text on buttons
+  trackProgress: "#00B0FF",     // Cyan for progress bar
+  trackBg: "#D0D0D0",           // Light gray for track background
+  icon: "#000000",              // Black icons
+  primary: "#00B0FF",           // Cyan for primary actions or highlights
+  secondary: "#9BB4C6",         // Light blue for secondary actions or highlights
 };
 
+
 export const darkTheme = {
-  background: "#1C1C1C",
-  text: "#FF69B4",
-  textPlaceholder: "#FFB0D9",
-  primary: "#FF69B4",
-  secondary: "#FFC0CB",
-  border: "#2A2A2A",
-  buttonBg: "#FF69B4",
-  buttonText: "#1C1C1C",
-  trackProgress: "#DA9100",
-  trackBg: "#800080",
-  icon: "#FF69B4",
+  bg: "#121212",               // Dark background
+  bg2: "#1E1E1E",              // Slightly lighter background for contrast
+  text: "#E0E0E0",             // Light gray text for readability
+  textPlaceholder: "#757575",  // Muted gray for placeholders
+  border: "#2C2C2C",           // Darker gray for borders
+  buttonBg: "#5A6A73",         // Gray button background
+  buttonText: "#E0E0E0",       // Light text on buttons
+  trackProgress: "#00B0FF",    // Cyan for progress bar
+  trackBg: "#37474F",          // Slate gray for track background
+  icon: "#90CAF9",             // Light blue for icons
+  primary: "#00B0FF",          // Cyan for primary actions or highlights
+  secondary: "#9BB4C6",        // Light blue for secondary actions or highlights
 };
 
 export const fonts = {

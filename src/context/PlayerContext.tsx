@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from "react";
 import { Audio } from "expo-av";
+import { Show } from "../types";
 
 type PlayerContextType = {
   isPlaying: boolean;
@@ -12,6 +13,7 @@ type PlayerContextType = {
   currentPlayingSongIndex: number;
   showFileCollection: any[];
   showId: string | null;
+  show: Show | null;
   handleSeek: (value: number) => Promise<void>;
   handlePlayPause: () => Promise<void>;
   nextSongAction: () => Promise<void>;
@@ -20,6 +22,7 @@ type PlayerContextType = {
   clearAudioFromStorage: () => Promise<void>;
   setShowFileCollection: (files: any[]) => void;
   setShowId: (id: string | null) => void;
+  setShow: (show: Show | null) => void;
   setCurrentPlayingSongIndex: (index: number) => void;
   setCurrentSongFile: (file: any | null) => void;
 };
@@ -32,6 +35,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showFileCollection, setShowFileCollection] = useState([]);
   const [showId, setShowId] = useState<string | null>(null);
+  const [show, setShow] = useState<Show | null>(null);
   const [duration, setDuration] = useState(0);
   const [position, setPosition] = useState(0);
   const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState(0);
@@ -140,6 +144,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         currentPlayingSongIndex,
         showFileCollection,
         showId,
+        show,
         handleSeek,
         handlePlayPause,
         nextSongAction,
@@ -148,6 +153,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         clearAudioFromStorage,
         setShowFileCollection,
         setShowId,
+        setShow,
         setCurrentPlayingSongIndex,
         setCurrentSongFile,
       }}

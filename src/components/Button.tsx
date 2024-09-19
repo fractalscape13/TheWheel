@@ -1,6 +1,6 @@
 import React from "react";
 import { Spinner, Text, useTheme, View } from "tamagui";
-import { TouchableOpacity } from "react-native";
+import Touchable from "./Touchable";
 
 type ButtonProps = {
   title: string;
@@ -36,7 +36,7 @@ const deriveStyle = (
     backgroundColor = theme.secondary.val;
     textColor = theme.buttonText.val;
   } else if (color === "tertiary") {
-    backgroundColor = theme.background.val;
+    backgroundColor = theme.bg.val;
     textColor = theme.text.val;
     borderWidth = 1;
     borderColor = theme.border.val;
@@ -79,9 +79,8 @@ const Button: React.FC<ButtonProps> = ({
     borderColor,
   } = deriveStyle(size, color, theme);
   return (
-    <TouchableOpacity
+    <Touchable
       onPress={onPress}
-      activeOpacity={0.7}
       disabled={disabled || isLoading}
       style={{
         borderRadius: 8,
@@ -113,7 +112,7 @@ const Button: React.FC<ButtonProps> = ({
           {rightIcon && <View style={{ marginLeft: 6 }}>{rightIcon}</View>}
         </>
       )}
-    </TouchableOpacity>
+    </Touchable>
   );
 };
 

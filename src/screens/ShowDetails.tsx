@@ -31,18 +31,13 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
         (track) => track["file"] === trackFile
       );
       const audioUrl = `https://archive.org/download/${showId}/${tracks[locatedTrackIndex].file}`;
-      onSelectTrack(locatedTrackIndex, tracks, audioUrl, showId);
+      onSelectTrack(locatedTrackIndex, tracks, audioUrl, showId, show);
     }
   };
 
   useEffect(() => {
-    const fetchShowByDateAndVenue = async (
-      showDate: string,
-      showVenue: string
-    ) => {
-      const query = encodeURIComponent(
-        `Grateful Dead AND date:${showDate} AND venue:"${showVenue}"`
-      );
+    const fetchShowByDate = async (showDate: string) => {
+      const query = encodeURIComponent(`Grateful Dead AND date:${showDate}"`);
       const url = `https://archive.org/advancedsearch.php?q=${query}&output=json&rows=1`;
       try {
         const response = await fetch(url);
@@ -85,8 +80,8 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
       }
     };
 
-    if (show?.date && show?.venue) {
-      fetchShowByDateAndVenue(show.date, show.venue);
+    if (show?.date) {
+      fetchShowByDate(show?.date);
       checkFavorite();
     }
   }, [show]);
@@ -117,7 +112,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
   };
 
   return (
-    <YStack pt={insets.top} bg="$background" flex={1} px="$3">
+    <YStack pt={insets.top} bg="$bg" flex={1} px="$3">
       <XStack jc="space-between" ai="center">
         <Touchable onPress={() => navigation.goBack()} hitSlop={15}>
           <Ionicons name="arrow-back" size={28} color="white" />
@@ -133,8 +128,11 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
       <Text fs="$5" fw="bold" color="$text" ta="center" mb="$2">
         {formatDate(show.date)}
       </Text>
+      <Text fs="$3" color="$text" ta="center">
+        {show.venue}
+      </Text>
       <Text fs="$3" color="$text" ta="center" mb="$3">
-        {show.venue} - {show.location}
+        {show.location}
       </Text>
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {loading ? (
@@ -149,7 +147,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
               onPress={() => handleTrackLoad(track.file)}
             >
               <XStack
-                bg="$buttonBg"
+                bg="$secondary"
                 px="$3"
                 py="$2"
                 mb="$2"
