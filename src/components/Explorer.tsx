@@ -3,6 +3,8 @@ import React, { useMemo, useRef, useState, useEffect } from "react";
 import { years, collectionSelection } from "@services/dataValidationUtils";
 import { showBones1965 } from "@services/1965-bones"; 
 import { showBones1966 } from "@services/1966-bones"; 
+import { showBones1967 } from "@services/1967-bones"; 
+import { showBones1968 } from "@services/1968-bones"; 
 import { showBones1970 } from "@services/1970-bones"; 
 import Touchable from "@components/Touchable";
 import { formatDate } from "@services/utils";
