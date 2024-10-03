@@ -5,7 +5,7 @@ import { showBones1965 } from "@services/1965-bones";
 import { showBones1966 } from "@services/1966-bones"; 
 import { showBones1967 } from "@services/1967-bones"; 
 import { showBones1968 } from "@services/1968-bones"; 
-import { showBones1969 } from "@services/1968-bones"; 
+import { showBones1969 } from "@services/1969-bones"; 
 import { showBones1970 } from "@services/1970-bones"; 
 import Touchable from "@components/Touchable";
 import { formatDate } from "@services/utils";
@@ -30,6 +30,7 @@ const Explorer: React.FC<ExplorerProps> = ({
   const scrollViewRef = useRef<ScrollView>(null);
   const theme = useTheme();
   const [favoriteShows, setFavoriteShows] = useState<Show[]>([]);
+  const [activeShowAlternateSources, setActiveShowAlternateSources] = useState<[] | null>(null);
   const filterShows = (shows: Show[]) => {
     if (searchTerm && searchTerm.length > 0) {
       return shows.filter(
@@ -41,20 +42,80 @@ const Explorer: React.FC<ExplorerProps> = ({
     }
     return shows;
   };
-  const activeCollection = useMemo(() => {
-    if (selectedYear && collectionSelection) {
+
+  const activeCollectionPreservedData = useMemo(() => {
+    // these if conditions are the boundary between new data and backwards compatibility
+    // the year date can be modified as new data is entered
+    if (selectedYear && (selectedYear > 1964 && selectedYear < 1971)) { 
+      if(selectedYear === 1965) { return showBones1965 }
+      if(selectedYear === 1966) { return showBones1966 }
+      if(selectedYear === 1967) { return showBones1967 }
+      if(selectedYear === 1968) { return showBones1968 }
+      if(selectedYear === 1969) { return showBones1969 }
+      if(selectedYear === 1970) { return showBones1970 }
+    }
+    if (selectedYear && (selectedYear >= 1971) && collectionSelection)  {
       const key = `showCollection${selectedYear}`;
       const shows = collectionSelection[key] || [];
       return filterShows(shows);
-    }
+    } 
+
     return null;
-  }, [selectedYear, searchTerm]);
+  }, [selectedYear]);
+
+  const activeCollection = useMemo(() => {
+    // these if conditions are the boundary between new data and backwards compatibility
+    // the year date can be modified as new data is entered
+    if (selectedYear && (selectedYear > 1964 && selectedYear < 1971)) {
+      // identify which imported collection to access
+      let collection = showBones1965;
+      // default to 1965 
+      if(selectedYear === 1965) { }
+      if(selectedYear === 1966) { collection = showBones1966 }
+      if(selectedYear === 1967) { collection =  showBones1967 }
+      if(selectedYear === 1968) { collection =  showBones1968 }
+      if(selectedYear === 1969) { collection =  showBones1969 }
+      if(selectedYear === 1970) { collection =  showBones1970 }
+      console.log("collection", collection);
+      // create unique show date list
+      const getUniqueByDate = (array) => {
+        const seenDates = new Set();
+        return array.filter(item => {
+          const date = item.date;
+          if (seenDates.has(date)) {
+            return false;
+          }
+          seenDates.add(date);
+          return true;
+        });
+      };
+      
+      const uniqueShowsByDate = getUniqueByDate(collection);
+      console.log(uniqueShowsByDate);
+      return uniqueShowsByDate;
+    }
+    if (selectedYear && (selectedYear >= 1971) && collectionSelection)  {
+      const key = `showCollection${selectedYear}`;
+      const shows = collectionSelection[key] || [];
+      return filterShows(shows);
+    } 
+
+    return null;
+  }, [selectedYear]);
+
+  const handleShowSelect = show => {
+    const availableShowsOnSelectedDate = activeCollectionPreservedData.filter(unfilteredShow => unfilteredShow.date === show.date);
+    setActiveShowAlternateSources(availableShowsOnSelectedDate);
+    return goToShow(show, availableShowsOnSelectedDate);
+  };
+
   const filteredFavoriteShows = useMemo(() => {
     if (favoriteShows && searchTerm) {
       return filterShows(favoriteShows);
     }
     return favoriteShows;
   }, [favoriteShows, searchTerm]);
+
   const handleSelectYear = (year: number) => {
     if (year === selectedYear) {
       setSelectedYear(null);
@@ -65,6 +126,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       }
     }
   };
+
   useEffect(() => {
     const fetchFavoriteShows = async () => {
       const favoriteShowDatesString = await SecureStore.getItemAsync(
@@ -91,6 +153,7 @@ const Explorer: React.FC<ExplorerProps> = ({
     };
     fetchFavoriteShows();
   }, []);
+
   return (
     <YStack>
       <Text color="$text" fs="$3" mb="$2">
@@ -130,7 +193,7 @@ const Explorer: React.FC<ExplorerProps> = ({
           {activeCollection.map((show: Show, index: number) => (
             <Touchable
               key={`${show.date}-${index}`}
-              onPress={() => goToShow(show)}
+              onPress={() => handleShowSelect(show)}
             >
               <YStack
                 bg="$secondary"
@@ -170,7 +233,7 @@ const Explorer: React.FC<ExplorerProps> = ({
             </Text>
             {filteredFavoriteShows.map((show, index) => (
               <Touchable
-                onPress={() => goToShow(show)}
+                onPress={() => handleShowSelect(show)}
                 key={`${index}-${show.date}`}
               >
                 <YStack

@@ -1151,16 +1151,6 @@ export const showBones1968 = [
   },
   {
     date: "1968-02-14",
-    index: 8,
-    location: "San Francisco, CA",
-    showIdentifier: "carousel-ballroom-poster",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
-    venue: "Carousel Ballroom",
-  },
-  {
-    date: "1968-02-14",
     index: 1,
     location: "San Francisco, CA",
     showIdentifier: "gd1968-02-14.sbd.bunjes.12939.shnf",
