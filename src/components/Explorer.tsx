@@ -93,7 +93,6 @@ const Explorer: React.FC<ExplorerProps> = ({
       };
       
       const uniqueShowsByDate = getUniqueByDate(collection);
-      console.log(uniqueShowsByDate);
       return uniqueShowsByDate;
     }
     if (selectedYear && (selectedYear >= 1971) && collectionSelection)  {
