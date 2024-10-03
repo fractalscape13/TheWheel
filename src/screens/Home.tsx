@@ -54,9 +54,10 @@ const Home = ({ navigation }: { navigation: any }) => {
       />
       <Explorer
         isLoading={isLoading}
-        goToShow={(show) => {
+        goToShow={(show, availableShowsOnSelectedDate) => {
           navigation.navigate("ShowDetails", {
             show,
+            availableShowsOnSelectedDate,
             onSelectTrack: handleSelectedTrack,
           });
         }}
