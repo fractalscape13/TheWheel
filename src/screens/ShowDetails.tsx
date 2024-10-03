@@ -205,7 +205,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
           <Touchable
             onPress={() => setIsOpen((prevValue) => !prevValue)}
             h={28}
-            style={{ minWidth: 20 }}
+            style={{ minWidth: 20, marginRight: 10, }}
             hitSlop={15}
           >
             <Text bg="$secondary" ta="center" color="$textSecondary">
