@@ -743,22 +743,7 @@ const showCollection1968 = [
     location: "New York City, NY",
   },
   {
-    date: "1968-05-07",
-    venue: "Electric Circus",
-    location: "New York City, NY",
-  },
-  {
     date: "1968-05-08",
-    venue: "Electric Circus",
-    location: "New York City, NY",
-  },
-  {
-    date: "1968-05-08",
-    venue: "Electric Circus",
-    location: "New York City, NY",
-  },
-  {
-    date: "1968-05-09",
     venue: "Electric Circus",
     location: "New York City, NY",
   },
@@ -828,16 +813,6 @@ const showCollection1968 = [
     location: "New York City, NY",
   },
   {
-    date: "1968-06-14",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1968-06-15",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
     date: "1968-06-15",
     venue: "Fillmore East",
     location: "New York City, NY",
@@ -848,17 +823,17 @@ const showCollection1968 = [
     location: "San Francisco, CA",
   },
   {
+    date: "1968-07-01",
+    venue: "King's Beach Bowl",
+    location: "Lake Tahoe, CA",
+  },
+  {
     date: "1968-07-11",
     venue: "Shrine Auditorium",
     location: "Los Angeles, CA",
   },
   {
     date: "1968-07-12",
-    venue: "King's Beach Bowl",
-    location: "Lake Tahoe, CA",
-  },
-  {
-    date: "1968-07-01",
     venue: "King's Beach Bowl",
     location: "Lake Tahoe, CA",
   },
@@ -1236,11 +1211,6 @@ const showCollection1969 = [
     location: "Santa Barbara, CA",
   },
   {
-    date: "1969-01-18",
-    venue: "",
-    location: "",
-  },
-  {
     date: "1969-01-20",
     venue: "Pacific High Recording",
     location: "San Mateo, CA",
@@ -1249,6 +1219,7 @@ const showCollection1969 = [
     date: "1969-01-24",
     venue: "Avalon Ballroom",
     location: "San Francisco, CA",
+    
   },
   {
     date: "1969-01-25",
@@ -1301,22 +1272,7 @@ const showCollection1969 = [
     location: "Pittsburgh, PA",
   },
   {
-    date: "1969-02-07",
-    venue: "Stanley Theater",
-    location: "Pittsburgh, PA",
-  },
-  {
     date: "1969-02-11",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-02-11",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-02-12",
     venue: "Fillmore East",
     location: "New York City, NY",
   },
@@ -1502,11 +1458,6 @@ const showCollection1969 = [
   },
   {
     date: "1969-05-03",
-    venue: "Sierra College",
-    location: "Rocklin, CA",
-  },
-  {
-    date: "1969-05-03",
     venue: "Winterland Arena",
     location: "San Francisco, CA",
   },
@@ -1611,16 +1562,6 @@ const showCollection1969 = [
     location: "New York City, NY",
   },
   {
-    date: "1969-06-20",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-06-21",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
     date: "1969-06-21",
     venue: "Fillmore East",
     location: "New York City, NY",
@@ -1664,11 +1605,6 @@ const showCollection1969 = [
     date: "1969-07-07",
     venue: "Piedmont Park",
     location: "Atlanta, GA",
-  },
-  {
-    date: "1969-07-08",
-    venue: "Rock Pile",
-    location: "Toronto, CA",
   },
   {
     date: "1969-07-08",
@@ -1761,16 +1697,6 @@ const showCollection1969 = [
     location: "New York City, NY",
   },
   {
-    date: "1969-09-26",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-09-27",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
     date: "1969-09-27",
     venue: "Fillmore East",
     location: "New York City, NY",
@@ -1781,22 +1707,7 @@ const showCollection1969 = [
     location: "New York City, NY",
   },
   {
-    date: "1969-09-29",
-    venue: "Cafe au Go Go",
-    location: "New York City, NY",
-  },
-  {
     date: "1969-09-30",
-    venue: "Cafe au Go Go",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-09-30",
-    venue: "Cafe au Go Go",
-    location: "New York City, NY",
-  },
-  {
-    date: "1969-10-01",
     venue: "Cafe au Go Go",
     location: "New York City, NY",
   },
@@ -2055,11 +1966,6 @@ const showCollection1970 = [
   },
   {
     date: "1970-02-07",
-    venue: "Pacific High Recording",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1970-02-07",
     venue: "Fillmore West",
     location: "San Francisco, CA",
   },
@@ -2137,11 +2043,6 @@ const showCollection1970 = [
     date: "1970-03-17",
     venue: "Kleinhans Music Hall",
     location: "Buffalo, NY",
-  },
-  {
-    date: "1970-03-20",
-    venue: "Capitol Theater",
-    location: "Port Chester, NY",
   },
   {
     date: "1970-03-20",
@@ -2339,11 +2240,6 @@ const showCollection1970 = [
     location: "Port Chester, NY",
   },
   {
-    date: "1970-06-24",
-    venue: "Capitol Theater",
-    location: "Port Chester, NY",
-  },
-  {
     date: "1970-06-27",
     venue: "Canadian National Exhibition Hall",
     location: "Toronto, CA",
@@ -2385,11 +2281,6 @@ const showCollection1970 = [
   },
   {
     date: "1970-07-14",
-    venue: "Euphoria Ballroom",
-    location: "San Rafael, CA",
-  },
-  {
-    date: "1970-07-16",
     venue: "Euphoria Ballroom",
     location: "San Rafael, CA",
   },
@@ -2504,11 +2395,6 @@ const showCollection1970 = [
     location: "Minneapolis, MN",
   },
   {
-    date: "1970-10-18",
-    venue: "Tyrone Guthrie Theatre",
-    location: "Minneapolis, MN",
-  },
-  {
     date: "1970-10-23",
     venue: "McDonough Arena, Georgetown U.",
     location: "Washington, DC",
@@ -2524,16 +2410,6 @@ const showCollection1970 = [
     location: "Stony Brook, NY",
   },
   {
-    date: "1970-10-30",
-    venue: "Gym, S.U.N.Y.",
-    location: "Stony Brook, NY",
-  },
-  {
-    date: "1970-10-31",
-    venue: "Gym, S.U.N.Y.",
-    location: "Stony Brook, NY",
-  },
-  {
     date: "1970-10-31",
     venue: "Gym, S.U.N.Y.",
     location: "Stony Brook, NY",
@@ -2545,16 +2421,6 @@ const showCollection1970 = [
   },
   {
     date: "1970-11-06",
-    venue: "Capitol Theater",
-    location: "Port Chester, NY",
-  },
-  {
-    date: "1970-11-06",
-    venue: "Capitol Theater",
-    location: "Port Chester, NY",
-  },
-  {
-    date: "1970-11-07",
     venue: "Capitol Theater",
     location: "Port Chester, NY",
   },
@@ -2607,11 +2473,6 @@ const showCollection1970 = [
     date: "1970-11-20",
     venue: "The Palestra, U. Of Rochester",
     location: "Rochester, NY",
-  },
-  {
-    date: "1970-11-21",
-    venue: "WBCN Studios",
-    location: "Boston, MA",
   },
   {
     date: "1970-11-21",
@@ -2689,24 +2550,9 @@ const showCollection1970 = [
     location: "El Monte, CA",
   },
   {
-    date: "1970-12-27",
-    venue: "KPPC Studios",
-    location: "Pasadena, CA",
-  },
-  {
     date: "1970-12-28",
     venue: "Legion Stadium",
     location: "El Monte, CA",
-  },
-  {
-    date: "1970-12-28",
-    venue: "Legion Stadium",
-    location: "El Monte, CA",
-  },
-  {
-    date: "1970-12-31",
-    venue: "Winterland Arena",
-    location: "San Francisco, CA",
   },
   {
     date: "1970-12-31",
@@ -2897,11 +2743,6 @@ const showCollection1971 = [
     location: "New York City, NY",
   },
   {
-    date: "1971-04-25",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
     date: "1971-04-26",
     venue: "Fillmore East",
     location: "New York City, NY",
@@ -2913,11 +2754,6 @@ const showCollection1971 = [
   },
   {
     date: "1971-04-28",
-    venue: "Fillmore East",
-    location: "New York City, NY",
-  },
-  {
-    date: "1971-04-29",
     venue: "Fillmore East",
     location: "New York City, NY",
   },
@@ -3087,11 +2923,6 @@ const showCollection1971 = [
     location: "San Antonio, TX",
   },
   {
-    date: "1971-11-12",
-    venue: "San Antonio Civic Auditorium",
-    location: "San Antonio, TX",
-  },
-  {
     date: "1971-11-14",
     venue: "Texas Christian University",
     location: "Fort Worth, TX",
@@ -3110,11 +2941,6 @@ const showCollection1971 = [
     date: "1971-11-20",
     venue: "Pauley Pavilion, UCLA",
     location: "Los Angeles, CA",
-  },
-  {
-    date: "1971-12-01",
-    venue: "Boston Music Hall",
-    location: "Boston, MA",
   },
   {
     date: "1971-12-01",
@@ -3157,11 +2983,6 @@ const showCollection1971 = [
     location: "St. Louis, MO",
   },
   {
-    date: "1971-12-10",
-    venue: "Fox Theatre",
-    location: "St. Louis, MO",
-  },
-  {
     date: "1971-12-14",
     venue: "Hill Auditorium",
     location: "Ann Arbor, MI",
@@ -3188,16 +3009,6 @@ const showCollection1972 = [
     date: "1972-03-05",
     venue: "Winterland Arena",
     location: "San Francisco, CA",
-  },
-  {
-    date: "1972-03-05",
-    venue: "Winterland Arena",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1972-03-21",
-    venue: "Academy of Music",
-    location: "New York City, NY",
   },
   {
     date: "1972-03-21",
@@ -3248,11 +3059,6 @@ const showCollection1972 = [
     date: "1972-04-11",
     venue: "City Hall",
     location: "Newcastle, England",
-  },
-  {
-    date: "1972-04-14",
-    venue: "Tivolis Koncertsal",
-    location: "Copenhagen, Denmark",
   },
   {
     date: "1972-04-14",
@@ -3758,11 +3564,6 @@ const showCollection1973 = [
     location: "Vancouver, Canada",
   },
   {
-    date: "1973-06-22",
-    venue: "P.N.E. Coliseum",
-    location: "Vancouver, Canada",
-  },
-  {
     date: "1973-06-24",
     venue: "Portland Memorial Coliseum",
     location: "Portland, OR",
@@ -3799,11 +3600,6 @@ const showCollection1973 = [
   },
   {
     date: "1973-07-31",
-    venue: "Roosevelt Stadium",
-    location: "Jersey City, NJ",
-  },
-  {
-    date: "1973-08-01",
     venue: "Roosevelt Stadium",
     location: "Jersey City, NJ",
   },
@@ -3871,11 +3667,6 @@ const showCollection1973 = [
     date: "1973-10-21",
     venue: "Civic Auditorium",
     location: "Omaha, NE",
-  },
-  {
-    date: "1973-10-23",
-    venue: "Metropolitan Sports Center",
-    location: "Bloomington, MN",
   },
   {
     date: "1973-10-23",
@@ -3973,11 +3764,6 @@ const showCollection1973 = [
     location: "Cincinnati, OH",
   },
   {
-    date: "1973-12-04",
-    venue: "Cincinnati Gardens",
-    location: "Cincinnati, OH",
-  },
-  {
     date: "1973-12-06",
     venue: "Convention Center",
     location: "Cleveland, OH",
@@ -4010,16 +3796,6 @@ const showCollection1973 = [
 ];
 
 const showCollection1974 = [
-  {
-    date: "1974-02-22",
-    venue: "Winterland Arena",
-    location: "San Francisco, CA",
-  },
-  {
-    date: "1974-02-22",
-    venue: "Winterland Arena",
-    location: "San Francisco, CA",
-  },
   {
     date: "1974-02-22",
     venue: "Winterland Arena",
@@ -5075,11 +4851,6 @@ const showCollection1978 = [
   {
     date: "1978-11-17",
     venue: "Uptown Theater",
-    location: "Chicago, IL",
-  },
-  {
-    date: "1978-11-17",
-    venue: "Loyola College",
     location: "Chicago, IL",
   },
   {
