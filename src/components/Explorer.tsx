@@ -67,8 +67,10 @@ const Explorer: React.FC<ExplorerProps> = ({
     // these if conditions are the boundary between new data and backwards compatibility
     // the year date can be modified as new data is entered
     if (selectedYear && (selectedYear > 1964 && selectedYear < 1971)) {
+
       // identify which imported collection to access
       let collection = showBones1965;
+
       // default to 1965 
       if(selectedYear === 1965) { }
       if(selectedYear === 1966) { collection = showBones1966 }
@@ -76,7 +78,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       if(selectedYear === 1968) { collection =  showBones1968 }
       if(selectedYear === 1969) { collection =  showBones1969 }
       if(selectedYear === 1970) { collection =  showBones1970 }
-      console.log("collection", collection);
+
       // create unique show date list
       const getUniqueByDate = (array) => {
         const seenDates = new Set();

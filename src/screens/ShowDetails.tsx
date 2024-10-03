@@ -208,7 +208,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
             style={{ minWidth: 20 }}
             hitSlop={15}
           >
-            <Text bg="$secondary" ta="center" color="$text">
+            <Text bg="$secondary" ta="center" color="$textSecondary">
               {availableShowsOnSelectedDate?.length}
             </Text>
           </Touchable>
