@@ -1,5 +1,6 @@
 import { Text, YStack, useTheme, ScrollView, XStack } from "tamagui";
 import React, { useMemo, useRef, useState, useEffect } from "react";
+
 import { years, collectionSelection } from "@services/dataValidationUtils";
 import { showBones1965 } from "@services/1965-bones"; 
 import { showBones1966 } from "@services/1966-bones"; 
@@ -9,6 +10,8 @@ import { showBones1969 } from "@services/1969-bones";
 import { showBones1970 } from "@services/1970-bones"; 
 import { showBones1971 } from "@services/1971-bones"; 
 import { showBones1972 } from "@services/1972-bones"; 
+import { showBones1973 } from "@services/1973-bones"; 
+
 import Touchable from "@components/Touchable";
 import { formatDate } from "@services/utils";
 import { Show } from "../types";
@@ -48,7 +51,7 @@ const Explorer: React.FC<ExplorerProps> = ({
   const activeCollectionPreservedData = useMemo(() => {
     // these if conditions are the boundary between new data and backwards compatibility
     // the year date can be modified as new data is entered
-    if (selectedYear && (selectedYear > 1964 && selectedYear < 1973)) { 
+    if (selectedYear && (selectedYear > 1964 && selectedYear < 1974)) { 
       if(selectedYear === 1965) { return showBones1965 }
       if(selectedYear === 1966) { return showBones1966 }
       if(selectedYear === 1967) { return showBones1967 }
@@ -57,9 +60,11 @@ const Explorer: React.FC<ExplorerProps> = ({
       if(selectedYear === 1970) { return showBones1970 }
       if(selectedYear === 1971) { return showBones1971 }
       if(selectedYear === 1972) { return showBones1972 }
+      if(selectedYear === 1973) { return showBones1973 }
+
 
     }
-    if (selectedYear && (selectedYear >= 1973) && collectionSelection)  {
+    if (selectedYear && (selectedYear >= 1974) && collectionSelection)  {
       const key = `showCollection${selectedYear}`;
       const shows = collectionSelection[key] || [];
       return filterShows(shows);
@@ -71,7 +76,7 @@ const Explorer: React.FC<ExplorerProps> = ({
   const activeCollection = useMemo(() => {
     // these if conditions are the boundary between new data and backwards compatibility
     // the year date can be modified as new data is entered
-    if (selectedYear && (selectedYear > 1964 && selectedYear < 1973)) {
+    if (selectedYear && (selectedYear > 1964 && selectedYear < 1974)) {
 
       // identify which imported collection to access
       let collection = showBones1965;
@@ -85,6 +90,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       if(selectedYear === 1970) { collection =  showBones1970 }
       if(selectedYear === 1971) { collection =  showBones1971 }
       if(selectedYear === 1972) { collection =  showBones1972 }
+      if(selectedYear === 1973) { collection =  showBones1973 }
 
       // create unique show date list
       const getUniqueByDate = (array) => {
@@ -102,7 +108,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       const uniqueShowsByDate = getUniqueByDate(collection);
       return uniqueShowsByDate;
     }
-    if (selectedYear && (selectedYear >= 1973) && collectionSelection)  {
+    if (selectedYear && (selectedYear >= 1974) && collectionSelection)  {
       const key = `showCollection${selectedYear}`;
       const shows = collectionSelection[key] || [];
       return filterShows(shows);
