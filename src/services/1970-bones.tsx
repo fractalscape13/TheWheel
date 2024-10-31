@@ -8641,16 +8641,6 @@ export const showBones1970 = [
   },
   {
     date: "1970-04-15",
-    index: 3,
-    location: "San Francisco, CA",
-    showIdentifier: "playboy-after-dark-s02e20-1970-04-15",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
-    venue: "Winterland Arena",
-  },
-  {
-    date: "1970-04-15",
     index: 0,
     location: "San Francisco, CA",
     showIdentifier: "gd70-04-15.sbd.kaplan.14354.sbeok.shnf",
@@ -8716,7 +8706,7 @@ export const showBones1970 = [
   {
     date: "1970-04-18",
     index: 0,
-    location: undefined,
+    location: "San Francisco, CA",
     showIdentifier: "09newspeedwayboogie",
     source: "N/A",
     tracks: [
@@ -17154,16 +17144,6 @@ export const showBones1970 = [
       },
     ],
     type: "sound",
-    venue: "Euphoria Ballroom",
-  },
-  {
-    date: "1970-07-16",
-    index: 0,
-    location: "San Rafael, CA",
-    showIdentifier: "janis-with-the-grateful-dead",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
     venue: "Euphoria Ballroom",
   },
   {

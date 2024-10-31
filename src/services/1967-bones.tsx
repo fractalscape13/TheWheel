@@ -994,16 +994,6 @@ export const showBones1967 = [
   },
   {
     date: "1967-06-18",
-    index: 3,
-    location: "Monterey, CA",
-    showIdentifier: "1967-06-18-aor-3.5",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
-    venue: "Monterey Fairgrounds",
-  },
-  {
-    date: "1967-06-18",
     index: 1,
     location: "Monterey, CA",
     showIdentifier: "gd67-06-18.sbd.mandrake.19586.sbeok.shnf",

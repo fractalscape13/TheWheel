@@ -2996,16 +2996,6 @@ export const showBones1968 = [
   },
   {
     date: "1968-08-28",
-    index: 1,
-    location: "San Francisco, CA",
-    showIdentifier: "gd1968-08-28.154147.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "Avalon Ballroom",
-  },
-  {
-    date: "1968-08-28",
     index: 6,
     location: "San Francisco, CA",
     showIdentifier: "gd1968-08-28.133762.aud.davmar77.flac16",
@@ -3505,17 +3495,6 @@ export const showBones1968 = [
     ],
     type: "sound",
     venue: "The Matrix",
-  },
-  {
-    date: "1968-10-12",
-    index: 7,
-    location: undefined,
-    showIdentifier:
-      "piece-of-my-heart-big-brother-and-the-holding-company-1968",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
-    venue: undefined,
   },
   {
     date: "1968-10-12",
@@ -4124,7 +4103,7 @@ export const showBones1968 = [
   {
     date: "1968-10-21",
     index: 0,
-    location: undefined,
+    location: " ",
     showIdentifier: "jg69-10-28dt01",
     source: "N/A",
     tracks: [
@@ -4160,7 +4139,7 @@ export const showBones1968 = [
       },
     ],
     type: "N/A",
-    venue: undefined,
+    venue: " ",
   },
   {
     date: "1968-10-30",
