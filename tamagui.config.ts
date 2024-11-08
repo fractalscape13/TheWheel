@@ -28,7 +28,7 @@ export const darkTheme = {
   trackBg: "#37474F",          // Slate gray for track background
   icon: "#90CAF9",             // Light blue for icons
   primary: "#00B0FF",          // Cyan for primary actions or highlights
-  secondary: "#9BB4C6",        // Light blue for secondary actions or highlights
+  secondary: "#BCC6CF",        // Light blue/grey
 };
 
 export const fonts = {
