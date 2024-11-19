@@ -11585,16 +11585,6 @@ export const showBones1981 = [
   },
   {
     date: "1981-03-20",
-    index: 2,
-    location: "London, England",
-    showIdentifier: "gd1981-03-20.sbd.gems.104938.flac24",
-    source: "SBD > Master Cassette",
-    tracks: [],
-    type: "sound",
-    venue: "Rainbow Theater",
-  },
-  {
-    date: "1981-03-20",
     index: 4,
     location: "London, England",
     showIdentifier: "gd1981-03-20.sndchk.aud.seaweed.113433.flac1644",
@@ -28394,16 +28384,6 @@ export const showBones1981 = [
   },
   {
     date: "1981-05-13",
-    index: 9,
-    location: "Providence, RI",
-    showIdentifier: "gd1981-05-13.bhp-dvdva.86979.dvdf",
-    source: "DTS-Audio-DVD 5.1 Mix (16/48) and SBD + AUD Matrix 2 Source Mix",
-    tracks: [],
-    type: "sound",
-    venue: "Providence Civic Center",
-  },
-  {
-    date: "1981-05-13",
     index: 10,
     location: "Providence, RI",
     showIdentifier: "gd1981-05-13.152426.mtx.seamons.ht127.flac1644",
@@ -36461,7 +36441,7 @@ export const showBones1981 = [
   {
     date: "1981-07-10 00:00:00",
     index: 9,
-    location: undefined,
+    location: "St. Paul, MN",
     showIdentifier: "jg1981-07-10-Interview.shnf",
     source: "MC>C>AIFF>WAV>SHN",
     tracks: [
@@ -36967,7 +36947,7 @@ export const showBones1981 = [
       },
     ],
     type: "sound",
-    venue: undefined,
+    venue: "St. Paul Civic Center",
   },
   {
     date: "1981-07-10",
@@ -55021,7 +55001,7 @@ export const showBones1981 = [
   {
     date: "1981-10-08",
     index: 0,
-    location: undefined,
+    location: "Copenhagen, DE",
     showIdentifier: "Copenhagen19811008",
     source: "N/A",
     tracks: [
@@ -55116,7 +55096,7 @@ export const showBones1981 = [
       { file: "25 US Blues.mp3", length: "317.7", title: "US Blues" },
     ],
     type: "N/A",
-    venue: undefined,
+    venue: "Forum Theater",
   },
   {
     date: "1981-10-08",
@@ -58086,16 +58066,6 @@ export const showBones1981 = [
   },
   {
     date: "1981-10-16",
-    index: 4,
-    location: "Amsterdam, Netherlands",
-    showIdentifier: "gd1981-10-16.147842.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "Club Melk Weg",
-  },
-  {
-    date: "1981-10-16",
     index: 6,
     location: "Amsterdam, Netherlands",
     showIdentifier: "gd1981-10-16.147841.mtx.tobin.flac16",
@@ -60494,17 +60464,6 @@ export const showBones1981 = [
   },
   {
     date: "1981-12-03",
-    index: 6,
-    location: "Madison, WI",
-    showIdentifier: "gd1981-12-03.142018.5-1.tobin.flac1648",
-    source:
-      "<b>flac16/48kHz;</b> <i>5.1 LPCM Surround Sound (48k)</i> - SBD (shnid = 108335) Recording Info:SBD -> Cassette Master -> Reel -> Dat (48k); Transfer Info:Dat (Sony R500) -> Sound devices 744T -> Samplitude Professional v11.03 -> FLAC; All Transfers and Mastering By Charlie Miller + AUD (shnid = 28901) Recording by Doug Mow. 2 Nak 700 shotguns > Sony TC-D5M > Maxell XLIIS tape. A true gem. Seeded to bt.etree.org on 04/08/05 by Alex Ford. - surround mixing by Kevin Tobin",
-    tracks: [],
-    type: "sound",
-    venue: "Dane County Coliseum",
-  },
-  {
-    date: "1981-12-03",
     index: 3,
     location: "Madison, WI",
     showIdentifier: "gd1981-12-03.153800.nak304.vita.miller.clugston.flac1648",
@@ -60792,17 +60751,6 @@ export const showBones1981 = [
         title: "Johnny B. Goode",
       },
     ],
-    type: "sound",
-    venue: "Dane County Coliseum",
-  },
-  {
-    date: "1981-12-03",
-    index: 10,
-    location: "Madison, WI",
-    showIdentifier: "gd1981-12-03.141697.dts.tobin.flac1644",
-    source:
-      "<b>DTS-Audio-CD 5.1 Mix;</b> SBD (shnid = 108335) Recording Info:SBD -> Cassette Master -> Reel -> Dat (48k); Transfer Info:Dat (Sony R500) -> Sound devices 744T -> Samplitude Professional v11.03 -> FLAC; All Transfers and Mastering By Charlie Miller + AUD (shnid = 28901) Recording by Doug Mow. 2 Nak 700 shotguns > Sony TC-D5M > Maxell XLIIS tape. A true gem. Seeded to bt.etree.org on 04/08/05 by Alex Ford. - dts mixing by Kevin Tobin",
-    tracks: [],
     type: "sound",
     venue: "Dane County Coliseum",
   },
@@ -69707,16 +69655,6 @@ export const showBones1981 = [
         title: "It's All Over Now Baby Blue",
       },
     ],
-    type: "sound",
-    venue: "Oakland Auditorium Arena",
-  },
-  {
-    date: "1981-12-31",
-    index: 7,
-    location: "Oakland, CA",
-    showIdentifier: "gd1981-12-31.143775.dts.tobin.flac1644",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
     type: "sound",
     venue: "Oakland Auditorium Arena",
   },
