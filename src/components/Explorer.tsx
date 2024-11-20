@@ -137,7 +137,6 @@ const Explorer: React.FC<ExplorerProps> = ({
       if(selectedYear === 1983) { collection =  showBones1983 }
       if(selectedYear === 1984) { collection =  showBones1984 }
       if(selectedYear === 1985) { collection =  showBones1985 }
-
       // create unique show date list
       const getUniqueByDate = (array:[]) => {
         const seenDates = new Set();
