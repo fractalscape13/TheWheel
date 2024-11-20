@@ -1421,28 +1421,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "San Francisco Civic Auditorium",
   },
-  {
-    date: "1987-01-29",
-    index: 8,
-    location: "San Francisco, CA",
-    showIdentifier: "gd1987-01-29.142028.mtx.tobin.flac1644",
-    source:
-      "<b>flac16;</b> <i>Matrix 2 Source Mix</i> - SBD (shnid = 83284)Recording Info: SBD -> Cassette Master (Maxell MX90/Sony D5) Transfer Info: Cassette Master (Tascam 122mkII) -> Apogee MiniMe (24bit/48k) -> Samplitude Professional v8.01 -> FLAC/16 All Transfers and Mastering By Charlie Miller + AUD (shnid = 79467) Source: Nakamichi 100s, taper's section > Sony D5 > Maxell MX90s. Recorded by B.Koucky.",
-    tracks: [],
-    type: "sound",
-    venue: "San Francisco Civic Auditorium",
-  },
-  {
-    date: "1987-01-29",
-    index: 10,
-    location: "San Francisco, CA",
-    showIdentifier: "gd1987-01-29.142030.5-1.tobin.flac1648",
-    source:
-      "<b>flac16/48kHz;</b> <i>5.1 LPCM Surround Sound (48k)</i> - SBD (shnid = 83284)Recording Info: SBD -> Cassette Master (Maxell MX90/Sony D5) Transfer Info: Cassette Master (Tascam 122mkII) -> Apogee MiniMe (24bit/48k) -> Samplitude Professional v8.01 -> FLAC/16 All Transfers and Mastering By Charlie Miller + AUD (shnid = 79467) Source: Nakamichi 100s, taper's section > Sony D5 > Maxell MX90s. Recorded by B.Koucky.",
-    tracks: [],
-    type: "sound",
-    venue: "San Francisco Civic Auditorium",
-  },
+
   {
     date: "1987-01-29",
     index: 3,
@@ -1610,17 +1589,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "San Francisco Civic Auditorium",
   },
-  {
-    date: "1987-01-29",
-    index: 9,
-    location: "San Francisco, CA",
-    showIdentifier: "gd1987-01-29.142029.dts.tobin.flac1644",
-    source:
-      "<b>DTS-Audio-CD 5.1 Mix;</b> SBD (shnid = 83284)Recording Info: SBD -> Cassette Master (Maxell MX90/Sony D5) Transfer Info: Cassette Master (Tascam 122mkII) -> Apogee MiniMe (24bit/48k) -> Samplitude Professional v8.01 -> FLAC/16 All Transfers and Mastering By Charlie Miller + AUD (shnid = 79467) Source: Nakamichi 100s, taper's section > Sony D5 > Maxell MX90s. Recorded by B.Koucky.",
-    tracks: [],
-    type: "sound",
-    venue: "San Francisco Civic Auditorium",
-  },
+
   {
     date: "1987-01-30",
     index: 0,
@@ -5741,17 +5710,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "Henry J Kaiser Convention Center",
   },
-  {
-    date: "1987-03-03",
-    index: 11,
-    location: "Oakland, CA",
-    showIdentifier: "gd1987-03-03.142402.5-1.tobin.flac1648",
-    source:
-      "<b>flac16/48kHz</b>; <i>5.1 LPCM Surround Sound (48k)</i> - SBD (shnid = 82726) Recording Info: SBD -> Cassette Master (Sony D5); Transfer Info: Cassette Master (Tascam 122mkII) -> Apogee MiniMe (24bit/48k) -> Samplitude Professional v8.01 -> FLAC/16 + AUD (shnid = 135314) Unknown mics & lead deck > Sony TC-D5M > Maxell MX-Metal 90's. Recording by Jon Bernstein.",
-    tracks: [],
-    type: "sound",
-    venue: "Henry J Kaiser Convention Center",
-  },
+
   {
     date: "1987-03-03",
     index: 10,
@@ -5831,17 +5790,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "Henry J Kaiser Convention Center",
   },
-  {
-    date: "1987-03-03",
-    index: 13,
-    location: "Oakland, CA",
-    showIdentifier: "gd1987-03-03.142401.dts.tobin.flac1644",
-    source:
-      "<b>DTS-Audio-CD 5.1 Mix;</b> - SBD (shnid = 82726) Recording Info: SBD -> Cassette Master (Sony D5); Transfer Info: Cassette Master (Tascam 122mkII) -> Apogee MiniMe (24bit/48k) -> Samplitude Professional v8.01 -> FLAC/16 + AUD (shnid = 135314) Unknown mics & lead deck > Sony TC-D5M > Maxell MX-Metal 90's. Recording by Jon Bernstein.",
-    tracks: [],
-    type: "sound",
-    venue: "Henry J Kaiser Convention Center",
-  },
+
   {
     date: "1987-03-03",
     index: 12,
@@ -10214,16 +10163,6 @@ export const showBones1987 = [
   },
   {
     date: "1987-03-26",
-    index: 0,
-    location: undefined,
-    showIdentifier: "gd1987-03-26.gd1987-03-26_85712",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
-    venue: undefined,
-  },
-  {
-    date: "1987-03-26",
     index: 4,
     location: "Hartford, CT",
     showIdentifier: "gd1987-03-26.138166.sbd.miller.sbeok.flac16",
@@ -10306,7 +10245,7 @@ export const showBones1987 = [
   {
     date: "1987-03-26",
     index: 1,
-    location: undefined,
+    location: "Hartford, CT",
     showIdentifier: "joshlattanzi_yahoo",
     source: "N/A",
     tracks: [
@@ -10384,7 +10323,7 @@ export const showBones1987 = [
       },
     ],
     type: "N/A",
-    venue: undefined,
+    venue: "Hartford Civic Center",
   },
   {
     date: "1987-03-26",
@@ -10958,7 +10897,7 @@ export const showBones1987 = [
   {
     date: "1987-03-26",
     index: 11,
-    location: undefined,
+    location: "Hartford, CT",
     showIdentifier: "gd87-03-26",
     source: "N/A",
     tracks: [
@@ -11036,7 +10975,7 @@ export const showBones1987 = [
       },
     ],
     type: "N/A",
-    venue: undefined,
+    venue: "Hartford Civic Center",
   },
   {
     date: "1987-03-26",
@@ -23015,16 +22954,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "UIC Pavilion",
   },
-  {
-    date: "1987-04-10",
-    index: 3,
-    location: "Chicago, IL",
-    showIdentifier: "gd1987-04-10.146112.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "UIC Pavilion",
-  },
+
   {
     date: "1987-04-10",
     index: 4,
@@ -42779,17 +42709,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "Sullivan Stadium",
   },
-  {
-    date: "1987-07-04",
-    index: 9,
-    location: "Foxboro, MA",
-    showIdentifier: "gd1987-07-04.143049.dts.tobin.flac1644",
-    source:
-      "<b>DTS-Audio-CD 5.1 Mix;</b>; SBD (shnid = 101650) Recording Info: SBD -> Cassette Master -> CD; Transfer Info: CD -> Samplitude Professional v10.02 -> FLAC; All Transfers and Mastering By Charlie Miller + AUD (shnid = 139594) Dan McSheffrey recording: (FOB) AKG 460/CK2 > PCM (Sony PCM-F1) > Dat (44.1k); Charlie Miller",
-    tracks: [],
-    type: "sound",
-    venue: "Sullivan Stadium",
-  },
+
   {
     date: "1987-07-04",
     index: 3,
@@ -43049,7 +42969,7 @@ export const showBones1987 = [
   {
     date: "1987-07-06",
     index: 0,
-    location: undefined,
+    location: "Pittsburgh, PA",
     showIdentifier: "throwing-stones",
     source: "N/A",
     tracks: [
@@ -43082,7 +43002,7 @@ export const showBones1987 = [
       },
     ],
     type: "N/A",
-    venue: undefined,
+    venue: "Civic Arena",
   },
   {
     date: "1987-07-06",
@@ -47498,17 +47418,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "Giants Stadium",
   },
-  {
-    date: "1987-07-12",
-    index: 2,
-    location: undefined,
-    showIdentifier:
-      "1987.07.12-grateful-dead-giants-stadium-1987.07.10-jfk-stadium-segment-2-jazz-clips",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
-    venue: undefined,
-  },
+
   {
     date: "1987-07-12",
     index: 1,
@@ -47719,16 +47629,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "Giants Stadium",
   },
-  {
-    date: "1987-07-12",
-    index: 4,
-    location: "East Rutherford, NJ",
-    showIdentifier: "gd1987-07-12.144320.set3.dts.tobin.flac1644",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "Giants Stadium",
-  },
+
   {
     date: "1987-07-12",
     index: 7,
@@ -51037,7 +50938,7 @@ export const showBones1987 = [
   {
     date: "1987-07-24",
     index: 0,
-    location: undefined,
+    location: "Oakland, CA",
     showIdentifier: "gd1987-07-24.gd",
     source: "N/A",
     tracks: [
@@ -51113,7 +51014,7 @@ export const showBones1987 = [
       },
     ],
     type: "N/A",
-    venue: undefined,
+    venue: "Oakland-Alameda County Coliseum Stadium",
   },
   {
     date: "1987-07-24",
@@ -51464,16 +51365,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "Oakland-Alameda County Coliseum Stadium",
   },
-  {
-    date: "1987-07-24",
-    index: 3,
-    location: undefined,
-    showIdentifier: "19870724GratefulDeadOaklandAlamedaCountyColiseumStadium",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
-    venue: undefined,
-  },
+
   {
     date: "1987-07-24",
     index: 5,
@@ -52139,16 +52031,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "Anaheim Stadium",
   },
-  {
-    date: "1987-07-26",
-    index: 0,
-    location: "Anaheim, CA",
-    showIdentifier: "gd1987-07-26.148617.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "Anaheim Stadium",
-  },
+
   {
     date: "1987-07-26",
     index: 5,
@@ -80144,16 +80027,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "Shoreline Amphitheatre",
   },
-  {
-    date: "1987-10-03",
-    index: 7,
-    location: "Mountain View, CA",
-    showIdentifier: "gd1987-10-03.sbd.miller.bertha.remaster-83906.86637.dvda",
-    source: "SBD>>MC>>WAV>>DAW(Bertha)>>Audio DVD",
-    tracks: [],
-    type: "sound",
-    venue: "Shoreline Amphitheatre",
-  },
+
   {
     date: "1987-10-03",
     index: 8,
@@ -87855,27 +87729,7 @@ export const showBones1987 = [
     type: "sound",
     venue: "Oakland Coliseum Arena",
   },
-  {
-    date: "1987-12-31",
-    index: 0,
-    location: undefined,
-    showIdentifier:
-      "1987.12.31-nye-grateful-dead-at-oakland-collisseum-calibration-1985.09.12-dead-in-oakland-ca",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
-    venue: undefined,
-  },
-  {
-    date: "1987-12-31",
-    index: 2,
-    location: undefined,
-    showIdentifier: "gratefuldeadnewyearsevepromo1987",
-    source: "N/A",
-    tracks: [],
-    type: "N/A",
-    venue: undefined,
-  },
+
   {
     date: "1987-12-31",
     index: 3,

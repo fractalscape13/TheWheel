@@ -540,28 +540,6 @@ export const showBones1986 = [
     venue: "Henry J. Kaiser Convention Center",
   },
   {
-    date: "1986-02-08",
-    index: 7,
-    location: "Oakland, CA",
-    showIdentifier: "gd1986-02-08.142388.5-1.tobin.flac1648",
-    source:
-      "<b>flac16/48kHz;</b> <i>5.1 LPCM Surround Sound (48k)</i> - SBD (shnid = 106033) Recording Info: SBD -> Cassette Master (Sony D5/Dolby B/TDK MA-R90); Transfer Info: Cassette Master (Nakamichi DR-1/Dolby B) -> Sound Devices 744T (24bit/96k) -> Samplitude Professional v11.03 -> FLAC/16; All Transfers and Mastering By Charlie Miller + AUD (shnid = 140205) Source Info: (FOB) Schoeps CMC4/MK41 > Oade M118 > Sony PCM-F1; Transfer Info: Master Oade PCM (unknown deck/hardware/software) > hard disk > Adobe Audition 3.0 > TLH flac16 - surround mixing by Kevin Tobin",
-    tracks: [],
-    type: "sound",
-    venue: "Henry J. Kaiser Convention Center",
-  },
-  {
-    date: "1986-02-08",
-    index: 8,
-    location: "Oakland, CA",
-    showIdentifier: "gd1986-02-08.142381.dts.tobin.flac1644",
-    source:
-      "<b>DTS-Audio-CD 5.1 Mix;</b> - SBD (shnid = 106033) Recording Info: SBD -> Cassette Master (Sony D5/Dolby B/TDK MA-R90); Transfer Info: Cassette Master (Nakamichi DR-1/Dolby B) -> Sound Devices 744T (24bit/96k) -> Samplitude Professional v11.03 -> FLAC/16; All Transfers and Mastering By Charlie Miller + AUD (shnid = 140205) Source Info: (FOB) Schoeps CMC4/MK41 > Oade M118 > Sony PCM-F1; Transfer Info: Master Oade PCM (unknown deck/hardware/software) > hard disk > Adobe Audition 3.0 > TLH flac16 - dts mixing by Kevin Tobin",
-    tracks: [],
-    type: "sound",
-    venue: "Henry J. Kaiser Convention Center",
-  },
-  {
     date: "1986-02-09",
     index: 0,
     location: "Oakland, CA",
@@ -2674,16 +2652,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "Henry J. Kaiser Convention Center",
   },
-  {
-    date: "1986-02-14",
-    index: 1,
-    location: "Oakland, CA",
-    showIdentifier: "gd1986-02-14.166566.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "Henry J. Kaiser Convention Center",
-  },
+
   {
     date: "1986-02-14",
     index: 2,
@@ -3797,16 +3766,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "Hampton Coliseum",
   },
-  {
-    date: "1986-03-19",
-    index: 2,
-    location: "Hampton, VA",
-    showIdentifier: "gd1986-03-19.147517.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "Hampton Coliseum",
-  },
+
   {
     date: "1986-03-19",
     index: 3,
@@ -8381,17 +8341,6 @@ export const showBones1986 = [
   },
   {
     date: "1986-03-21",
-    index: 15,
-    location: "Hampton, VA",
-    showIdentifier: "gd1986-03-21.142493.5-1.tobin.flac1648",
-    source:
-      "<b>flac16/48kHz</b>; <i>5.1 LPCM Surround Sound (48k)</i> - SBD (shnid = 142450) Recording Info: SBD > Cassette Master > Reel (Technics) > Dat (Panasonic SV-3800/48k); Transfer Info: Dat (Sony PCM-R500) > Tascam DA-3000 > Adobe Audition CC2015 > Samplitude Pro X3 Suite > FLAC/48k + AUD (shnid = 107555) source: 2 Beyer M160 Microphones>Sony TC-D5M - 25 feet from stage (mic's on a stand @about 5½ feet feet)>analog cassette master - Maxell MX90's.",
-    tracks: [],
-    type: "sound",
-    venue: "Hampton Coliseum",
-  },
-  {
-    date: "1986-03-21",
     index: 14,
     location: "Hampton, VA",
     showIdentifier: "gd1986-03-21.156025.beyer-m201.holbrook.flac1644",
@@ -8646,17 +8595,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "Hampton Coliseum",
   },
-  {
-    date: "1986-03-21",
-    index: 17,
-    location: "Hampton, VA",
-    showIdentifier: "gd1986-03-21.142492.dts.tobin.flac1644",
-    source:
-      "<b>DTS-Audio-CD 5.1 Mix;</b> - SBD (shnid = 142450) Recording Info: SBD > Cassette Master > Reel (Technics) > Dat (Panasonic SV-3800/48k); Transfer Info: Dat (Sony PCM-R500) > Tascam DA-3000 > Adobe Audition CC2015 > Samplitude Pro X3 Suite > FLAC/48k + AUD (shnid = 107555) source: 2 Beyer M160 Microphones>Sony TC-D5M - 25 feet from stage (mic's on a stand @about 5½ feet feet)>analog cassette master - Maxell MX90's.",
-    tracks: [],
-    type: "sound",
-    venue: "Hampton Coliseum",
-  },
+
   {
     date: "1986-03-23",
     index: 0,
@@ -8765,26 +8704,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "The Spectrum",
   },
-  {
-    date: "1986-03-23",
-    index: 2,
-    location: "Philadelphia, PA",
-    showIdentifier: "gd1986-03-23.145703.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "The Spectrum",
-  },
-  {
-    date: "1986-03-23",
-    index: 5,
-    location: "Philadelphia, PA",
-    showIdentifier: "gd1986-03-23.145705.5-1.tobin.flac1648",
-    source: "5.1 LPCM Surround Sound Mix (48k)",
-    tracks: [],
-    type: "sound",
-    venue: "The Spectrum",
-  },
+
   {
     date: "1986-03-23",
     index: 6,
@@ -8992,16 +8912,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "The Spectrum",
   },
-  {
-    date: "1986-03-23",
-    index: 3,
-    location: "Philadelphia, PA",
-    showIdentifier: "gd1986-03-23.145702.mtx.tobin.flac16",
-    source: "SBD + AUD Matrix 2 Source Mix (44/16)",
-    tracks: [],
-    type: "sound",
-    venue: "The Spectrum",
-  },
+
   {
     date: "1986-03-23",
     index: 11,
@@ -10360,16 +10271,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "The Spectrum",
   },
-  {
-    date: "1986-03-24",
-    index: 1,
-    location: "Philadelphia, PA",
-    showIdentifier: "gd1986-03-24.148733.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "The Spectrum",
-  },
+
   {
     date: "1986-03-24",
     index: 2,
@@ -12060,16 +11962,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "The Spectrum",
   },
-  {
-    date: "1986-03-25",
-    index: 1,
-    location: "Philadelphia, PA",
-    showIdentifier: "gd1986-03-25.145623.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "The Spectrum",
-  },
+
   {
     date: "1986-03-25",
     index: 2,
@@ -27709,16 +27602,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "Cal Expo",
   },
-  {
-    date: "1986-05-03",
-    index: 2,
-    location: "Sacramento (Calif.)",
-    showIdentifier: "css_004457",
-    source: "Poster: 1 page (11 x 17 in)",
-    tracks: [],
-    type: "N/A",
-    venue: undefined,
-  },
+
   {
     date: "1986-05-03",
     index: 3,
@@ -32677,17 +32561,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "Greek Theatre",
   },
-  {
-    date: "1986-06-20",
-    index: 11,
-    location: "Berkeley, CA",
-    showIdentifier: "gd1986-06-20.mtx.bear.gems.105540.flac16",
-    source:
-      "A combination of microphones and select console feeds. TDK MA-R 90 master metal cassette [typeIV] [no dolby]",
-    tracks: [],
-    type: "sound",
-    venue: "Greek Theatre, U. Of California",
-  },
+
   {
     date: "1986-06-20",
     index: 9,
@@ -34733,18 +34607,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "Greek Theatre, University Of California",
   },
-  {
-    date: "1986-06-21",
-    index: 13,
-    location: "Berkeley, CA",
-    showIdentifier:
-      "gd1986-06-21.fob.schoeps.grace-szvetecz.gems.98673.sbeok.flac16",
-    source:
-      "OTS, Schoeps CMC42 (Spread Omnis, Spaced 3 Feet Apart with 180 degree angle of incidence) ->  Grace 18v Mic Preamp -> MOD PCM-F1",
-    tracks: [],
-    type: "sound",
-    venue: "Greek Theatre - University of California",
-  },
+
   {
     date: "1986-06-21",
     index: 14,
@@ -35001,28 +34864,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "Greek Theatre, University Of California",
   },
-  {
-    date: "1986-06-21",
-    index: 18,
-    location: "Berkeley, CA",
-    showIdentifier: "gd1986-06-21.141790.dts.tobin.flac1644",
-    source:
-      "<b>DTS-Audio-CD 5.1 Mix</b>; SBD (shnid = 81518)Recording Info: SBD -> Cassette Master (Sony D5/Maxell MX-90) Transfer Info: Cassette Master (Tascam 122mkII) -> Apogee MiniMe (24bit/48k) -> Samplitude Professional v8.01 -> FLAC/16 via Charlie Miller + AUD (shnid = 98673) Recorded by Mike Grace and Annie Szvetecz;",
-    tracks: [],
-    type: "sound",
-    venue: "Greek Theatre, U. Of California",
-  },
-  {
-    date: "1986-06-21",
-    index: 20,
-    location: "Berkeley, CA",
-    showIdentifier: "gd1986-06-21.142016.5-1.tobin.flac1648",
-    source:
-      "<b>flac16/48kHz;</b> <i>5.1 LPCM Surround Sound (48k)</i> - SBD (shnid = 81518)Recording Info: SBD -> Cassette Master (Sony D5/Maxell MX-90) Transfer Info: Cassette Master (Tascam 122mkII) -> Apogee MiniMe (24bit/48k) -> Samplitude Professional v8.01 -> FLAC/16 via Charlie Miller + AUD (shnid = 98673) Recorded by Mike Grace and Annie Szvetecz;",
-    tracks: [],
-    type: "sound",
-    venue: "Greek Theatre, U. Of California",
-  },
+
   {
     date: "1986-06-21",
     index: 21,
@@ -51942,16 +51784,7 @@ export const showBones1986 = [
     type: "sound",
     venue: "Henry J. Kaiser Convention Center",
   },
-  {
-    date: "1986-12-28",
-    index: 2,
-    location: "Oakland, CA",
-    showIdentifier: "gd1986-12-28.155897.dts.tobin.flac16",
-    source: "DTS-Audio-CD 5.1 Mix",
-    tracks: [],
-    type: "sound",
-    venue: "Henry J Kaiser Convention Center",
-  },
+
   {
     date: "1986-12-28",
     index: 3,
