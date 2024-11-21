@@ -10,16 +10,16 @@ import { FAVORITE_SHOWS } from "../constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const formatShowSource = (src: string) => {
-  if (src?.includes(".sbd")) {
+  if (src?.toLowerCase()?.includes("sbd")) {
     return (
       <>
-        <Text fw="800">SBD </Text> {src.replace(".sbd", "")}
+        <Text fw="800">SBD </Text> {src.replace(".sbd", "") || src}
       </>
     );
-  } else if (src?.includes(".aud")) {
+  } else if (src?.toLowerCase()?.includes("aud")) {
     return (
       <>
-        <Text fw="800">AUD </Text> {src.replace(".aud", "")}
+        <Text fw="800">AUD </Text> {src.replace(".aud", "") || src}
       </>
     );
   }
