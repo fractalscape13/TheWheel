@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "The Wheel",
+    "newArchEnabled": true,
     "slug": "thewheel",
     "ios": {
       "supportsTablet": true,
@@ -24,7 +25,8 @@
             "newArchEnabled": true
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ]
   }
 }

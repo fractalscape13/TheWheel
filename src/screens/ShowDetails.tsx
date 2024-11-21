@@ -10,16 +10,16 @@ import { FAVORITE_SHOWS } from "../constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const formatShowSource = (src: string) => {
-  if (src.includes(".sbd")) {
+  if (src?.toLowerCase()?.includes("sbd")) {
     return (
       <>
-        <Text fw="800">SBD </Text> {src.replace(".sbd", "")}
+        <Text fw="800">SBD </Text> {src.replace(".sbd", "") || src}
       </>
     );
-  } else if (src.includes(".aud")) {
+  } else if (src?.toLowerCase()?.includes("aud")) {
     return (
       <>
-        <Text fw="800">AUD </Text> {src.replace(".aud", "")}
+        <Text fw="800">AUD </Text> {src.replace(".aud", "") || src}
       </>
     );
   }
@@ -72,6 +72,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
         const data = await response.json();
         const results = data?.response?.docs;
         if (results && results.length > 0) {
+          console.log("number of shows", results.length);
           results.forEach(async (show, index) => {
             const showId = show.identifier;
             const showResponse = await fetch(
@@ -92,16 +93,16 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
               setTracks(audioTracks);
             }
 
-            // console.log({
-            //   date: showData.metadata.date,
-            //   location: showData.metadata.coverage,
-            //   venue: showData.metadata.venue,
-            //   showIdentifier: showId,
-            //   source: showData.metadata.source || "N/A",
-            //   type: showData.metadata.type || "N/A",
-            //   tracks: audioTracks,
-            //   index: index,
-            // });
+            console.log({
+              date: showData.metadata.date,
+              location: showData.metadata.coverage,
+              venue: showData.metadata.venue,
+              showIdentifier: showId,
+              source: showData.metadata.source || "N/A",
+              type: showData.metadata.type || "N/A",
+              tracks: audioTracks,
+              index: index,
+            });
           });
         } else {
           console.error("No show data found for the specified date and venue.");
