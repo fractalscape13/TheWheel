@@ -27,8 +27,8 @@ import { showBones1986 } from "@services/1986-bones";
 import { showBones1987 } from "@services/1987-bones";
 import { showBones1988 } from "@services/1988-bones";
 import { showBones1989 } from "@services/1989-bones";
-// import { showBones1990 } from "@services/1990-bones";
-// import { showBones1991 } from "@services/1991-bones";
+import { showBones1990 } from "@services/1990-bones";
+import { showBones1991 } from "@services/1991-bones";
 // import { showBones1992 } from "@services/1992-bones";
 // import { showBones1993 } from "@services/1993-bones";
 // import { showBones1994 } from "@services/1994-bones";
@@ -73,7 +73,7 @@ const Explorer: React.FC<ExplorerProps> = ({
   const activeCollectionPreservedData = useMemo(() => {
     // these if conditions are the boundary between new data and backwards compatibility
     // the year date can be modified as new data is entered
-    if (selectedYear && (selectedYear > 1964 && selectedYear < 1990)) { 
+    if (selectedYear && (selectedYear > 1964 && selectedYear < 1992)) { 
       if(selectedYear === 1965) { return showBones1965 }
       if(selectedYear === 1966) { return showBones1966 }
       if(selectedYear === 1967) { return showBones1967 }
@@ -99,10 +99,12 @@ const Explorer: React.FC<ExplorerProps> = ({
       if(selectedYear === 1987) { return showBones1987 }
       if(selectedYear === 1988) { return showBones1988 }
       if(selectedYear === 1989) { return showBones1989 }
+      if(selectedYear === 1990) { return showBones1990 }
+      if(selectedYear === 1991) { return showBones1991 }
 
     }
 
-    if (selectedYear && (selectedYear >= 1989) && collectionSelection)  {
+    if (selectedYear && (selectedYear >= 1991) && collectionSelection)  {
       const key = `showCollection${selectedYear}`;
       const shows = collectionSelection[key] || [];
       return filterShows(shows);
@@ -114,7 +116,7 @@ const Explorer: React.FC<ExplorerProps> = ({
   const activeCollection = useMemo(() => {
     // these if conditions are the boundary between new data and backwards compatibility
     // the year date can be modified as new data is entered
-    if (selectedYear && (selectedYear > 1964 && selectedYear < 1990)) {
+    if (selectedYear && (selectedYear > 1964 && selectedYear < 1992)) {
 
       // identify which imported collection to access
       let collection = showBones1965;
@@ -145,6 +147,8 @@ const Explorer: React.FC<ExplorerProps> = ({
       if(selectedYear === 1987) { collection =  showBones1987 }
       if(selectedYear === 1988) { collection =  showBones1988 }
       if(selectedYear === 1989) { collection =  showBones1989 }
+      if(selectedYear === 1990) { collection =  showBones1990 }
+      if(selectedYear === 1991) { collection =  showBones1991 }
 
       // create unique show date list
       const getUniqueByDate = (array:[]) => {
@@ -162,7 +166,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       const uniqueShowsByDate = getUniqueByDate(collection);
       return uniqueShowsByDate;
     }
-    if (selectedYear && (selectedYear >= 1989) && collectionSelection)  {
+    if (selectedYear && (selectedYear >= 1991) && collectionSelection)  {
       const key = `showCollection${selectedYear}`;
       const shows = collectionSelection[key] || [];
       return filterShows(shows);
