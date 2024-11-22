@@ -52,7 +52,7 @@ const Player: React.FC = () => {
         <XStack>
           {!isExpanded && (
             <Text color="$text">
-              {show?.date && formatDate(show?.date)}
+              {show?.date && formatDate(show?.date, true)}{" - "}
             </Text>
           )}
           <Text color="$text" fs="$2">
