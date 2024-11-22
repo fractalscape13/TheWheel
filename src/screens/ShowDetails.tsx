@@ -39,15 +39,13 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
     isLoading = false,
   } = route.params;
   const insets = useSafeAreaInsets();
-  const [tracks, setTracks] = useState<Track[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
-  const [showId, setShowId] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [activeShow, setActiveShow] = useState<any | null>(show);
-  const [showDataCollection, setShowDataCollection] = useState<any | null>(
-    null
-  );
+  const [activeShow, setActiveShow] = useState<any | null>(null);
+
+  useEffect(() => {
+    setActiveShow(show);
+  }, [show])
 
   const doMultipleSourcesExist = useMemo(() => {
     return (availableShowsOnSelectedDate?.length ?? 0) > 1;
@@ -55,81 +53,10 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
 
   const handleTrackLoad = (trackFile: string) => {
     if (!isLoading) {
-      const locatedTrackIndex = tracks?.findIndex(
-        (track) => track["file"] === trackFile
-      );
-      const audioUrl = `https://archive.org/download/${showId}/${tracks[locatedTrackIndex].file}`;
-      onSelectTrack(locatedTrackIndex, tracks, audioUrl, showId, show);
+      const audioUrl = `https://archive.org/download/${activeShow.showIdentifier}/${trackFile}`;
+      onSelectTrack(audioUrl, show);
     }
   };
-
-  useEffect(() => {
-    const fetchShowByDate = async (showDate: string) => {
-      const query = encodeURIComponent(`Grateful Dead AND date:${showDate}"`);
-      const url = `https://archive.org/advancedsearch.php?q=${query}&output=json&rows=50`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const results = data?.response?.docs;
-        if (results && results.length > 0) {
-          console.log("number of shows", results.length);
-          results.forEach(async (show, index) => {
-            const showId = show.identifier;
-            const showResponse = await fetch(
-              `https://archive.org/metadata/${showId}`
-            );
-            const showData = await showResponse.json();
-            const audioTracks = showData?.files
-              ?.filter((file: any) => file.format.includes("MP3"))
-              .map((file: any) => ({
-                title: file.title || file.name,
-                length: file.length || "N/A",
-                file: file.name,
-              }));
-
-            if (index === 0) {
-              setShowId(showId);
-              setShowDataCollection(showData);
-              setTracks(audioTracks);
-            }
-
-            console.log({
-              date: showData.metadata.date,
-              location: showData.metadata.coverage,
-              venue: showData.metadata.venue,
-              showIdentifier: showId,
-              source: showData.metadata.source || "N/A",
-              type: showData.metadata.type || "N/A",
-              tracks: audioTracks,
-              index: index,
-            });
-          });
-        } else {
-          console.error("No show data found for the specified date and venue.");
-        }
-      } catch (error) {
-        console.error("Error fetching show by date and venue:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const checkFavorite = async () => {
-      const favoriteShowsString = await SecureStore.getItemAsync(
-        FAVORITE_SHOWS
-      );
-      if (favoriteShowsString) {
-        const favoriteShows = JSON.parse(favoriteShowsString);
-        const isFavorited = favoriteShows.includes(show.date);
-        setIsFavorited(isFavorited);
-      }
-    };
-
-    if (show?.date) {
-      fetchShowByDate(show?.date);
-      checkFavorite();
-    }
-  }, [show]);
 
   const toggleFavorite = async () => {
     try {
@@ -156,22 +83,9 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
     }
   };
 
-  const handleAlternateShowSelect = async (selectedShow) => {
+  const handleNewShowSelect = (show) => {
+    setActiveShow(show);
     setIsOpen(false);
-    const showId = selectedShow.showIdentifier;
-    const showResponse = await fetch(`https://archive.org/metadata/${showId}`);
-    const showData = await showResponse.json();
-    const audioTracks = showData?.files
-      ?.filter((file: any) => file.format.includes("MP3"))
-      .map((file: any) => ({
-        title: file.title || file.name,
-        length: file.length || "N/A",
-        file: file.name,
-      }));
-    setShowId(showId);
-    setShowDataCollection(showData);
-    setTracks(audioTracks);
-    setActiveShow(selectedShow);
   };
 
   return (
@@ -193,7 +107,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
               <Touchable
                 w="100%"
                 key={`${show.showIdentifier}-${index}`}
-                onPress={() => handleAlternateShowSelect(show)}
+                onPress={() => handleNewShowSelect(show)}
                 hitSlop={5}
               >
                 <XStack
@@ -234,7 +148,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
         </XStack>
       </XStack>
       <Text fs="$5" fw="bold" color="$text" ta="center" mb="$2">
-        {formatDate(activeShow?.date)}
+        {activeShow?.date ? formatDate(activeShow?.date) : ""}
       </Text>
       <Text fs="$3" color="$text" ta="center">
         {activeShow?.venue}
@@ -253,6 +167,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
           px="$4"
           mb="$4"
           br="$4"
+          overflow="hidden"
         >
           {doMultipleSourcesExist ? (
             <Ionicons name="chevron-down" size={22} color="white" />
@@ -270,12 +185,12 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
         </XStack>
       </Touchable>
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {loading ? (
+        {isLoading ? (
           <YStack jc="center" ai="center" mt="$5">
             <ActivityIndicator size="small" color="#fff" />
           </YStack>
         ) : (
-          tracks?.map((track, index) => (
+          activeShow?.tracks?.map((track, index) => (
             <Touchable
               disabled={isLoading}
               key={`${track.title}-${index}`}

@@ -886,51 +886,6 @@ export const showBones1967 = [
     venue: "Fillmore Auditorium",
   },
   {
-    date: "1967-06",
-    index: 0,
-    location: "",
-    showIdentifier: "jefferson-airplane-fillmore-san-francisco-1967",
-    source: "N/A",
-    tracks: [
-      {
-        file: "01 3_5 Of A Mile In 10 Seconds.mp3",
-        length: "312.16",
-        title: "3/5 Of A Mile In 10 Seconds",
-      },
-      {
-        file: "02 Runnin' Round.mp3",
-        length: "156.11",
-        title: "Runnin' Round This World",
-      },
-      {
-        file: "03 Somebody To Love.mp3",
-        length: "187.4",
-        title: "Somebody To Love",
-      },
-      { file: "04 Today.mp3", length: "203.39", title: "Today" },
-      { file: "05 Get Together.mp3", length: "252.5", title: "Get Together" },
-      {
-        file: "06 Other Side Of This Life.mp3",
-        length: "410.44",
-        title: "Other Side Of This Life",
-      },
-      { file: "07 Fat Angel.mp3", length: "418.35", title: "Fat Angel" },
-      {
-        file: "08 ...Grace Talk....mp3",
-        length: "6.06",
-        title: "...Grace Talk...",
-      },
-      { file: "09 Go To Her.mp3", length: "261.43", title: "Go To Her" },
-      {
-        file: "10 She Has Funny Cars.mp3",
-        length: "215.98",
-        title: "She Has Funny Cars",
-      },
-    ],
-    type: "N/A",
-    venue: "",
-  },
-  {
     date: "1967-06-18",
     index: 2,
     location: "Monterey, CA",

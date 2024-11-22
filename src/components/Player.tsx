@@ -28,9 +28,7 @@ const Player: React.FC = () => {
   const {
     isExpanded,
     togglePlayerSize,
-    currentSongFile,
     currentPlayingSongIndex,
-    showFileCollection,
     duration,
     position,
     isPlaying,
@@ -39,8 +37,9 @@ const Player: React.FC = () => {
     handlePlayPause,
     previousSongAction,
     nextSongAction,
+    trackSelectAction,
   } = usePlayer();
-  if (!currentSongFile) return null;
+  if (!show) return null;
   return (
     <YStack
       bg="$bg2"
@@ -53,11 +52,11 @@ const Player: React.FC = () => {
         <XStack>
           {!isExpanded && (
             <Text color="$text">
-              {show?.date && formatDate(show?.date, true)}{" - "}
+              {show?.date && formatDate(show?.date)}
             </Text>
           )}
           <Text color="$text" fs="$2">
-            {currentSongFile?.title || currentSongFile?.name}
+            {show?.tracks[currentPlayingSongIndex]?.title || ""}
           </Text>
         </XStack>
         <Touchable onPress={togglePlayerSize} hitSlop={15}>
@@ -121,7 +120,7 @@ const Player: React.FC = () => {
       {isExpanded && show && (
         <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
           <Text fs="$5" fw="bold" color="$text" ta="center" my="$3">
-            {formatDate(show?.date)}
+            {show?.date}
           </Text>
           <Text fs="$3" fw="600" color="$text" ta="center">
             {show?.venue}
@@ -129,24 +128,39 @@ const Player: React.FC = () => {
           <Text fs="$3" fw="600" color="$text" ta="center" mb="$3">
             {show?.location}
           </Text>
-          {showFileCollection && (
             <YStack ta="center" mt="$3">
-              {showFileCollection?.map((track, index: number) => (
-                <Text
-                  key={track?.name}
-                  color={
-                    currentPlayingSongIndex === index
-                      ? "$trackProgress"
-                      : "$text"
-                  }
-                  fs="$3"
-                  mt="$2"
+              {show?.tracks?.map((track, index: number) => (
+                <Touchable
+                  onPress={() => trackSelectAction(index)}
+                  key={track?.file}
                 >
-                  {index + 1}) {track?.title || track?.name}
-                </Text>
+                  <XStack jc="space-between" ai="center" fd="row" w="100%">
+                    <Text
+                      color={
+                        currentPlayingSongIndex === index
+                          ? "$trackProgress"
+                          : "$text"
+                      }
+                      fs="$3"
+                      mt="$2"
+                    >
+                      {index + 1}) {track?.title || track?.file}
+                    </Text>
+                    <Text    
+                      color={
+                        currentPlayingSongIndex === index
+                          ? "$trackProgress"
+                          : "$text"
+                      }          
+                      fs="$3"
+                      mt="$2"
+                    >
+                      {track?.length}
+                    </Text>
+                  </XStack>
+                </Touchable>
               ))}
             </YStack>
-          )}
         </ScrollView>
       )}
     </YStack>

@@ -10,33 +10,16 @@ const Home = ({ navigation }: { navigation: any }) => {
   const insets = useSafeAreaInsets();
   const {
     isLoading,
-    setShowFileCollection,
-    setShowId,
     setShow,
     loadAudioAndPlay,
-    setCurrentPlayingSongIndex,
-    setCurrentSongFile,
   } = usePlayer();
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number>(1965);
   const handleSelectedTrack = async (
-    locatedTrackIndex: number,
-    tracks: any[],
     audioUrl: string,
-    showId: string,
     show: Show,
   ) => {
-    setCurrentPlayingSongIndex(locatedTrackIndex);
-    setShowId(showId);
     setShow(show);
-    setCurrentSongFile(tracks[locatedTrackIndex]);
-    const restructuredTrackMap = tracks.map((track) => ({
-      name: track.file,
-      file: track.file,
-      length: track.length,
-      title: track.title,
-    }));
-    setShowFileCollection(restructuredTrackMap);
     await loadAudioAndPlay(audioUrl);
   };
   return (
