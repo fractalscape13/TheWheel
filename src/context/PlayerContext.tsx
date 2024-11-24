@@ -11,20 +11,16 @@ type PlayerContextType = {
   position: number;
   currentSongFile: any;
   currentPlayingSongIndex: number;
-  showFileCollection: any[];
-  showId: string | null;
   show: Show | null;
   handleSeek: (value: number) => Promise<void>;
   handlePlayPause: () => Promise<void>;
   nextSongAction: () => Promise<void>;
   previousSongAction: () => Promise<void>;
+  trackSelectAction: (index:number) => Promise<void>;
   loadAudioAndPlay: (trackDownloadSlug: string) => Promise<void>;
   clearAudioFromStorage: () => Promise<void>;
-  setShowFileCollection: (files: any[]) => void;
-  setShowId: (id: string | null) => void;
   setShow: (show: Show | null) => void;
   setCurrentPlayingSongIndex: (index: number) => void;
-  setCurrentSongFile: (file: any | null) => void;
 };
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -33,8 +29,6 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   const [currentSong, setCurrentSong] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showFileCollection, setShowFileCollection] = useState([]);
-  const [showId, setShowId] = useState<string | null>(null);
   const [show, setShow] = useState<Show | null>(null);
   const [duration, setDuration] = useState(0);
   const [position, setPosition] = useState(0);
@@ -42,7 +36,6 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [expandedDetails, setExpandedDetails] = useState(false);
-  const [currentSongFile, setCurrentSongFile] = useState<any>(null);
 
   const togglePlayerSize = () => {
     setIsExpanded((prev) => !prev);
@@ -100,19 +93,17 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   };
 
   const nextSongAction = async () => {
-    if (currentPlayingSongIndex === showFileCollection.length - 1) {
+    if (currentPlayingSongIndex === show?.tracks?.length - 1) {
       return;
     }
     setIsLoading(true);
     const newIndex = currentPlayingSongIndex + 1;
+    setCurrentPlayingSongIndex(newIndex);
     if (currentSong) {
       await clearAudioFromStorage();
     }
-    const newSelectedSong = showFileCollection[newIndex];
-    setCurrentSongFile(newSelectedSong);
-    const audioUrl = `https://archive.org/download/${showId}/${newSelectedSong.name}`;
+    const audioUrl = `https://archive.org/download/${show.showIdentifier}/${show.tracks[newIndex].file}`;
     await loadAudioAndPlay(audioUrl);
-    setCurrentPlayingSongIndex(newIndex);
   };
 
   const previousSongAction = async () => {
@@ -121,14 +112,22 @@ export const PlayerProvider = ({ children }: { children: any }) => {
     }
     setIsLoading(true);
     const newIndex = currentPlayingSongIndex - 1;
+    setCurrentPlayingSongIndex(newIndex);
     if (currentSong) {
       await clearAudioFromStorage();
     }
-    const newSelectedSong = showFileCollection[newIndex];
-    setCurrentSongFile(newSelectedSong);
-    const audioUrl = `https://archive.org/download/${showId}/${newSelectedSong.name}`;
+    const audioUrl = `https://archive.org/download/${show.showIdentifier}/${show.tracks[newIndex].file}`;
     await loadAudioAndPlay(audioUrl);
-    setCurrentPlayingSongIndex(newIndex);
+  };
+
+  const trackSelectAction = async (selectedTrackIndex:number) => {
+    setIsLoading(true);
+    setCurrentPlayingSongIndex(selectedTrackIndex);
+    if (currentSong) {
+      await clearAudioFromStorage();
+    }
+    const audioUrl = `https://archive.org/download/${show.showIdentifier}/${show.tracks[selectedTrackIndex].file}`;
+    await loadAudioAndPlay(audioUrl);
   };
 
   return (
@@ -140,22 +139,17 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         togglePlayerSize,
         duration,
         position,
-        currentSongFile,
         currentPlayingSongIndex,
-        showFileCollection,
-        showId,
         show,
         handleSeek,
         handlePlayPause,
         nextSongAction,
         previousSongAction,
+        trackSelectAction,
         loadAudioAndPlay,
         clearAudioFromStorage,
-        setShowFileCollection,
-        setShowId,
         setShow,
         setCurrentPlayingSongIndex,
-        setCurrentSongFile,
       }}
     >
       {children}
