@@ -45,9 +45,9 @@ const Explorer: React.FC<ExplorerProps> = ({
   }, [selectedYear]);
 
   const uniqueShowDates = useMemo(() => {
-    const getUniqueByDate = (array:[]) => {
+    const getUniqueByDate = (collection) => {
       const seenDates = new Set();
-      return array.filter(show => {
+      return collection.filter((show:Show) => {
         const date = show.date;
         if (seenDates.has(date)) {
           return false;
@@ -60,7 +60,7 @@ const Explorer: React.FC<ExplorerProps> = ({
     return getUniqueByDate(activeCollection);
   }, [activeCollection]);
 
-  const handleShowSelect = show => {
+  const handleShowSelect = (show:Show) => {
     const allAvailableShowsOnSelectedDate = activeCollection.filter(unfilteredShow => unfilteredShow.date === show.date);
     return goToShow(show, allAvailableShowsOnSelectedDate);
   };
@@ -89,6 +89,8 @@ const Explorer: React.FC<ExplorerProps> = ({
       if (favoriteShowDatesString) {
         const favoriteShowDates = JSON.parse(favoriteShowDatesString);
         const foundShows: Show[] = [];
+
+        console.log("favoriteShowDates", favoriteShowDates);
      
         // to do: replace with update logic 
         // fix favorite shows by locating shows here

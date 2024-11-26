@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
 import { formatDate } from "@services/utils";
 import Touchable from "@components/Touchable";
-import { Track } from "../types";
+import { Track, Show } from "../types";
 import { FAVORITE_SHOWS } from "../constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -41,7 +41,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
   const insets = useSafeAreaInsets();
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [activeShow, setActiveShow] = useState<any | null>(null);
+  const [activeShow, setActiveShow] = useState<Show | null>(null);
 
   useEffect(() => {
     setActiveShow(show);
@@ -83,7 +83,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
     }
   };
 
-  const handleNewShowSelect = (show) => {
+  const handleNewShowSelect = (show:Show) => {
     setActiveShow(show);
     setIsOpen(false);
   };
@@ -102,7 +102,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
           br="$3"
           overflow="hidden"
         >
-          {availableShowsOnSelectedDate?.map((show, index: number) => {
+          {availableShowsOnSelectedDate?.map((show:Show, index: number) => {
             return (
               <Touchable
                 w="100%"
@@ -190,7 +190,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
             <ActivityIndicator size="small" color="#fff" />
           </YStack>
         ) : (
-          activeShow?.tracks?.map((track, index) => (
+          activeShow?.tracks?.map((track: Track, index:number) => (
             <Touchable
               disabled={isLoading}
               key={`${track.title}-${index}`}

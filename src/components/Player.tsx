@@ -120,7 +120,7 @@ const Player: React.FC = () => {
       {isExpanded && show && (
         <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
           <Text fs="$5" fw="bold" color="$text" ta="center" my="$3">
-            {show?.date}
+            {show?.date ? formatDate(show?.date) : ""}
           </Text>
           <Text fs="$3" fw="600" color="$text" ta="center">
             {show?.venue}
