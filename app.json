@@ -3,30 +3,38 @@
     "name": "The Wheel",
     "newArchEnabled": true,
     "slug": "thewheel",
+    "version": "1.0.0",
+    "orientation": "portrait",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.thewheel.app"
+      "bundleIdentifier": "com.thewheel.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio"]
+      }
     },
     "android": {
-      "package": "com.thewheel.app"
+      "package": "com.thewheel.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/wheel-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
     },
     "web": {
       "favicon": "./assets/wheel-icon.png"
     },
     "icon": "./assets/wheel-icon.png",
+    "splash": {
+      "image": "./assets/wheel-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "plugins": [
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "newArchEnabled": true
-          },
-          "android": {
-            "newArchEnabled": true
-          }
-        }
-      ],
       "expo-secure-store"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
     ]
   }
 }

@@ -6,12 +6,11 @@ import { formatDate } from "@services/utils";
 import { Show } from "../types";
 import * as SecureStore from "expo-secure-store";
 import { FAVORITE_SHOWS } from "../constants";
-import { getSelectedYearData } from "@services/yearsService"
-import { years } from "@services/utils"
-
+import { getSelectedYearData } from "@services/yearsService";
+import { years } from "@services/utils";
 
 type ExplorerProps = {
-  goToShow: (show: Show | null, availableShowsOnSelectedDate:any) => void;
+  goToShow: (show: Show | null, availableShowsOnSelectedDate: any) => void;
   setSelectedYear: (year: number) => void;
   selectedYear: number;
   isLoading: boolean;
@@ -45,7 +44,7 @@ const Explorer: React.FC<ExplorerProps> = ({
   }, [selectedYear]);
 
   const uniqueShowDates = useMemo(() => {
-    const getUniqueByDate = (collection) => {
+    const getUniqueByDate = (array: []) => {
       const seenDates = new Set();
       return collection.filter((show:Show) => {
         const date = show.date;
@@ -56,7 +55,7 @@ const Explorer: React.FC<ExplorerProps> = ({
         return true;
       });
     };
-    
+
     return getUniqueByDate(activeCollection);
   }, [activeCollection]);
 
@@ -88,13 +87,12 @@ const Explorer: React.FC<ExplorerProps> = ({
       );
       if (favoriteShowDatesString) {
         const favoriteShowDates = JSON.parse(favoriteShowDatesString);
+        console.log("fave showage:::", favoriteShowDates);
         const foundShows: Show[] = [];
 
-        console.log("favoriteShowDates", favoriteShowDates);
-     
-        // to do: replace with update logic 
+        // to do: replace with update logic
         // fix favorite shows by locating shows here
-        
+
         if (foundShows.length > 0) {
           setFavoriteShows(foundShows);
         } else {
@@ -129,7 +127,11 @@ const Explorer: React.FC<ExplorerProps> = ({
             }}
             onPress={() => handleSelectYear(year)}
             children={
-              <Text fs="$3" fw="bold" color={year === selectedYear ?  "black" : "white"}>
+              <Text
+                fs="$3"
+                fw="bold"
+                color={year === selectedYear ? "black" : "white"}
+              >
                 {year}
               </Text>
             }
