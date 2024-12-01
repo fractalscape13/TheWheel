@@ -16,11 +16,11 @@ const Home = ({ navigation }: { navigation: any }) => {
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [selectedYear, setSelectedYear] = useState<number>(1965);
   const handleSelectedTrack = async (
-    audioUrl: string,
+    selectedIndex: number,
     show: Show,
   ) => {
     setShow(show);
-    await loadAudioAndPlay(audioUrl);
+    await loadAudioAndPlay(show, selectedIndex);
   };
   return (
     <YStack

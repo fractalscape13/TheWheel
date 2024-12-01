@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
-import { formatDate, millisToMinutesAndSeconds } from "@services/utils";
+import { formatDate, secondsToFormattedMinutesSeconds } from "@services/utils";
 import Touchable from "@components/Touchable";
 import { usePlayer } from "../context/PlayerContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -96,8 +96,7 @@ const Player: React.FC = () => {
         </Touchable>
       </XStack>
       <Text color="$text" fs="$1" alignSelf="center" mb="$1">
-        {millisToMinutesAndSeconds(position)} /{" "}
-        {millisToMinutesAndSeconds(duration)}
+        {secondsToFormattedMinutesSeconds(position)}{" / "}{secondsToFormattedMinutesSeconds(duration)}
       </Text>
       <Slider
         w="100%"
@@ -134,7 +133,7 @@ const Player: React.FC = () => {
                   onPress={() => trackSelectAction(index)}
                   key={track?.file}
                 >
-                  <XStack jc="space-between" ai="center" fd="row" w="100%">
+                  <XStack jc="space-between" ai="center" fd="row" w="100%" >
                     <Text
                       color={
                         currentPlayingSongIndex === index
@@ -144,7 +143,7 @@ const Player: React.FC = () => {
                       fs="$3"
                       mt="$2"
                     >
-                      {index + 1}) {track?.title || track?.file}
+                      {index + 1} {track?.title || track?.file}
                     </Text>
                     <Text    
                       color={

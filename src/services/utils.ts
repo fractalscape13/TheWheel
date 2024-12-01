@@ -4,6 +4,12 @@ export const millisToMinutesAndSeconds = (millis: number) => {
   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 };
 
+export const secondsToFormattedMinutesSeconds = (seconds: number) => {
+  const minutes = Math.floor(seconds.toFixed(0) / 60);
+  const remainingSeconds = seconds.toFixed(0) % 60;
+  return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+};
+
 export const formatDate = (dateString: string, abbreviated?: boolean) => {
   const [year, month, day] = dateString.split("-").map(Number); 
   const date = new Date(Date.UTC(year, month - 1, (day + 1)));

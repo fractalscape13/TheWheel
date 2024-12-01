@@ -51,11 +51,8 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
     return (availableShowsOnSelectedDate?.length ?? 0) > 1;
   }, [availableShowsOnSelectedDate]);
 
-  const handleTrackLoad = (trackFile: string) => {
-    if (!isLoading) {
-      const audioUrl = `https://archive.org/download/${activeShow.showIdentifier}/${trackFile}`;
-      onSelectTrack(audioUrl, show);
-    }
+  const handleTrackLoad = (trackIndex: string) => {
+    onSelectTrack(trackIndex, show);
   };
 
   const toggleFavorite = async () => {
@@ -194,7 +191,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
             <Touchable
               disabled={isLoading}
               key={`${track.title}-${index}`}
-              onPress={() => handleTrackLoad(track.file)}
+              onPress={() => handleTrackLoad(index)}
             >
               <XStack
                 bg="$secondary"

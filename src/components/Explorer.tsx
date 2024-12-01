@@ -1,6 +1,5 @@
 import { Text, YStack, useTheme, ScrollView, XStack } from "tamagui";
 import React, { useMemo, useRef, useState, useEffect } from "react";
-
 import Touchable from "@components/Touchable";
 import { formatDate } from "@services/utils";
 import { Show } from "../types";
@@ -46,7 +45,7 @@ const Explorer: React.FC<ExplorerProps> = ({
   const uniqueShowDates = useMemo(() => {
     const getUniqueByDate = (array: []) => {
       const seenDates = new Set();
-      return collection.filter((show:Show) => {
+      return array.filter((show:Show) => {
         const date = show.date;
         if (seenDates.has(date)) {
           return false;
