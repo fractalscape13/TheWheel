@@ -1,133 +1,113 @@
 import React, { createContext, useState, useContext } from "react";
-import { Audio } from "expo-av";
-import { Show } from "../types";
+import { Show, Track } from "../types";
+import {
+  addTracks,
+  playTrack,
+  reset,
+  seekTo,
+  selectTrack,
+  handlePlayPause,
+  nextSongAction,
+  previousSongAction,
+} from "../services/trackPlayer";
+import {
+  useProgress,
+  useTrackPlayerEvents,
+  Event,
+  State,
+} from "react-native-track-player";
 
 type PlayerContextType = {
-  isPlaying: boolean;
   isLoading: boolean;
+  isPlaying: boolean;
   isExpanded: boolean;
   togglePlayerSize: () => void;
   duration: number;
   position: number;
-  currentSongFile: any;
-  currentPlayingSongIndex: number;
   show: Show | null;
+  currentPlayingSongIndex: number | null;
   handleSeek: (value: number) => Promise<void>;
   handlePlayPause: () => Promise<void>;
   nextSongAction: () => Promise<void>;
   previousSongAction: () => Promise<void>;
-  trackSelectAction: (index:number) => Promise<void>;
-  loadAudioAndPlay: (trackDownloadSlug: string) => Promise<void>;
-  clearAudioFromStorage: () => Promise<void>;
+  trackSelectAction: (index: number) => Promise<void>;
+  loadAudioAndPlay: (show: Show, trackIndex: number) => Promise<void>;
   setShow: (show: Show | null) => void;
-  setCurrentPlayingSongIndex: (index: number) => void;
 };
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
 export const PlayerProvider = ({ children }: { children: any }) => {
-  const [currentSong, setCurrentSong] = useState<Audio.Sound | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [show, setShow] = useState<Show | null>(null);
-  const [duration, setDuration] = useState(0);
-  const [position, setPosition] = useState(0);
-  const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [expandedDetails, setExpandedDetails] = useState(false);
+  const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState<
+    number | null
+  >(null);
+  const [playerState, setPlayerState] = useState(null);
+
+  const progress = useProgress();
+
+  const events = [Event.PlaybackState, Event.PlaybackError];
+
+  useTrackPlayerEvents(events, (event) => {
+    if (event.type === Event.PlaybackError) {
+      // error state, useful for analytics?
+    }
+    if (event.type === Event.PlaybackState) {
+      setPlayerState(event.state);
+    }
+  });
+
+  const isPlaying = playerState === State.Playing;
 
   const togglePlayerSize = () => {
     setIsExpanded((prev) => !prev);
   };
 
-  const onPlaybackStatusUpdate = (status: any) => {
-    if (status.isLoaded) {
-      setIsLoading(false);
-      setDuration(status.durationMillis);
-      setPosition(status.positionMillis);
-
-      if (status.didJustFinish) {
-        nextSongAction();
-      }
-    }
-  };
-
-  const loadAudioAndPlay = async (trackDownloadSlug: string) => {
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: trackDownloadSlug },
-      { shouldPlay: true },
-      (status) => setIsPlaying(status.isLoaded)
-    );
-    setCurrentSong(sound);
-    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+  const loadAudioAndPlay = async (show: Show, trackIndex: number) => {
+    await clearAudioFromStorage();
+    setShow(show);
+    setCurrentPlayingSongIndex(trackIndex);
+    const formattedTracks = show?.tracks?.map((track: Track) => {
+      const audioUrl = `https://archive.org/download/${show.showIdentifier}/${track.file}`;
+      return {
+        artist: "Grateful Dead",
+        title: track.title,
+        url: audioUrl,
+      };
+    });
+    await addTracks(formattedTracks);
+    await selectTrack(trackIndex);
+    await playTrack();
   };
 
   const clearAudioFromStorage = async () => {
-    if (currentSong) {
-      await currentSong.stopAsync();
-      await currentSong.unloadAsync();
-      setDuration(0);
-      setPosition(0);
-      setCurrentSong(null);
-    }
+    setCurrentPlayingSongIndex(null);
+    await reset();
   };
 
   const handleSeek = async (value: number) => {
-    if (currentSong) {
-      await currentSong.setPositionAsync(value);
-    }
+    await seekTo(value);
   };
 
-  const handlePlayPause = async () => {
-    if (currentSong) {
-      const status = await currentSong.getStatusAsync();
-      if (status.isPlaying) {
-        await currentSong.pauseAsync();
-        setIsPlaying(false);
-      } else {
-        await currentSong.playAsync();
-        setIsPlaying(true);
-      }
-    }
+  const handleNextSongAction = async () => {
+    setCurrentPlayingSongIndex((prevIndex: number | null) =>
+      prevIndex ? prevIndex + 1 : null
+    );
+    await nextSongAction();
   };
 
-  const nextSongAction = async () => {
-    if (currentPlayingSongIndex === show?.tracks?.length - 1) {
-      return;
-    }
-    setIsLoading(true);
-    const newIndex = currentPlayingSongIndex + 1;
-    setCurrentPlayingSongIndex(newIndex);
-    if (currentSong) {
-      await clearAudioFromStorage();
-    }
-    const audioUrl = `https://archive.org/download/${show.showIdentifier}/${show.tracks[newIndex].file}`;
-    await loadAudioAndPlay(audioUrl);
+  const handlePreviousSongAction = async () => {
+    setCurrentPlayingSongIndex((prevIndex: number | null) =>
+      prevIndex ? prevIndex - 1 : null
+    );
+    await previousSongAction();
   };
 
-  const previousSongAction = async () => {
-    if (currentPlayingSongIndex === 0) {
-      return;
-    }
-    setIsLoading(true);
-    const newIndex = currentPlayingSongIndex - 1;
-    setCurrentPlayingSongIndex(newIndex);
-    if (currentSong) {
-      await clearAudioFromStorage();
-    }
-    const audioUrl = `https://archive.org/download/${show.showIdentifier}/${show.tracks[newIndex].file}`;
-    await loadAudioAndPlay(audioUrl);
-  };
-
-  const trackSelectAction = async (selectedTrackIndex:number) => {
-    setIsLoading(true);
+  const trackSelectAction = async (selectedTrackIndex: number) => {
     setCurrentPlayingSongIndex(selectedTrackIndex);
-    if (currentSong) {
-      await clearAudioFromStorage();
-    }
-    const audioUrl = `https://archive.org/download/${show.showIdentifier}/${show.tracks[selectedTrackIndex].file}`;
-    await loadAudioAndPlay(audioUrl);
+    await selectTrack(selectedTrackIndex);
   };
 
   return (
@@ -137,19 +117,17 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         isLoading,
         isExpanded,
         togglePlayerSize,
-        duration,
-        position,
-        currentPlayingSongIndex,
+        duration: progress.duration,
+        position: progress.position,
         show,
+        currentPlayingSongIndex,
         handleSeek,
         handlePlayPause,
-        nextSongAction,
-        previousSongAction,
+        nextSongAction: handleNextSongAction,
+        previousSongAction: handlePreviousSongAction,
         trackSelectAction,
         loadAudioAndPlay,
-        clearAudioFromStorage,
         setShow,
-        setCurrentPlayingSongIndex,
       }}
     >
       {children}

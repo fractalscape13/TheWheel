@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
-import { formatDate, millisToMinutesAndSeconds } from "@services/utils";
+import { formatDate, secondsToFormattedMinutesSeconds } from "@services/utils";
 import Touchable from "@components/Touchable";
 import { usePlayer } from "../context/PlayerContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -52,7 +52,8 @@ const Player: React.FC = () => {
         <XStack>
           {!isExpanded && (
             <Text color="$text">
-              {show?.date && formatDate(show?.date, true)}{" - "}
+              {show?.date && formatDate(show?.date, true)}
+              {" - "}
             </Text>
           )}
           <Text color="$text" fs="$2">
@@ -96,8 +97,9 @@ const Player: React.FC = () => {
         </Touchable>
       </XStack>
       <Text color="$text" fs="$1" alignSelf="center" mb="$1">
-        {millisToMinutesAndSeconds(position)} /{" "}
-        {millisToMinutesAndSeconds(duration)}
+        {secondsToFormattedMinutesSeconds(position)}
+        {" / "}
+        {secondsToFormattedMinutesSeconds(duration)}
       </Text>
       <Slider
         w="100%"
@@ -120,7 +122,7 @@ const Player: React.FC = () => {
       {isExpanded && show && (
         <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
           <Text fs="$5" fw="bold" color="$text" ta="center" my="$3">
-            {show?.date}
+            {show?.date ? formatDate(show?.date) : ""}
           </Text>
           <Text fs="$3" fw="600" color="$text" ta="center">
             {show?.venue}
@@ -128,39 +130,39 @@ const Player: React.FC = () => {
           <Text fs="$3" fw="600" color="$text" ta="center" mb="$3">
             {show?.location}
           </Text>
-            <YStack ta="center" mt="$3">
-              {show?.tracks?.map((track, index: number) => (
-                <Touchable
-                  onPress={() => trackSelectAction(index)}
-                  key={track?.file}
-                >
-                  <XStack jc="space-between" ai="center" fd="row" w="100%">
-                    <Text
-                      color={
-                        currentPlayingSongIndex === index
-                          ? "$trackProgress"
-                          : "$text"
-                      }
-                      fs="$3"
-                      mt="$2"
-                    >
-                      {index + 1}) {track?.title || track?.file}
-                    </Text>
-                    <Text    
-                      color={
-                        currentPlayingSongIndex === index
-                          ? "$trackProgress"
-                          : "$text"
-                      }          
-                      fs="$3"
-                      mt="$2"
-                    >
-                      {track?.length}
-                    </Text>
-                  </XStack>
-                </Touchable>
-              ))}
-            </YStack>
+          <YStack ta="center" mt="$3">
+            {show?.tracks?.map((track, index: number) => (
+              <Touchable
+                onPress={() => trackSelectAction(index)}
+                key={track?.file}
+              >
+                <XStack jc="space-between" ai="center" fd="row" w="100%">
+                  <Text
+                    color={
+                      currentPlayingSongIndex === index
+                        ? "$trackProgress"
+                        : "$text"
+                    }
+                    fs="$3"
+                    mt="$2"
+                  >
+                    {index + 1} {track?.title || track?.file}
+                  </Text>
+                  <Text
+                    color={
+                      currentPlayingSongIndex === index
+                        ? "$trackProgress"
+                        : "$text"
+                    }
+                    fs="$3"
+                    mt="$2"
+                  >
+                    {track?.length}
+                  </Text>
+                </XStack>
+              </Touchable>
+            ))}
+          </YStack>
         </ScrollView>
       )}
     </YStack>
