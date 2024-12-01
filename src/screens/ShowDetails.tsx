@@ -47,6 +47,27 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
     setActiveShow(show);
   }, [show]);
 
+  const checkFavoriteStatus = async (show: Show) => {
+    try {
+      const favoriteShowsString = await SecureStore.getItemAsync(
+        FAVORITE_SHOWS
+      );
+      let favoriteShows: string[] = favoriteShowsString
+        ? JSON.parse(favoriteShowsString)
+        : [];
+
+      if (favoriteShows.includes(show.date)){
+        setIsFavorited(true);
+      }
+    } catch (error) {
+      console.error("Error getting favorite shows:", error);
+    }
+  }
+
+  useEffect(() => {
+    checkFavoriteStatus(show);
+  }, [show]);
+
   const doMultipleSourcesExist = useMemo(() => {
     return (availableShowsOnSelectedDate?.length ?? 0) > 1;
   }, [availableShowsOnSelectedDate]);

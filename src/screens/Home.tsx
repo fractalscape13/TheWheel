@@ -10,7 +10,7 @@ const Home = ({ navigation }: { navigation: any }) => {
   const insets = useSafeAreaInsets();
   const { isLoading, setShow, loadAudioAndPlay } = usePlayer();
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
-  const [selectedYear, setSelectedYear] = useState<number>(1965);
+  const [selectedYear, setSelectedYear] = useState<number>(0);
   const handleSelectedTrack = async (selectedIndex: number, show: Show) => {
     setShow(show);
     await loadAudioAndPlay(show, selectedIndex);
