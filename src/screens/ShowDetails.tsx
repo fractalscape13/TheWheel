@@ -45,7 +45,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
 
   useEffect(() => {
     setActiveShow(show);
-  }, [show])
+  }, [show]);
 
   const doMultipleSourcesExist = useMemo(() => {
     return (availableShowsOnSelectedDate?.length ?? 0) > 1;
@@ -80,7 +80,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
     }
   };
 
-  const handleNewShowSelect = (show:Show) => {
+  const handleNewShowSelect = (show: Show) => {
     setActiveShow(show);
     setIsOpen(false);
   };
@@ -99,7 +99,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
           br="$3"
           overflow="hidden"
         >
-          {availableShowsOnSelectedDate?.map((show:Show, index: number) => {
+          {availableShowsOnSelectedDate?.map((show: Show, index: number) => {
             return (
               <Touchable
                 w="100%"
@@ -187,7 +187,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
             <ActivityIndicator size="small" color="#fff" />
           </YStack>
         ) : (
-          activeShow?.tracks?.map((track: Track, index:number) => (
+          activeShow?.tracks?.map((track: Track, index: number) => (
             <Touchable
               disabled={isLoading}
               key={`${track.title}-${index}`}

@@ -1,7 +1,4 @@
-import TrackPlayer, {
-  Event,
-  State,
-} from "react-native-track-player";
+import TrackPlayer, { Event, State } from "react-native-track-player";
 
 export const setupPlayer = async () => {
   let isSetup = false;
@@ -9,34 +6,32 @@ export const setupPlayer = async () => {
     await TrackPlayer.getCurrentTrack();
     isSetup = true;
     console.log(`Track Player Setup: -->>> ${isSetup}`);
-  }
-  catch {
+  } catch {
     await TrackPlayer.setupPlayer();
     await TrackPlayer.updateOptions({
       stopWithApp: true,
       capabilities: [
-          TrackPlayer.CAPABILITY_PLAY,
-          TrackPlayer.CAPABILITY_PAUSE,
-          TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-          TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-          TrackPlayer.CAPABILITY_STOP,
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_STOP,
       ],
       compactCapabilities: [
-          TrackPlayer.CAPABILITY_PLAY,
-          TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
       ],
       notificationCapabilities: [
-          TrackPlayer.CAPABILITY_PLAY,
-          TrackPlayer.CAPABILITY_PAUSE,
-          TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-          TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
       ],
-  });
+    });
 
     isSetup = true;
     console.log(`Track Player Setup: -->>> ${isSetup}`);
-  }
-  finally {
+  } finally {
     return isSetup;
   }
 };
@@ -53,24 +48,38 @@ export const playbackService = async () => {
   });
 };
 
-export const addTracks = async (tracks: []) => { await TrackPlayer.add(tracks) }
+export const addTracks = async (tracks: []) => {
+  await TrackPlayer.add(tracks);
+};
 
-export const playTrack = async () => { await TrackPlayer.play() }
+export const playTrack = async () => {
+  await TrackPlayer.play();
+};
 
-export const reset = async () => { await TrackPlayer.reset() }
+export const reset = async () => {
+  await TrackPlayer.reset();
+};
 
-export const seekTo = async (value:number) => { await TrackPlayer.seekTo(value) };
+export const seekTo = async (value: number) => {
+  await TrackPlayer.seekTo(value);
+};
 
-export const nextSongAction = async () => { await TrackPlayer.skipToNext() };
+export const nextSongAction = async () => {
+  await TrackPlayer.skipToNext();
+};
 
-export const previousSongAction = async () => { await TrackPlayer.skipToPrevious() };
+export const previousSongAction = async () => {
+  await TrackPlayer.skipToPrevious();
+};
 
-export const selectTrack = async (selectedTrackIndex:number) => { 
-  await TrackPlayer.skip(selectedTrackIndex)
-  return await TrackPlayer.play()
- };
+export const selectTrack = async (selectedTrackIndex: number) => {
+  await TrackPlayer.skip(selectedTrackIndex);
+  return await TrackPlayer.play();
+};
 
-export const getState = async () => { await TrackPlayer.getState() };
+export const getState = async () => {
+  await TrackPlayer.getState();
+};
 
 export const handlePlayPause = async () => {
   const state = await TrackPlayer.getState();
@@ -80,8 +89,3 @@ export const handlePlayPause = async () => {
     return TrackPlayer.play();
   }
 };
-
-
-
-
-

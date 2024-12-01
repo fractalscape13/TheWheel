@@ -1,7 +1,21 @@
 import React, { createContext, useState, useContext } from "react";
 import { Show, Track } from "../types";
-import { addTracks, playTrack, reset, seekTo, selectTrack, handlePlayPause, nextSongAction, previousSongAction } from "../services/trackPlayer";
-import { useProgress, useTrackPlayerEvents, Event, State } from 'react-native-track-player';
+import {
+  addTracks,
+  playTrack,
+  reset,
+  seekTo,
+  selectTrack,
+  handlePlayPause,
+  nextSongAction,
+  previousSongAction,
+} from "../services/trackPlayer";
+import {
+  useProgress,
+  useTrackPlayerEvents,
+  Event,
+  State,
+} from "react-native-track-player";
 
 type PlayerContextType = {
   isLoading: boolean;
@@ -16,7 +30,7 @@ type PlayerContextType = {
   handlePlayPause: () => Promise<void>;
   nextSongAction: () => Promise<void>;
   previousSongAction: () => Promise<void>;
-  trackSelectAction: (index:number) => Promise<void>;
+  trackSelectAction: (index: number) => Promise<void>;
   loadAudioAndPlay: (show: Show, trackIndex: number) => Promise<void>;
   setShow: (show: Show | null) => void;
 };
@@ -27,15 +41,14 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   const [show, setShow] = useState<Show | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState<number | null>(null);
-  const [playerState, setPlayerState] = useState(null)
+  const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState<
+    number | null
+  >(null);
+  const [playerState, setPlayerState] = useState(null);
 
   const progress = useProgress();
 
-  const events = [
-    Event.PlaybackState,
-    Event.PlaybackError,
-  ];
+  const events = [Event.PlaybackState, Event.PlaybackError];
 
   useTrackPlayerEvents(events, (event) => {
     if (event.type === Event.PlaybackError) {
@@ -62,14 +75,14 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         artist: "Grateful Dead",
         title: track.title,
         url: audioUrl,
-      }
+      };
     });
     await addTracks(formattedTracks);
     await selectTrack(trackIndex);
     await playTrack();
   };
 
-  const clearAudioFromStorage = async () => { 
+  const clearAudioFromStorage = async () => {
     setCurrentPlayingSongIndex(null);
     await reset();
   };
@@ -79,16 +92,20 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   };
 
   const handleNextSongAction = async () => {
-    setCurrentPlayingSongIndex((prevIndex:number | null) => prevIndex ? prevIndex + 1 : null)
+    setCurrentPlayingSongIndex((prevIndex: number | null) =>
+      prevIndex ? prevIndex + 1 : null
+    );
     await nextSongAction();
   };
 
   const handlePreviousSongAction = async () => {
-    setCurrentPlayingSongIndex((prevIndex:number | null) => prevIndex ? prevIndex - 1 : null)
+    setCurrentPlayingSongIndex((prevIndex: number | null) =>
+      prevIndex ? prevIndex - 1 : null
+    );
     await previousSongAction();
   };
 
-  const trackSelectAction = async (selectedTrackIndex:number) => {
+  const trackSelectAction = async (selectedTrackIndex: number) => {
     setCurrentPlayingSongIndex(selectedTrackIndex);
     await selectTrack(selectedTrackIndex);
   };

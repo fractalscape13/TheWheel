@@ -8,28 +8,15 @@ import { Show } from "../types";
 
 const Home = ({ navigation }: { navigation: any }) => {
   const insets = useSafeAreaInsets();
-  const {
-    isLoading,
-    setShow,
-    loadAudioAndPlay,
-  } = usePlayer();
+  const { isLoading, setShow, loadAudioAndPlay } = usePlayer();
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [selectedYear, setSelectedYear] = useState<number>(1965);
-  const handleSelectedTrack = async (
-    selectedIndex: number,
-    show: Show,
-  ) => {
+  const handleSelectedTrack = async (selectedIndex: number, show: Show) => {
     setShow(show);
     await loadAudioAndPlay(show, selectedIndex);
   };
   return (
-    <YStack
-      flex={1}
-      bg="$bg"
-      px="$3"
-      pt={insets.top}
-      pb={insets.bottom}
-    >
+    <YStack flex={1} bg="$bg" px="$3" pt={insets.top} pb={insets.bottom}>
       <SearchBar
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}

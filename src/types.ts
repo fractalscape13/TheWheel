@@ -6,10 +6,10 @@ export interface Show {
   source: string;
   venue: string;
   type: string;
-  tracks?: { 
+  tracks?: {
     file: string;
     length: string;
-    title: string 
+    title: string;
   }[];
 }
 
@@ -17,4 +17,4 @@ export interface Track {
   title: string;
   length: string;
   file: string;
-};
+}

@@ -45,7 +45,7 @@ const Explorer: React.FC<ExplorerProps> = ({
   const uniqueShowDates = useMemo(() => {
     const getUniqueByDate = (array: []) => {
       const seenDates = new Set();
-      return array.filter((show:Show) => {
+      return array.filter((show: Show) => {
         const date = show.date;
         if (seenDates.has(date)) {
           return false;
@@ -58,8 +58,10 @@ const Explorer: React.FC<ExplorerProps> = ({
     return getUniqueByDate(activeCollection);
   }, [activeCollection]);
 
-  const handleShowSelect = (show:Show) => {
-    const allAvailableShowsOnSelectedDate = activeCollection.filter(unfilteredShow => unfilteredShow.date === show.date);
+  const handleShowSelect = (show: Show) => {
+    const allAvailableShowsOnSelectedDate = activeCollection.filter(
+      (unfilteredShow) => unfilteredShow.date === show.date
+    );
     return goToShow(show, allAvailableShowsOnSelectedDate);
   };
 
