@@ -11,4 +11,4 @@
 > config changes require `npx expo prebuild` to update native directories
 
 
-> cleanup command `rm -rf node_modules yarn.lock ios/build ios/Podfile.lock ios/Pods && yarn install && cd ios && RCT_NEW_ARCH_ENABLED=1 pod install && cd .. && yarn cache clean ` 
+> cleanup command `yarn cache clean && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock ios/Pods && yarn install && cd ios && RCT_NEW_ARCH_ENABLED=1 pod install && cd .. ` 
