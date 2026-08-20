@@ -54,6 +54,12 @@ export const playbackService = async () => {
   });
 };
 
+/** Reads back what the native player is currently on, for rehydrating after a
+ *  JS reload — the playback service outlives the JS context. */
+export const getActiveTrack = async () => TrackPlayer.getActiveTrack();
+
+export const getActiveTrackIndex = async () => TrackPlayer.getActiveTrackIndex();
+
 export const addTracks = async (tracks: AddTrack[]) => {
   await TrackPlayer.add(tracks);
 };

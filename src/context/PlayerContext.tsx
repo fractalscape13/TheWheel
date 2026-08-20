@@ -1,7 +1,10 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Show, Track } from "../types";
 import {
   addTracks,
+  getActiveTrack,
+  getActiveTrackIndex,
+  getState,
   playTrack,
   reset,
   seekTo,
@@ -10,6 +13,7 @@ import {
   nextSongAction,
   previousSongAction,
 } from "../services/trackPlayer";
+import { getSelectedYearData } from "@services/yearsService";
 import {
   useProgress,
   useTrackPlayerEvents,
@@ -68,6 +72,51 @@ export const PlayerProvider = ({ children }: { children: any }) => {
     }
   });
 
+  // The playback service survives a JS reload, so audio can still be playing
+  // while React state is empty — which hid the player controls entirely.
+  useEffect(() => {
+    let cancelled = false;
+
+    const restoreFromNativePlayer = async () => {
+      try {
+        const activeTrack = await getActiveTrack();
+        const showDate = activeTrack?.showDate as string | undefined;
+        if (cancelled || !showDate) {
+          return;
+        }
+        const year = parseInt(showDate.split("-")[0], 10);
+        if (!year) {
+          return;
+        }
+        const restored = getSelectedYearData(year).find(
+          (candidate) =>
+            candidate.date === showDate &&
+            candidate.showIdentifier === activeTrack?.showIdentifier
+        );
+        if (!restored || cancelled) {
+          return;
+        }
+        const [activeIndex, state] = await Promise.all([
+          getActiveTrackIndex(),
+          getState(),
+        ]);
+        if (cancelled) {
+          return;
+        }
+        setShow(restored);
+        setCurrentPlayingSongIndex(activeIndex ?? null);
+        setPlayerState(state ?? null);
+      } catch {
+        // No player set up yet (cold start) — nothing to restore.
+      }
+    };
+
+    restoreFromNativePlayer();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const isPlaying = playerState === State.Playing;
 
   const togglePlayerSize = () => {
@@ -89,6 +138,10 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         artist: "Grateful Dead",
         title: track.title,
         url: audioUrl,
+        // Carried so state can be rebuilt after a JS reload; the native
+        // playback service keeps going but React state starts empty.
+        showDate: show.date,
+        showIdentifier: show.showIdentifier,
       };
     });
     if (!formattedTracks?.length) {
