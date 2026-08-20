@@ -44,11 +44,15 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState<
     number | null
   >(null);
-  const [playerState, setPlayerState] = useState(null);
+  const [playerState, setPlayerState] = useState<State | null>(null);
 
   const progress = useProgress();
 
-  const events = [Event.PlaybackState, Event.PlaybackError];
+  const events = [
+    Event.PlaybackState,
+    Event.PlaybackError,
+    Event.PlaybackActiveTrackChanged,
+  ];
 
   useTrackPlayerEvents(events, (event) => {
     if (event.type === Event.PlaybackError) {
@@ -56,6 +60,11 @@ export const PlayerProvider = ({ children }: { children: any }) => {
     }
     if (event.type === Event.PlaybackState) {
       setPlayerState(event.state);
+    }
+    // The player advances by itself at the end of a track (and from the lock
+    // screen), so follow its index rather than only tracking our own taps.
+    if (event.type === Event.PlaybackActiveTrackChanged) {
+      setCurrentPlayingSongIndex(event.index ?? null);
     }
   });
 
@@ -66,6 +75,11 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   };
 
   const loadAudioAndPlay = async (show: Show, trackIndex: number) => {
+    // A few archive records have no identifier or no track list; without this the
+    // URL becomes ".../undefined/..." and the player fails silently.
+    if (!show?.showIdentifier || !show?.tracks?.length) {
+      return;
+    }
     await clearAudioFromStorage();
     setShow(show);
     setCurrentPlayingSongIndex(trackIndex);
@@ -77,9 +91,17 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         url: audioUrl,
       };
     });
-    await addTracks(formattedTracks);
-    await selectTrack(trackIndex);
-    await playTrack();
+    if (!formattedTracks?.length) {
+      return;
+    }
+    try {
+      setIsLoading(true);
+      await addTracks(formattedTracks);
+      await selectTrack(trackIndex);
+      await playTrack();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const clearAudioFromStorage = async () => {
@@ -92,15 +114,16 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   };
 
   const handleNextSongAction = async () => {
-    setCurrentPlayingSongIndex((prevIndex: number | null) =>
-      prevIndex ? prevIndex + 1 : null
+    const lastIndex = (show?.tracks?.length ?? 0) - 1;
+    setCurrentPlayingSongIndex((prevIndex) =>
+      prevIndex === null ? null : Math.min(prevIndex + 1, lastIndex)
     );
     await nextSongAction();
   };
 
   const handlePreviousSongAction = async () => {
-    setCurrentPlayingSongIndex((prevIndex: number | null) =>
-      prevIndex ? prevIndex - 1 : null
+    setCurrentPlayingSongIndex((prevIndex) =>
+      prevIndex === null ? null : Math.max(prevIndex - 1, 0)
     );
     await previousSongAction();
   };

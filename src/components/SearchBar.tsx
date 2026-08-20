@@ -1,20 +1,14 @@
 import React from "react";
 import { XStack, Input, View, useTheme } from "tamagui";
-import { ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Touchable from "./Touchable";
 
 type SearchBarProps = {
   searchTerm: string | undefined;
   setSearchTerm: (value: string) => void;
-  isLoading: boolean;
 };
 
-const SearchBar: React.FC<SearchBarProps> = ({
-  searchTerm,
-  setSearchTerm,
-  isLoading,
-}) => {
+const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, setSearchTerm }) => {
   const theme = useTheme();
   return (
     <XStack jc="space-between" ai="center" mb="$3">
@@ -23,6 +17,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
           placeholder="Filter by city or venue..."
           placeholderTextColor="$textPlaceholder"
           color="$text"
+          autoCapitalize="none"
+          autoCorrect={false}
+          returnKeyType="search"
+          clearButtonMode="never"
           style={{ backgroundColor: theme?.bg?.val }}
           value={searchTerm}
           onChangeText={setSearchTerm}
@@ -51,11 +49,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         bg="transparent"
         ml="$2"
       >
-        {isLoading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Ionicons name="search" size={28} color={theme?.$buttonBg?.val} />
-        )}
+        <Ionicons name="search" size={28} color={theme?.primary?.val} />
       </View>
     </XStack>
   );

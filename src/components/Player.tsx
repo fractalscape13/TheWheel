@@ -4,7 +4,6 @@ import {
   YStack,
   XStack,
   Slider,
-  styled,
   ScrollView,
   useTheme,
 } from "tamagui";
@@ -13,14 +12,6 @@ import { formatDate, secondsToFormattedMinutesSeconds } from "@services/utils";
 import Touchable from "@components/Touchable";
 import { usePlayer } from "../context/PlayerContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const CustomTrack = styled(YStack, {
-  width: "100%",
-  height: 8,
-  borderRadius: 10,
-  backgroundColor: "$trackBg",
-  position: "relative",
-});
 
 const Player: React.FC = () => {
   const theme = useTheme();
@@ -44,20 +35,20 @@ const Player: React.FC = () => {
     <YStack
       bg="$bg2"
       px="$4"
-      pt={isExpanded && insets.top}
-      pb={!isExpanded && insets.bottom}
+      pt={isExpanded ? insets.top : 0}
+      pb={isExpanded ? 0 : insets.bottom}
       h={isExpanded ? "100%" : "auto"}
     >
       <XStack jc="space-between" ai="center" pt="$2">
         <XStack>
           {!isExpanded && (
             <Text color="$text">
-              {show?.date && formatDate(show?.date, true)}
+              {show?.date && formatDate(show?.date)}
               {" - "}
             </Text>
           )}
           <Text color="$text" fs="$2">
-            {show?.tracks[currentPlayingSongIndex]?.title || ""}
+            {show?.tracks?.[currentPlayingSongIndex ?? -1]?.title || ""}
           </Text>
         </XStack>
         <Touchable onPress={togglePlayerSize} hitSlop={15}>
@@ -96,7 +87,7 @@ const Player: React.FC = () => {
           />
         </Touchable>
       </XStack>
-      <Text color="$text" fs="$1" alignSelf="center" mb="$1">
+      <Text color="$text" fs="$1" ff="$mono" alignSelf="center" mb="$1">
         {secondsToFormattedMinutesSeconds(position)}
         {" / "}
         {secondsToFormattedMinutesSeconds(duration)}
@@ -105,23 +96,32 @@ const Player: React.FC = () => {
         w="100%"
         mt="$1"
         mb="$3"
-        defaultValue={[0]}
+        size="$2"
         min={0}
-        maxValue={duration || 1}
+        max={Math.max(1, Math.floor(duration) || 1)}
         step={1}
-        onSlideEnd={(val) => handleSeek(val[0])}
+        value={[Math.min(Math.floor(position), Math.max(1, Math.floor(duration) || 1))]}
+        onSlideEnd={(_, value) => handleSeek(value)}
       >
-        <CustomTrack>
-          <YStack
-            bg="$trackProgress"
-            h="100%"
-            w={`${(position / duration) * 100}%`}
-          />
-        </CustomTrack>
+        <Slider.Track h={8} br={10} bg="$trackBg">
+          <Slider.TrackActive bg="$trackProgress" />
+        </Slider.Track>
+        <Slider.Thumb index={0} circular size="$1" bg="$primary" />
       </Slider>
       {isExpanded && show && (
         <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-          <Text fs="$5" fw="bold" color="$text" ta="center" my="$3">
+          <Text
+            fs="$5"
+            lh="$5"
+            fw="700"
+            ff="$heading"
+            color="$text"
+            ta="center"
+            my="$3"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+          >
             {show?.date ? formatDate(show?.date) : ""}
           </Text>
           <Text fs="$3" fw="600" color="$text" ta="center">
@@ -130,7 +130,7 @@ const Player: React.FC = () => {
           <Text fs="$3" fw="600" color="$text" ta="center" mb="$3">
             {show?.location}
           </Text>
-          <YStack ta="center" mt="$3">
+          <YStack mt="$3">
             {show?.tracks?.map((track, index: number) => (
               <Touchable
                 onPress={() => trackSelectAction(index)}
@@ -155,6 +155,7 @@ const Player: React.FC = () => {
                         : "$text"
                     }
                     fs="$3"
+                    ff="$mono"
                     mt="$2"
                   >
                     {track?.length}

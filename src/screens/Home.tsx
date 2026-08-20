@@ -5,25 +5,22 @@ import { usePlayer } from "../context/PlayerContext";
 import Explorer from "@components/Explorer";
 import SearchBar from "@components/SearchBar";
 import { Show } from "../types";
+import { SCREEN_PADDING, TODAY_TAB } from "../constants";
 
 const Home = ({ navigation }: { navigation: any }) => {
   const insets = useSafeAreaInsets();
-  const { isLoading, setShow, loadAudioAndPlay } = usePlayer();
+  const { setShow, loadAudioAndPlay } = usePlayer();
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
-  const [selectedYear, setSelectedYear] = useState<number>(0);
+  // Defaults to today's shows; Explorer switches to Favorites if any exist.
+  const [selectedYear, setSelectedYear] = useState<number>(TODAY_TAB);
   const handleSelectedTrack = async (selectedIndex: number, show: Show) => {
     setShow(show);
     await loadAudioAndPlay(show, selectedIndex);
   };
   return (
-    <YStack flex={1} bg="$bg" px="$3" pt={insets.top} pb={insets.bottom}>
-      <SearchBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        isLoading={isLoading}
-      />
+    <YStack flex={1} bg="$bg" px={SCREEN_PADDING} pt={insets.top} pb={insets.bottom}>
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <Explorer
-        isLoading={isLoading}
         goToShow={(show, availableShowsOnSelectedDate) => {
           navigation.navigate("ShowDetails", {
             show,

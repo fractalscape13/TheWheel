@@ -1,39 +1,42 @@
 {
+  "name": "thewheel",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "postinstall": "patch-package"
   },
   "dependencies": {
-    "@expo/vector-icons": "^14.0.2",
-    "@react-native-masked-view/masked-view": "0.3.2",
-    "@react-navigation/native": "^6.1.18",
-    "@react-navigation/native-stack": "^6.11.0",
-    "expo": "^52.0.9",
-    "expo-av": "~15.0.1",
-    "expo-build-properties": "~0.13.1",
-    "expo-image": "~2.0.1",
-    "expo-linear-gradient": "~14.0.1",
-    "expo-secure-store": "~14.0.0",
-    "expo-splash-screen": "~0.29.12",
-    "expo-status-bar": "~2.0.0",
-    "react": "18.3.1",
-    "react-native": "0.76.3",
-    "react-native-safe-area-context": "4.12.0",
-    "react-native-screens": "~4.1.0",
-    "react-native-track-player": "doublesymmetry/react-native-track-player#pull/2395/head",
-    "tamagui": "1.110.2"
+    "@expo-google-fonts/ibm-plex-mono": "^0.4.1",
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/syncopate": "^0.4.1",
+    "@expo/vector-icons": "^15.0.2",
+    "@react-navigation/native": "^7.3.17",
+    "@react-navigation/native-stack": "^7.18.9",
+    "expo": "~57.0.14",
+    "expo-build-properties": "~57.0.12",
+    "expo-font": "~57.0.1",
+    "expo-secure-store": "~57.0.1",
+    "expo-splash-screen": "~57.0.7",
+    "expo-status-bar": "~57.0.1",
+    "expo-system-ui": "~57.0.2",
+    "react": "19.2.3",
+    "react-native": "0.86.2",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-track-player": "^4.1.2",
+    "tamagui": "1.144.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@types/react": "~18.3.12",
-    "@types/react-native": "^0.73.0",
+    "@types/react": "~19.2.2",
     "babel-plugin-module-resolver": "^5.0.2",
-    "typescript": "^5.5.4"
+    "patch-package": "^8.0.1",
+    "typescript": "~6.0.3"
   },
-  "name": "thewheel",
-  "version": "1.0.0",
-  "private": true,
-  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+  "overrides": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  }
 }

@@ -1,31 +1,37 @@
-import TrackPlayer, { Event, State } from "react-native-track-player";
+import type { AddTrack } from "react-native-track-player";
+import TrackPlayer, {
+  AppKilledPlaybackBehavior,
+  Capability,
+  Event,
+  State,
+} from "react-native-track-player";
 
 export const setupPlayer = async () => {
   let isSetup = false;
   try {
-    await TrackPlayer.getCurrentTrack();
+    await TrackPlayer.getActiveTrackIndex();
     isSetup = true;
     console.log(`Track Player Setup: -->>> ${isSetup}`);
   } catch {
     await TrackPlayer.setupPlayer();
     await TrackPlayer.updateOptions({
-      stopWithApp: true,
+      android: {
+        appKilledPlaybackBehavior:
+          AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+      },
       capabilities: [
-        TrackPlayer.CAPABILITY_PLAY,
-        TrackPlayer.CAPABILITY_PAUSE,
-        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-        TrackPlayer.CAPABILITY_STOP,
+        Capability.Play,
+        Capability.Pause,
+        Capability.SkipToNext,
+        Capability.SkipToPrevious,
+        Capability.Stop,
       ],
-      compactCapabilities: [
-        TrackPlayer.CAPABILITY_PLAY,
-        TrackPlayer.CAPABILITY_PAUSE,
-      ],
+      compactCapabilities: [Capability.Play, Capability.Pause],
       notificationCapabilities: [
-        TrackPlayer.CAPABILITY_PLAY,
-        TrackPlayer.CAPABILITY_PAUSE,
-        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        Capability.Play,
+        Capability.Pause,
+        Capability.SkipToNext,
+        Capability.SkipToPrevious,
       ],
     });
 
@@ -48,7 +54,7 @@ export const playbackService = async () => {
   });
 };
 
-export const addTracks = async (tracks: []) => {
+export const addTracks = async (tracks: AddTrack[]) => {
   await TrackPlayer.add(tracks);
 };
 
@@ -78,11 +84,11 @@ export const selectTrack = async (selectedTrackIndex: number) => {
 };
 
 export const getState = async () => {
-  await TrackPlayer.getState();
+  return (await TrackPlayer.getPlaybackState()).state;
 };
 
 export const handlePlayPause = async () => {
-  const state = await TrackPlayer.getState();
+  const { state } = await TrackPlayer.getPlaybackState();
   if (state === State.Playing) {
     return TrackPlayer.pause();
   } else {

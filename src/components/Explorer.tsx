@@ -1,11 +1,24 @@
 import { Text, YStack, useTheme, ScrollView, XStack } from "tamagui";
-import React, { useMemo, useRef, useState, useEffect } from "react";
+import React, {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { FlatList } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Touchable from "@components/Touchable";
 import { formatDate } from "@services/utils";
 import { Show } from "../types";
 import * as SecureStore from "expo-secure-store";
-import { FAVORITE_SHOWS } from "../constants";
+import {
+  FAVORITE_SHOWS,
+  FAVORITES_TAB,
+  SCREEN_PADDING,
+  TODAY_TAB,
+} from "../constants";
 import { getSelectedYearData } from "@services/yearsService";
 import { years } from "@services/utils";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,9 +27,91 @@ type ExplorerProps = {
   goToShow: (show: Show | null, availableShowsOnSelectedDate: any) => void;
   setSelectedYear: (year: number) => void;
   selectedYear: number;
-  isLoading: boolean;
   searchTerm: string | undefined;
 };
+
+type TabPillProps = {
+  active: boolean;
+  onPress: () => void;
+  label?: string;
+  icon?: React.ComponentProps<typeof Ionicons>["name"];
+};
+
+const TabPill: React.FC<TabPillProps> = ({ active, onPress, label, icon }) => {
+  const theme = useTheme();
+  // Ionicons needs a resolved colour string, not a "$token".
+  const foreground = (
+    active ? theme?.pillActiveText?.val : theme?.pillText?.val
+  ) as string;
+  return (
+    <Touchable
+      onPress={onPress}
+      style={{
+        backgroundColor: (active
+          ? theme?.pillActiveBg?.val
+          : theme?.pillBg?.val) as string,
+        borderRadius: 8,
+        marginRight: 6,
+        height: 30,
+        width: 60,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {icon ? (
+        <Ionicons name={icon} size={18} color={foreground} />
+      ) : (
+        <Text fs="$3" fw="700" color={foreground}>
+          {label}
+        </Text>
+      )}
+    </Touchable>
+  );
+};
+
+type ShowRowProps = {
+  show: Show;
+  onPress: (show: Show) => void;
+};
+
+const ShowRow = React.memo(({ show, onPress }: ShowRowProps) => (
+  <Touchable onPress={() => onPress(show)}>
+    <YStack
+      bg="$card"
+      px="$3"
+      py="$2"
+      mb="$3"
+      br="$3"
+      shadowColor="$shadowColor"
+      shadowRadius={3}
+      shadowOpacity={0.2}
+    >
+      <Text fs="$3" mb="$1" fw="700" color="$cardText">
+        {formatDate(show.date)}
+      </Text>
+      <XStack jc="space-between" ai="center" maxW="100%">
+        <Text
+          fs="$2"
+          color="$cardMuted"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          maxW="100%"
+        >
+          {show.venue}
+        </Text>
+        <Text
+          fs="$2"
+          ml="$2"
+          color="$cardMuted"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {show.location}
+        </Text>
+      </XStack>
+    </YStack>
+  </Touchable>
+));
 
 const Explorer: React.FC<ExplorerProps> = ({
   goToShow,
@@ -24,34 +119,45 @@ const Explorer: React.FC<ExplorerProps> = ({
   selectedYear,
   searchTerm,
 }) => {
-  const scrollViewRef = useRef<ScrollView>(null);
+  const showListRef = useRef<FlatList<Show>>(null);
   const theme = useTheme();
   const [favoriteShows, setFavoriteShows] = useState<Show[]>([]);
+  const [favoritesLoaded, setFavoritesLoaded] = useState(false);
 
   const navigation = useNavigation();
 
+  // Filtering + re-rendering the list is the expensive part, so let it lag a frame
+  // behind the input rather than blocking each keystroke.
+  const deferredSearchTerm = useDeferredValue(searchTerm);
+
   const filterShows = (shows: Show[]) => {
-    if (searchTerm && searchTerm.length > 0) {
-      return shows.filter(
-        (show) =>
-          show.venue.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          show.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          show.date.includes(searchTerm)
-      );
+    const term = deferredSearchTerm?.trim().toLowerCase();
+    if (!term) {
+      return shows;
     }
-    return shows;
+    // venue/location are absent on a handful of records, so match optionally.
+    return shows.filter(
+      (show) =>
+        show.venue?.toLowerCase().includes(term) ||
+        show.location?.toLowerCase().includes(term) ||
+        show.date?.includes(term)
+    );
   };
 
-  const getUniqueByDate = (array: []) => {
-    const seenDates = new Set();
-    return array.filter((show: Show) => {
-      const date = show.date;
-      if (seenDates.has(date)) {
-        return false;
+  const isPlayable = (show: Show) =>
+    Boolean(show.showIdentifier && show.tracks?.length);
+
+  const getUniqueByDate = (shows: Show[]) => {
+    // One row per date. A few dates list an incomplete source first (no tracks),
+    // so prefer a source that can actually be played; Map keeps date order.
+    const byDate = new Map<string, Show>();
+    shows.forEach((show) => {
+      const existing = byDate.get(show.date);
+      if (!existing || (!isPlayable(existing) && isPlayable(show))) {
+        byDate.set(show.date, show);
       }
-      seenDates.add(date);
-      return true;
     });
+    return Array.from(byDate.values());
   };
 
   const activeCollection = useMemo(() => {
@@ -59,22 +165,22 @@ const Explorer: React.FC<ExplorerProps> = ({
   }, [selectedYear]);
 
   const uniqueShowDates = useMemo(() => {
-    if (activeCollection) {
-      return getUniqueByDate(activeCollection);
-    } else {
-      return null;
+    if (!activeCollection) {
+      return [];
     }
-  }, [activeCollection]);
+    // Filter before de-duplicating, so a date survives when any of its sources
+    // matches and the row shown is the one that actually matched.
+    return getUniqueByDate(filterShows(activeCollection));
+  }, [activeCollection, deferredSearchTerm]);
 
-  const handleShowSelect = (show: Show) => {
+  const handleShowSelect = useCallback((show: Show) => {
     const allAvailableShowsOnSelectedDate = activeCollection.filter(
       (unfilteredShow) => unfilteredShow.date === show.date
     );
-    const isFavorite = favoriteShows.includes(show.date) || false;
     return goToShow(show, allAvailableShowsOnSelectedDate);
-  };
+  }, [activeCollection, goToShow]);
 
-  const handleFavoriteShowSelect = (show: Show) => {
+  const handleFavoriteShowSelect = useCallback((show: Show) => {
     const year = parseInt(show.date.split("-")[0]) || null;
     if (year) {
       const collection = getSelectedYearData(year);
@@ -83,213 +189,220 @@ const Explorer: React.FC<ExplorerProps> = ({
       );
       return goToShow(show, allAvailableShowsOnSelectedDate);
     }
-  };
+  }, [goToShow]);
 
   const handleSelectYear = (year: number) => {
     if (year !== selectedYear) {
       setSelectedYear(year);
-      if (scrollViewRef.current) {
-        scrollViewRef.current.scrollTo({ y: 0, animated: false });
-      }
+      showListRef.current?.scrollToOffset({ offset: 0, animated: false });
     }
   };
 
   const filteredFavoriteShows = useMemo(() => {
-    if (favoriteShows && searchTerm) {
+    if (favoriteShows && deferredSearchTerm) {
       return filterShows(favoriteShows);
     }
     return favoriteShows;
-  }, [favoriteShows, searchTerm]);
+  }, [favoriteShows, deferredSearchTerm]);
+
+  // Recomputed whenever the screen regains focus, so leaving the app open across
+  // midnight still shows the correct day rather than a stale one.
+  const [todayStamp, setTodayStamp] = useState(() => new Date().toDateString());
+
+  // Shown instead of an empty favorites list: the same calendar day across every year.
+  const todayLabel = useMemo(
+    () =>
+      new Date().toLocaleDateString(undefined, {
+        month: "long",
+        day: "numeric",
+      }),
+    [todayStamp]
+  );
+
+  const onThisDayShows = useMemo(() => {
+    const now = new Date();
+    const monthDay = `-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
+      now.getDate()
+    ).padStart(2, "0")}`;
+    const matches: Show[] = [];
+    years.forEach((year) => {
+      getSelectedYearData(year).forEach((show) => {
+        if (show.date.endsWith(monthDay)) {
+          matches.push(show);
+        }
+      });
+    });
+    return getUniqueByDate(matches);
+  }, [todayStamp]);
+
+  const filteredOnThisDayShows = useMemo(
+    () => filterShows(onThisDayShows),
+    [onThisDayShows, deferredSearchTerm]
+  );
 
   const fetchFavoriteShows = async () => {
-    const favoriteShowDatesString = await SecureStore.getItemAsync(
-      FAVORITE_SHOWS
-    );
-    if (favoriteShowDatesString) {
-      const favoriteShowDates = JSON.parse(favoriteShowDatesString);
-      const favorites = favoriteShowDates;
-      let foundShows: Show[] = [];
-      favorites.forEach((favoritedShowDate: string) => {
-        const year = parseInt(favoritedShowDate.split("-")[0]) || null;
-        if (year) {
-          const collection = getSelectedYearData(year);
-          const foundShow = collection.find(
-            (show) => show.date === favoritedShowDate
-          );
-          if (foundShow) {
-            foundShows.push(foundShow);
-          }
+    try {
+      const favoriteShowDatesString = await SecureStore.getItemAsync(
+        FAVORITE_SHOWS
+      );
+      const favoriteShowDates: string[] = favoriteShowDatesString
+        ? JSON.parse(favoriteShowDatesString)
+        : [];
+
+      const foundShows: Show[] = [];
+      favoriteShowDates.forEach((favoritedShowDate) => {
+        const year = parseInt(favoritedShowDate.split("-")[0], 10);
+        if (!year) {
+          return;
+        }
+        const onThatDate = getSelectedYearData(year).filter(
+          (show) => show.date === favoritedShowDate
+        );
+        // Prefer a source that can actually be played, as the main list does.
+        const foundShow = onThatDate.find(isPlayable) ?? onThatDate[0];
+        if (foundShow) {
+          foundShows.push(foundShow);
         }
       });
 
-      if (foundShows.length > 0) {
-        setFavoriteShows(foundShows);
-      } else {
-        console.error("No favorite shows found in collectionSelection.");
-      }
+      // Always set: previously this only assigned when something was found, so
+      // removing your last favorite left the old list on screen.
+      setFavoriteShows(foundShows);
+      setFavoritesLoaded(true);
+    } catch (error) {
+      console.error("Error getting favorite shows:", error);
+      setFavoriteShows([]);
+      setFavoritesLoaded(true);
     }
   };
 
+  const hasFavorites = favoriteShows.length > 0;
+
+  // Land on Favorites when the user has some, otherwise stay on today's shows.
+  // Runs once, so it never fights a manual tab choice.
+  const didPickInitialTab = useRef(false);
   useEffect(() => {
-    if (selectedYear === 0) {
-      fetchFavoriteShows();
+    if (didPickInitialTab.current || !favoritesLoaded) {
+      return;
     }
-  }, [selectedYear]);
+    didPickInitialTab.current = true;
+    if (hasFavorites) {
+      setSelectedYear(FAVORITES_TAB);
+    }
+  }, [favoritesLoaded, hasFavorites, setSelectedYear]);
+
+  // The heart tab disappears with the last favorite; don't leave the user on it.
+  useEffect(() => {
+    if (!hasFavorites && favoritesLoaded && selectedYear === FAVORITES_TAB) {
+      setSelectedYear(TODAY_TAB);
+    }
+  }, [hasFavorites, favoritesLoaded, selectedYear, setSelectedYear]);
 
   useFocusEffect(
     React.useCallback(() => {
       fetchFavoriteShows();
+      const currentDay = new Date().toDateString();
+      setTodayStamp((prev) => (prev === currentDay ? prev : currentDay));
     }, [])
   );
 
   return (
-    <YStack>
-      <Text color="$text" fs="$3" mb="$2">
-        Select year
-      </Text>
+    // flex={1} so the lists below are height-bounded and can actually virtualise.
+    <YStack flex={1}>
       <ScrollView
         horizontal
-        contentContainerStyle={{ paddingLeft: 18, marginBottom: 12 }}
+        showsHorizontalScrollIndicator={false}
+        // Full-bleed: cancel the screen gutter so the strip reaches both edges.
+        mx={-SCREEN_PADDING}
+        mb="$3"
+        // Keep it to its own height; otherwise it stretches down the flex column.
+        flexGrow={0}
+        flexShrink={0}
       >
-        <Touchable
-          style={{
-            backgroundColor:
-              selectedYear === 0 ? "white" : theme?.$buttonBg?.val,
-            borderRadius: 8,
-            marginRight: 6,
-            height: 30,
-            width: 60,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={() => handleSelectYear(0)}
-          children={
-            <Text
-              fs="$3"
-              fw="bold"
-              color={selectedYear === 0 ? "black" : "white"}
-            >
-              <Ionicons
-                name={"heart"}
-                size={18}
-                color={selectedYear === 0 ? "black" : "white"}
-              />
-            </Text>
-          }
+        {hasFavorites && (
+          <TabPill
+            active={selectedYear === FAVORITES_TAB}
+            onPress={() => handleSelectYear(FAVORITES_TAB)}
+            icon="heart"
+          />
+        )}
+        <TabPill
+          active={selectedYear === TODAY_TAB}
+          onPress={() => handleSelectYear(TODAY_TAB)}
+          icon="today"
         />
         {years?.map((year: number) => (
-          <Touchable
+          <TabPill
             key={year}
-            style={{
-              backgroundColor:
-                year === selectedYear ? "white" : theme?.$buttonBg?.val,
-              borderRadius: 8,
-              marginRight: 6,
-              height: 30,
-              width: 60,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            active={year === selectedYear}
             onPress={() => handleSelectYear(year)}
-            children={
-              <Text
-                fs="$3"
-                fw="bold"
-                color={year === selectedYear ? "black" : "white"}
-              >
-                {year}
-              </Text>
-            }
+            label={String(year)}
           />
         ))}
       </ScrollView>
-      {activeCollection && selectedYear ? (
-        <ScrollView
+      {selectedYear !== FAVORITES_TAB && selectedYear !== TODAY_TAB ? (
+        <FlatList
+          ref={showListRef}
+          data={uniqueShowDates}
+          keyExtractor={(show, index) => `${show.date}-${index}`}
+          renderItem={({ item }) => (
+            <ShowRow show={item} onPress={handleShowSelect} />
+          )}
           contentContainerStyle={{ paddingBottom: 300 }}
-          ref={scrollViewRef}
-        >
-          {uniqueShowDates.map((show: Show, index: number) => (
-            <Touchable
-              key={`${show.date}-${index}`}
-              onPress={() => handleShowSelect(show)}
-            >
-              <YStack
-                bg="$secondary"
-                px="$3"
-                py="$2"
-                mb="$3"
-                br="$3"
-                shadowColor="$shadowColor"
-                shadowRadius={3}
-                shadowOpacity={0.2}
-              >
-                <Text fs="$3" mb="$1" fw="bold">
-                  {formatDate(show.date)}
-                </Text>
-                <XStack jc="space-between" ai="center" maxW="100%">
-                  <Text
-                    fs="$2"
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    maxW="100%"
-                  >
-                    {show.venue}
-                  </Text>
-                  <Text fs="$2" ml="$2" numberOfLines={1} ellipsizeMode="tail">
-                    {show.location}
-                  </Text>
-                </XStack>
-              </YStack>
-            </Touchable>
-          ))}
-        </ScrollView>
-      ) : selectedYear === 0 && filteredFavoriteShows?.length > 0 ? (
-        <YStack>
-          <Text fs="$3" fw="bold" my="$2" color="$text">
+          keyboardShouldPersistTaps="handled"
+          initialNumToRender={12}
+          windowSize={7}
+          removeClippedSubviews
+          ListEmptyComponent={
+            <Text color="$text" fs="$3">
+              {deferredSearchTerm?.trim()
+                ? `No ${selectedYear} shows match "${deferredSearchTerm.trim()}"`
+                : `No shows found for ${selectedYear}`}
+            </Text>
+          }
+        />
+      ) : selectedYear === FAVORITES_TAB ? (
+        <>
+          <Text fs="$3" lh="$3" fw="700" ff="$heading" mb="$2" color="$text">
             Favorites
           </Text>
-          {filteredFavoriteShows.map((show, index) => (
-            <Touchable
-              onPress={() => handleFavoriteShowSelect(show)}
-              key={`${index}-${show.date}`}
-            >
-              <YStack
-                bg="$secondary"
-                px="$3"
-                py="$2"
-                mb="$3"
-                br="$3"
-                shadowColor="$shadowColor"
-                shadowRadius={3}
-                shadowOpacity={0.2}
-              >
-                <Text fs="$3" mb="$1" fw="bold">
-                  {formatDate(show.date)}
-                </Text>
-                <XStack jc="space-between" ai="center" maxW="100%">
-                  <Text
-                    fs="$2"
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    maxW="100%"
-                  >
-                    {show.venue}
-                  </Text>
-                  <Text fs="$2" ml="$2" numberOfLines={1} ellipsizeMode="tail">
-                    {show.location}
-                  </Text>
-                </XStack>
-              </YStack>
-            </Touchable>
-          ))}
-        </YStack>
+          <FlatList
+            data={filteredFavoriteShows}
+            keyExtractor={(show, index) => `${show.date}-${index}`}
+            renderItem={({ item }) => (
+              <ShowRow show={item} onPress={handleFavoriteShowSelect} />
+            )}
+            contentContainerStyle={{ paddingBottom: 300 }}
+            keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={
+              <Text color="$text" fs="$3">
+                {`No favorites match "${deferredSearchTerm?.trim()}"`}
+              </Text>
+            }
+          />
+        </>
       ) : (
-        <YStack>
-          <Text color="$text">
-            This is default state, no selected year and no favorited shows
+        <>
+          <Text fs="$3" lh="$3" fw="700" ff="$heading" mb="$2" color="$text">
+            {`On this day · ${todayLabel}`}
           </Text>
-          <Text color="$text">Add a call to action here? Graphic?</Text>
-        </YStack>
+          <FlatList
+            data={filteredOnThisDayShows}
+            keyExtractor={(show, index) => `${show.date}-${index}`}
+            renderItem={({ item }) => (
+              <ShowRow show={item} onPress={handleFavoriteShowSelect} />
+            )}
+            contentContainerStyle={{ paddingBottom: 300 }}
+            keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={
+              <Text color="$text" fs="$3">
+                {deferredSearchTerm?.trim()
+                  ? `No ${todayLabel} shows match "${deferredSearchTerm.trim()}"`
+                  : `No shows on ${todayLabel}.`}
+              </Text>
+            }
+          />
+        </>
       )}
     </YStack>
   );

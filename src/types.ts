@@ -1,11 +1,12 @@
 export interface Show {
   date: string;
-  index: number;
-  location: string;
-  showIdentifier: string;
-  source: string;
-  venue: string;
-  type: string;
+  // A few archive records are incomplete, so these are genuinely optional.
+  index?: number;
+  location?: string;
+  showIdentifier?: string;
+  source?: string;
+  venue?: string;
+  type?: string;
   tracks?: {
     file: string;
     length: string;

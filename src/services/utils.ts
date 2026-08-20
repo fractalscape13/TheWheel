@@ -1,21 +1,20 @@
-export const millisToMinutesAndSeconds = (millis: number) => {
-  const minutes = Math.floor(millis / 60000);
-  const seconds = ((millis % 60000) / 1000).toFixed(0);
-  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-};
-
 export const secondsToFormattedMinutesSeconds = (seconds: number) => {
-  const minutes = Math.floor(seconds.toFixed(0) / 60);
-  const remainingSeconds = seconds.toFixed(0) % 60;
-  return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  // Round to whole seconds first, so 59.9s formats as 1:00 rather than 0:60.
+  const totalSeconds = Math.max(0, Math.round(seconds));
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
 };
 
-export const formatDate = (dateString: string, abbreviated?: boolean) => {
+export const formatDate = (dateString: string) => {
   const [year, month, day] = dateString.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day + 1));
+  // Format in UTC. Building the date at UTC midnight and then formatting in the
+  // device's zone shifted every show a day later for anyone at or east of UTC.
+  const date = new Date(Date.UTC(year, month - 1, day));
   return date.toLocaleDateString(undefined, {
+    timeZone: "UTC",
     year: "numeric",
-    month: abbreviated ? "short" : "long",
+    month: "short",
     day: "numeric",
   });
 };

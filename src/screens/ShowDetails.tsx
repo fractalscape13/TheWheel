@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { ScrollView, Text, YStack, XStack } from "tamagui";
+import { ScrollView, Text, YStack, XStack, useTheme } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
 import { formatDate } from "@services/utils";
@@ -8,18 +8,19 @@ import Touchable from "@components/Touchable";
 import { Track, Show } from "../types";
 import { FAVORITE_SHOWS } from "../constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { usePlayer } from "../context/PlayerContext";
 
-const formatShowSource = (src: string) => {
+const formatShowSource = (src?: string) => {
   if (src?.toLowerCase()?.includes("sbd")) {
     return (
       <>
-        <Text fw="800">SBD </Text> {src.replace(".sbd", "") || src}
+        <Text fw="700">SBD </Text> {src.replace(".sbd", "") || src}
       </>
     );
   } else if (src?.toLowerCase()?.includes("aud")) {
     return (
       <>
-        <Text fw="800">AUD </Text> {src.replace(".aud", "") || src}
+        <Text fw="700">AUD </Text> {src.replace(".aud", "") || src}
       </>
     );
   }
@@ -32,13 +33,12 @@ type ShowDetailsProps = {
 };
 
 const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
-  const {
-    show,
-    availableShowsOnSelectedDate,
-    onSelectTrack,
-    isLoading = false,
-  } = route.params;
+  const { show, availableShowsOnSelectedDate, onSelectTrack } = route.params;
+  // Comes from the player rather than a route param, which was never passed and
+  // left the spinner permanently unreachable.
+  const { isLoading } = usePlayer();
   const insets = useSafeAreaInsets();
+  const theme = useTheme();
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeShow, setActiveShow] = useState<Show | null>(null);
@@ -56,9 +56,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
         ? JSON.parse(favoriteShowsString)
         : [];
 
-      if (favoriteShows.includes(show.date)){
-        setIsFavorited(true);
-      }
+      setIsFavorited(favoriteShows.includes(show.date));
     } catch (error) {
       console.error("Error getting favorite shows:", error);
     }
@@ -72,8 +70,10 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
     return (availableShowsOnSelectedDate?.length ?? 0) > 1;
   }, [availableShowsOnSelectedDate]);
 
-  const handleTrackLoad = (trackIndex: string) => {
-    onSelectTrack(trackIndex, show);
+  const handleTrackLoad = (trackIndex: number) => {
+    // Must be activeShow: the source picker swaps it, and the track list below
+    // renders from activeShow, so playing `show` would play a different source.
+    onSelectTrack(trackIndex, activeShow ?? show);
   };
 
   const toggleFavorite = async () => {
@@ -115,7 +115,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
           top={insets.top + 145}
           left={18}
           right={18}
-          backgroundColor={"rgba(0 0, 0, 0.5)"}
+          backgroundColor="$overlay"
           z="$4"
           br="$3"
           overflow="hidden"
@@ -123,22 +123,24 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
           {availableShowsOnSelectedDate?.map((show: Show, index: number) => {
             return (
               <Touchable
-                w="100%"
+                style={{ width: "100%" }}
                 key={`${show.showIdentifier}-${index}`}
                 onPress={() => handleNewShowSelect(show)}
                 hitSlop={5}
               >
                 <XStack
-                  bg="white"
+                  bg="$sheetBg"
                   px="$3"
                   py="$3"
                   jc="center"
                   ai="center"
                   borderBottomWidth={1}
+                  borderBottomColor="$border"
                 >
                   <Text
                     z="$3"
                     fs="$3"
+                    color="$sheetText"
                     numberOfLines={1}
                     ellipsizeMode="tail"
                     flex={1}
@@ -153,19 +155,30 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
       )}
       <XStack jc="space-between" ai="center">
         <Touchable onPress={() => navigation.goBack()} hitSlop={15}>
-          <Ionicons name="arrow-back" size={28} color="white" />
+          <Ionicons name="arrow-back" size={28} color={theme?.text?.val} />
         </Touchable>
         <XStack jc="center" ai="center" h="100%">
           <Touchable onPress={toggleFavorite} hitSlop={15}>
             <Ionicons
               name={isFavorited ? "heart" : "heart-outline"}
               size={28}
-              color={isFavorited ? "white" : "white"}
+              color={theme?.primary?.val}
             />
           </Touchable>
         </XStack>
       </XStack>
-      <Text fs="$5" fw="bold" color="$text" ta="center" mb="$2">
+      <Text
+        fs="$5"
+        lh="$5"
+        fw="700"
+        ff="$heading"
+        color="$text"
+        ta="center"
+        mb="$2"
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+      >
         {activeShow?.date ? formatDate(activeShow?.date) : ""}
       </Text>
       <Text fs="$3" color="$text" ta="center">
@@ -180,7 +193,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
       >
         <XStack
           bw={doMultipleSourcesExist ? 1 : 0}
-          bc="white"
+          bc="$border"
           py="$2"
           px="$4"
           mb="$4"
@@ -188,7 +201,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
           overflow="hidden"
         >
           {doMultipleSourcesExist ? (
-            <Ionicons name="chevron-down" size={22} color="white" />
+            <Ionicons name="chevron-down" size={22} color={theme?.text?.val} />
           ) : null}
           <Text
             fs="$3"
@@ -205,8 +218,12 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {isLoading ? (
           <YStack jc="center" ai="center" mt="$5">
-            <ActivityIndicator size="small" color="#fff" />
+            <ActivityIndicator size="small" color={theme?.primary?.val} />
           </YStack>
+        ) : !activeShow?.tracks?.length ? (
+          <Text fs="$3" color="$text" ta="center" mt="$5">
+            No tracks are listed for this recording.
+          </Text>
         ) : (
           activeShow?.tracks?.map((track: Track, index: number) => (
             <Touchable
@@ -215,7 +232,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
               onPress={() => handleTrackLoad(index)}
             >
               <XStack
-                bg="$secondary"
+                bg="$card"
                 px="$3"
                 py="$2"
                 mb="$2"
@@ -224,10 +241,11 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
                 ai="center"
               >
                 <XStack flex={1} ai="center">
-                  <Text fs="$3">{index + 1}</Text>
+                  <Text fs="$3" color="$cardMuted">{index + 1}</Text>
                   <Text
                     fs="$3"
                     ml="$2"
+                    color="$cardText"
                     numberOfLines={1}
                     ellipsizeMode="tail"
                     flex={1}
@@ -235,7 +253,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
                     {track.title}
                   </Text>
                 </XStack>
-                <Text fs="$3" color="$textSecondary" ml="$2">
+                <Text fs="$3" ff="$mono" color="$cardMuted" ml="$2">
                   {track.length}
                 </Text>
               </XStack>

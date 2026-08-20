@@ -1,3 +1,4 @@
+import { Show } from "../types";
 import { showBones1965 } from "@services/1965-bones";
 import { showBones1966 } from "@services/1966-bones";
 import { showBones1967 } from "@services/1967-bones";
@@ -30,7 +31,7 @@ import { showBones1993 } from "@services/1993-bones";
 import { showBones1994 } from "@services/1994-bones";
 import { showBones1995 } from "@services/1995-bones";
 
-export const getSelectedYearData = (selectedYear:number) => {
+export const getSelectedYearData = (selectedYear: number): Show[] => {
     if(selectedYear === 1965) { return showBones1965 }
     if(selectedYear === 1966) { return showBones1966 }
     if(selectedYear === 1967) { return showBones1967 }
@@ -62,5 +63,6 @@ export const getSelectedYearData = (selectedYear:number) => {
     if(selectedYear === 1993) { return showBones1993 }
     if(selectedYear === 1994) { return showBones1994 }
     if(selectedYear === 1995) { return showBones1995 }
+    return [];
 }
 
