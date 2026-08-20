@@ -8132,7 +8132,7 @@ export const showBones1993 = [
         title: "Baba O'Riley > Tomorrow Never Knows",
       },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "The Omni",
   },
   {
@@ -42910,7 +42910,7 @@ export const showBones1993 = [
       },
       { file: "gd1993-09-24d3t04.mp3", length: "07:26", title: "Liberty" },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Boston Garden",
   },
   {
@@ -50453,7 +50453,7 @@ export const showBones1993 = [
       },
       { file: "gd93-12-18d3t04.mp3", length: "05:23", title: "Box Of Rain" },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Oakland-Alameda County Coliseum",
   },
   {

@@ -1282,7 +1282,7 @@ export const showBones1970 = [
   {
     date: "1970-01-16",
     location: "Portland, OR",
-    showId: "gd70-01-16.sbd.popi.7111.sbeok.shnf",
+    showIdentifier: "gd70-01-16.sbd.popi.7111.sbeok.shnf",
   },
   {
     date: "1970-01-16",
@@ -10981,7 +10981,7 @@ export const showBones1970 = [
       { file: "gd70-05-09d1t05.mp3", length: "06:48", title: "Black Peter" },
       { file: "gd70-05-09d1t06.mp3", length: "00:34", title: "Announcement" },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Worcester Polytechnic Institute",
   },
   {

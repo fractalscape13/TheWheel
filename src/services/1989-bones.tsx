@@ -9002,8 +9002,6 @@ export const showBones1989 = [
     type: "sound",
     venue: "Greensboro Coliseum",
   },
-
-  ,
   {
     date: "1989-04-02",
     index: 1,

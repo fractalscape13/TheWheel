@@ -68189,7 +68189,7 @@ export const showBones1987 = [
         title: "Sunshine Daydream",
       },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Madison Square Garden",
   },
   {

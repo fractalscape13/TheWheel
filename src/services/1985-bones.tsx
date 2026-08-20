@@ -66799,7 +66799,7 @@ export const showBones1985 = [
         title: "One More Saturday Night",
       },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Manor Downs",
   },
   {

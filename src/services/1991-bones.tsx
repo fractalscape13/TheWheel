@@ -37675,7 +37675,7 @@ export const showBones1991 = [
         title: "The Mighty Quinn (Quinnn The Eskimo)",
       },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Pine Knob Music Theater",
   },
   {

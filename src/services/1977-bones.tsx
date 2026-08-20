@@ -665,7 +665,7 @@ export const showBones1977 = [
       },
       { file: "gd77-02-26d3t05.mp3", length: "06:11", title: "E: U.S. Blues" },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Swing Auditorium",
   },
   {

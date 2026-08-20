@@ -5563,18 +5563,15 @@ export const showBones1976 = [
   {
     date: "1976-06-12",
     index: 0,
-    location: undefined,
     showIdentifier:
       "left-in-the-vaults-vol.-3-grateful-dead-live-in-boston-june-12th-1976",
     source: "N/A",
     tracks: [],
     type: "N/A",
-    venue: undefined,
   },
   {
     date: "1976-06-12",
     index: 1,
-    location: undefined,
     showIdentifier: "grateful-dead-june-1976-boston-music-hall-wbcn",
     source: "N/A",
     tracks: [
@@ -5686,7 +5683,6 @@ export const showBones1976 = [
       },
     ],
     type: "N/A",
-    venue: undefined,
   },
   {
     date: "1976-06-12",
@@ -9213,7 +9209,6 @@ export const showBones1976 = [
   {
     date: "1976-06-19",
     index: 12,
-    location: undefined,
     showIdentifier: "Yes_SoloAlbum_1976-06-19-GetDown-Hartford",
     source: "N/A",
     tracks: [
@@ -9289,7 +9284,6 @@ export const showBones1976 = [
       },
     ],
     type: "N/A",
-    venue: undefined,
   },
   {
     date: "1976-06-19",
@@ -9360,12 +9354,10 @@ export const showBones1976 = [
   {
     date: "1976-06-19",
     index: 6,
-    location: undefined,
     showIdentifier: "PageTitle1978-11-24-GratefulDead-CapitolTheatrePassaicNJ",
     source: "N/A",
     tracks: [],
     type: "N/A",
-    venue: undefined,
   },
   {
     date: "1976-06-19",
@@ -13543,13 +13535,11 @@ export const showBones1976 = [
   {
     date: "1976-06-29",
     index: 0,
-    location: undefined,
     showIdentifier:
       "left-in-the-vaults-vol.-1-grateful-dead-live-at-auditorium-theatre-on-1976-06-29",
     source: "N/A",
     tracks: [],
     type: "N/A",
-    venue: undefined,
   },
   {
     date: "1976-06-29",

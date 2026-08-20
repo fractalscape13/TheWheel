@@ -12756,7 +12756,7 @@ export const showBones1990 = [
         title: "And We Bid You Good Night",
       },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Knickerbocker Arena",
   },
   {
@@ -97076,7 +97076,7 @@ export const showBones1990 = [
         title: "It's All Over Now, Baby Blue",
       },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Oakland-Alameda County Coliseum",
   },
   {

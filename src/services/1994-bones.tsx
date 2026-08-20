@@ -10038,7 +10038,7 @@ export const showBones1994 = [
         title: "Sympathy for the devil",
       },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "W.O.W. Hall",
   },
   {

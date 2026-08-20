@@ -47618,7 +47618,7 @@ export const showBones1979 = [
       },
       { file: "gd79-12-31d4t04.mp3", length: "08:11", title: "Good Lovin'" },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Oakland Auditorium Arena",
   },
   {

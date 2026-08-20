@@ -2980,7 +2980,7 @@ export const showBones1966 = [
       { file: "gd66-09-16d1t08.mp3", length: "03:00", title: "Stealin'" },
       { file: "gd66-09-16d1t09.mp3", length: "12:52", title: "Same Thing" },
     ],
-    type: ["sound", "sound"],
+    type: "sound",
     venue: "Avalon Ballroom",
   },
   {
