@@ -18,14 +18,25 @@
  *    redirect is sticky, retrying cannot route around a bad node; using the data
  *    node directly can.
  *
- * The metadata lookup is best-effort. It is cached per item, bounded by a short
- * timeout, and on any failure falls back to the `/download/` URL — i.e. exactly
- * the previous behaviour, never worse.
+ * The metadata lookup is best-effort and never on the critical path. Playback used
+ * to await it for up to 6s before a queue was even built, which — against an
+ * endpoint measured succeeding 1 time in 8 — usually meant a six-second stall
+ * followed by the `/download/` fallback anyway. Now a caller waits `LOCATION_WAIT_MS`
+ * at most and the request outlives that deadline, so a lookup too slow for this
+ * play still warms the cache for the next one. Prefetch it when a recording comes
+ * on screen (`prefetchItemLocation`) and the wait is usually zero.
+ *
+ * On any failure it falls back to the `/download/` URL — i.e. exactly the previous
+ * behaviour, never worse.
  */
 
 const DOWNLOAD_HOST = "https://archive.org/download";
 const METADATA_HOST = "https://archive.org/metadata";
+/** Ceiling on the request itself, independent of how long any one caller waits. */
 const METADATA_TIMEOUT_MS = 6000;
+/** How long a caller that needs a URL *now* will wait before falling back. The
+ *  request is not cancelled when this expires — see `resolveItemLocation`. */
+const LOCATION_WAIT_MS = 800;
 
 type ItemLocation = { server: string; dir: string };
 
@@ -36,6 +47,13 @@ type ItemLocation = { server: string; dir: string };
  */
 const locations = new Map<string, ItemLocation>();
 
+/**
+ * Lookups currently on the wire, keyed by item. A prefetch and the play that
+ * follows it join one request instead of issuing two, and a caller that gives up
+ * waiting doesn't cancel it for everyone else.
+ */
+const inFlight = new Map<string, Promise<ItemLocation | null>>();
+
 const encodePath = (file: string) =>
   file.split("/").map(encodeURIComponent).join("/");
 
@@ -43,22 +61,12 @@ const encodePath = (file: string) =>
 export const archiveDownloadUrl = (showIdentifier: string, file: string) =>
   `${DOWNLOAD_HOST}/${encodeURIComponent(showIdentifier)}/${encodePath(file)}`;
 
-/**
- * Which data node holds this item, or null if that can't be established.
- * Cached — including failures, so a bad lookup isn't repeated per track.
- */
-export const resolveItemLocation = async (
-  showIdentifier: string,
-  // Callers not about to play anything can afford to wait far less.
-  timeoutMs: number = METADATA_TIMEOUT_MS
+/** The network call. Bounded only by its own ceiling, never by a caller's patience. */
+const requestLocation = async (
+  showIdentifier: string
 ): Promise<ItemLocation | null> => {
-  const cached = locations.get(showIdentifier);
-  if (cached) {
-    return cached;
-  }
-
   const timeout = new AbortController();
-  const timer = setTimeout(() => timeout.abort(), timeoutMs);
+  const timer = setTimeout(() => timeout.abort(), METADATA_TIMEOUT_MS);
   try {
     const response = await fetch(
       `${METADATA_HOST}/${encodeURIComponent(showIdentifier)}`,
@@ -83,6 +91,60 @@ export const resolveItemLocation = async (
       `Archive metadata unavailable (${String(error)}); using /download/`
     );
     return null;
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
+/** Joins the lookup already running for this item, or starts one. */
+const lookup = (showIdentifier: string): Promise<ItemLocation | null> => {
+  const running = inFlight.get(showIdentifier);
+  if (running) {
+    return running;
+  }
+  const request = requestLocation(showIdentifier).finally(() => {
+    inFlight.delete(showIdentifier);
+  });
+  inFlight.set(showIdentifier, request);
+  return request;
+};
+
+/**
+ * Start the lookup without waiting for it. Call this when a recording comes on
+ * screen: the user reads a track list for seconds before tapping one, which is
+ * long enough for the lookup to land, so the tap then starts on the item's own
+ * data node with no wait at all.
+ */
+export const prefetchItemLocation = (showIdentifier?: string | null) => {
+  if (!showIdentifier || locations.has(showIdentifier)) {
+    return;
+  }
+  void lookup(showIdentifier);
+};
+
+/**
+ * Which data node holds this item, or null if that can't be established in the
+ * time the caller has. Successes are cached; failures are not, so one bad request
+ * doesn't send the rest of the session down the flaky redirect path.
+ */
+export const resolveItemLocation = async (
+  showIdentifier: string,
+  waitMs: number = LOCATION_WAIT_MS
+): Promise<ItemLocation | null> => {
+  const cached = locations.get(showIdentifier);
+  if (cached) {
+    return cached;
+  }
+
+  const request = lookup(showIdentifier);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  // Losing this race is not a failure. The request keeps running and caches its
+  // result, so the wait is spent once per item rather than once per play.
+  const gaveUp = new Promise<null>((resolve) => {
+    timer = setTimeout(() => resolve(null), waitMs);
+  });
+  try {
+    return await Promise.race([request, gaveUp]);
   } finally {
     clearTimeout(timer);
   }

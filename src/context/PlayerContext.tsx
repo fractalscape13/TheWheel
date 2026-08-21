@@ -76,10 +76,6 @@ const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
  *  a long time before the app is killed. This bounds what's lost. */
 const POSITION_SAVE_INTERVAL_MS = 15000;
 
-/** Nothing is playing during a restore, so the data-node lookup is optional
- *  there and must not hold the queue up. */
-const RESTORE_LOCATION_TIMEOUT_MS = 1500;
-
 /** Below this, seeking just forces a re-buffer for nothing. */
 const RESUME_FLOOR_SECONDS = 3;
 /** Above this the user would resume in the outro, or past the end. */
@@ -344,7 +340,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
 
     // Queue it up paused so the controls work; changes nothing on screen.
     const queueSaved = async ({ show, trackIndex, resumeAt }: Resumable) => {
-      const queue = await toQueue(show, RESTORE_LOCATION_TIMEOUT_MS);
+      const queue = await toQueue(show);
       if (!queue.length || superseded()) {
         return;
       }
@@ -447,14 +443,15 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   };
 
   // Shared by the load path and the mount-time restore.
-  const toQueue = async (show: Show, locationTimeoutMs?: number) => {
+  const toQueue = async (show: Show) => {
     const showIdentifier = show.showIdentifier;
     if (!showIdentifier) {
       return [];
     }
-    // Which data node holds this item. Cached per item, short timeout, and falls
-    // back to the /download/ URL — so this can only help, never block playback.
-    const location = await resolveItemLocation(showIdentifier, locationTimeoutMs);
+    // Which data node holds this item. Bounded to a fraction of a second and
+    // falling back to the /download/ URL, so this can only help; ShowDetails
+    // prefetches it, which is what usually makes the wait zero.
+    const location = await resolveItemLocation(showIdentifier);
     return (show.tracks ?? []).map((track: Track) => ({
       artist: "Grateful Dead",
       title: track.title,

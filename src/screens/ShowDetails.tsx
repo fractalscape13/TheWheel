@@ -8,6 +8,7 @@ import {
   toggleFavoriteShowDate,
 } from "@services/favorites";
 import Touchable from "@components/Touchable";
+import { prefetchItemLocation } from "@services/archiveUrl";
 import { Track, Show } from "../types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePlayer } from "../context/PlayerContext";
@@ -63,6 +64,14 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
   useEffect(() => {
     setIsFavorited(isShowFavorited(show.date));
   }, [show]);
+
+  // Warm the data-node lookup for whatever a tap would play. The user reads this
+  // track list for seconds first, which is long enough for the lookup to land —
+  // so playback starts on the item's own node instead of waiting on it and
+  // falling back to the flaky redirect tier. Re-runs when the picker swaps source.
+  useEffect(() => {
+    prefetchItemLocation((activeShow ?? show)?.showIdentifier);
+  }, [activeShow, show]);
 
   // A few identifiers appear on more than one archive record, which listed the
   // same recording twice with identical labels — one of the pair sometimes being
