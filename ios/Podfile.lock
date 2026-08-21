@@ -1,7 +1,7 @@
 PODS:
-  - EXConstants (57.0.12):
+  - EXConstants (57.0.13):
     - ExpoModulesCore
-  - Expo (57.0.14):
+  - Expo (57.0.15):
     - ExpoModulesCore
     - ExpoModulesJSI
     - hermes-engine
@@ -27,11 +27,11 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - ExpoAsset (57.0.12):
+  - ExpoAsset (57.0.13):
     - ExpoModulesCore
   - ExpoDomWebView (57.0.1):
     - ExpoModulesCore
-  - ExpoFileSystem (57.0.4):
+  - ExpoFileSystem (57.0.5):
     - ExpoModulesCore
   - ExpoFont (57.0.1):
     - ExpoModulesCore
@@ -39,7 +39,7 @@ PODS:
     - ExpoModulesCore
   - ExpoLogBox (57.0.3):
     - React-Core
-  - ExpoModulesCore (57.0.11):
+  - ExpoModulesCore (57.0.12):
     - ExpoModulesJSI
     - hermes-engine
     - RCTRequired
@@ -63,10 +63,10 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - ExpoModulesJSI (57.0.4):
+  - ExpoModulesJSI (57.0.5):
     - React-Core
     - ReactCommon
-  - ExpoModulesWorklets (57.0.11):
+  - ExpoModulesWorklets (57.0.12):
     - ExpoModulesCore
     - ExpoModulesJSI
   - ExpoSecureStore (57.0.1):
@@ -2308,17 +2308,17 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  EXConstants: 5633deb9d049de0e7312b682f73d0a929fb0c793
-  Expo: 1e49d30c267df5cc3d8fe1b9127a8c5f0261ba50
-  ExpoAsset: ce2b87849bbe7ec8b88fbf543cb23d2eda16bafb
+  EXConstants: 27830fdf6ed001b3c58164a76dc77623887173a0
+  Expo: b78c363da590de06aa558f670eccb97f1ee973e7
+  ExpoAsset: 97d1ada96c36e63ca0188055ed26c38e1769e479
   ExpoDomWebView: fa9c72fe29dd4649197a7ecb07ddd870d55c4eda
-  ExpoFileSystem: 191afda4706089fd14caf9053608b725d8e1fc2f
+  ExpoFileSystem: 54a1e09ae8ccde79fd26f19af8f01f0ca8b09440
   ExpoFont: 17668fb7b4e06edf35e015183eb7bc09d83be637
   ExpoKeepAwake: 20a87dafdd9d84d68673e8eaf1a1c7eed8f92659
   ExpoLogBox: f7a6e4749816328bbcc0c906ec5108d304aeaa9b
-  ExpoModulesCore: fe5e52e158d51da40ae7b69405619b115498909b
-  ExpoModulesJSI: 6cb6d299ace493e7dd20ba94c99e8c4799b07afd
-  ExpoModulesWorklets: 0b413c44a848159e224a148dd648b091352d8d9e
+  ExpoModulesCore: e222dfcdee5da14b76bf1217c6af727d2bfa1fa7
+  ExpoModulesJSI: f7b9fe1e0e5e38b2b9a133c7eb5a409be178da1c
+  ExpoModulesWorklets: e539f9940e89dd7abfc37dbb1d964d1110658589
   ExpoSecureStore: bfe0879ff06a729a4a3ff4417ac4e1cd5f2aea04
   ExpoSplashScreen: 071868f4e8a7c21efceea5a23c5b591fe79efa2f
   ExpoSystemUI: e898bb2967e58b2e5ed8e26fb5a89bd004103d51
