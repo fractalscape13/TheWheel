@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.thewheel.app",
+      "bundleIdentifier": "com.fractalscape13.thewheel",
       "buildNumber": "1",
       "infoPlist": {
         "UIBackgroundModes": [
@@ -15,7 +15,7 @@
       }
     },
     "android": {
-      "package": "com.thewheel.app",
+      "package": "com.fractalscape13.thewheel",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
