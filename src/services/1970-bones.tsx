@@ -16168,20 +16168,6 @@ export const showBones1970 = [
     venue: "Capitol Theater",
   },
   {
-    date: "1970-07-01",
-    index: 0,
-    location: "Winnipeg, Manitoba, Canada",
-    showIdentifier: "gd70-07-01.sbd.cotsman.9624.sbeok.shnf",
-    source: "Soundboard",
-    tracks: [
-      { file: "gd70-07-01d1t01.mp3", length: "03:18", title: "Hard To Handle" },
-      { file: "gd70-07-01d1t02.mp3", length: "08:09", title: "Easy Wind" },
-      { file: "gd70-07-01d1t03.mp3", length: "05:42", title: "Candyman" },
-    ],
-    type: "sound",
-    venue: "Winnipeg Fairgrounds",
-  },
-  {
     date: "1970-07-00",
     index: 1,
     location: "Canada",
@@ -16196,6 +16182,20 @@ export const showBones1970 = [
     ],
     type: "sound",
     venue: "Festival Express Train",
+  },
+  {
+    date: "1970-07-01",
+    index: 0,
+    location: "Winnipeg, Manitoba, Canada",
+    showIdentifier: "gd70-07-01.sbd.cotsman.9624.sbeok.shnf",
+    source: "Soundboard",
+    tracks: [
+      { file: "gd70-07-01d1t01.mp3", length: "03:18", title: "Hard To Handle" },
+      { file: "gd70-07-01d1t02.mp3", length: "08:09", title: "Easy Wind" },
+      { file: "gd70-07-01d1t03.mp3", length: "05:42", title: "Candyman" },
+    ],
+    type: "sound",
+    venue: "Winnipeg Fairgrounds",
   },
   {
     date: "1970-07-10",

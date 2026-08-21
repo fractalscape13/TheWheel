@@ -52,19 +52,20 @@ export const formatTrackLength = (length?: string | number) => {
 };
 
 /**
- * The archive's date field is mostly `YYYY-MM-DD`, but six records are not, and
- * every one of them broke something:
+ * The archive's date field is mostly `YYYY-MM-DD`, but seven records are not,
+ * and every one of them broke something:
  *
  *   "1974-05-17 00:00:00"  a timestamp        -> rendered "Invalid Date"
  *   "1981-07-10 00:00:00"                     -> rendered "Invalid Date"
  *   "1983-06-28 00:00:00"                     -> rendered "Invalid Date"
  *   "1967-04"              month precision    -> rendered "Invalid Date"
+ *   "1970-07-00"           day unknown        -> rendered "Jun 30, 1970"
  *   "9-7-1973"             month-day-year     -> rendered "Nov 24, 1914"
  *   "03/21/90"             US short form      -> year parsed as 3
  *
- * The last two are the dangerous ones: one displayed a confidently wrong date,
- * and both yielded a nonsense year, so the year lookup that turns a favorite
- * back into a show found nothing and the row silently died.
+ * The last three are the dangerous ones: each displayed a confidently wrong
+ * date, and the last two yielded a nonsense year, so the year lookup that turns
+ * a favorite back into a show found nothing and the row silently died.
  *
  * Both were disambiguated against the archive itself rather than guessed:
  * "9-7-1973" is at Nassau Coliseum, Uniondale NY, and 1973-09-07 exists there
@@ -82,7 +83,15 @@ export const parseShowDate = (dateString?: string): ShowDateParts | null => {
 
   const ymd = datePart.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   if (ymd) {
-    return { year: +ymd[1], month: +ymd[2], day: +ymd[3] };
+    const year = +ymd[1];
+    const month = +ymd[2];
+    const day = +ymd[3];
+    // A zero means the archive doesn't know that part of the date. Passing it to
+    // Date.UTC rolled back into the previous month instead.
+    if (!month) {
+      return { year };
+    }
+    return day ? { year, month, day } : { year, month };
   }
   const ym = datePart.match(/^(\d{4})-(\d{1,2})$/);
   if (ym) {

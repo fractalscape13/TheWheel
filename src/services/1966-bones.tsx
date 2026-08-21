@@ -814,6 +814,22 @@ export const showBones1966 = [
     venue: "The Questing Beast",
   },
   {
+    date: "1966-02-12",
+    index: 0,
+    location: "Compton, CA",
+    showIdentifier: "gd1966-02-12.sbd.bershaw.9515.shnf",
+    source: "Soundboard",
+    tracks: [
+      {
+        file: "acid5t01.mp3",
+        length: "06:09",
+        title: "Who Cares Rap (Pigpen, Weir, etc.)",
+      },
+    ],
+    type: "sound",
+    venue: "Youth Opportunities Center",
+  },
+  {
     date: "1966-02-25",
     index: 1,
     location: "Los Angeles, CA",
@@ -914,22 +930,6 @@ export const showBones1966 = [
     ],
     type: "sound",
     venue: "Ivar Theater",
-  },
-  {
-    date: "1966-02-12",
-    index: 0,
-    location: "Compton, CA",
-    showIdentifier: "gd1966-02-12.sbd.bershaw.9515.shnf",
-    source: "Soundboard",
-    tracks: [
-      {
-        file: "acid5t01.mp3",
-        length: "06:09",
-        title: "Who Cares Rap (Pigpen, Weir, etc.)",
-      },
-    ],
-    type: "sound",
-    venue: "Youth Opportunities Center",
   },
   {
     date: "1966-03-09",

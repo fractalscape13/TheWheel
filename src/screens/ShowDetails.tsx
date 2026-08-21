@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Pressable, useWindowDimensions } from "react-native";
 import { ScrollView, Text, YStack, XStack, useTheme } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
-import * as SecureStore from "expo-secure-store";
 import { formatDate, formatTrackLength } from "@services/utils";
+import {
+  isFavorited as isShowFavorited,
+  toggleFavoriteShowDate,
+} from "@services/favorites";
 import Touchable from "@components/Touchable";
 import { Track, Show } from "../types";
-import { FAVORITE_SHOWS } from "../constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePlayer } from "../context/PlayerContext";
 
@@ -32,6 +34,11 @@ const formatShowSource = (src?: string) => {
   return <Text>{src}</Text>;
 };
 
+// The trigger sits above the backdrop, so the current recording stays readable
+// while the picker is open.
+const BACKDROP_Z = 5;
+const PICKER_Z = 10;
+
 type ShowDetailsProps = {
   route: any;
   navigation: any;
@@ -43,6 +50,7 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
   // left the spinner permanently unreachable.
   const { loadingTrack } = usePlayer();
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
   const theme = useTheme();
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -52,23 +60,8 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
     setActiveShow(show);
   }, [show]);
 
-  const checkFavoriteStatus = async (show: Show) => {
-    try {
-      const favoriteShowsString = await SecureStore.getItemAsync(
-        FAVORITE_SHOWS
-      );
-      let favoriteShows: string[] = favoriteShowsString
-        ? JSON.parse(favoriteShowsString)
-        : [];
-
-      setIsFavorited(favoriteShows.includes(show.date));
-    } catch (error) {
-      console.error("Error getting favorite shows:", error);
-    }
-  }
-
   useEffect(() => {
-    checkFavoriteStatus(show);
+    setIsFavorited(isShowFavorited(show.date));
   }, [show]);
 
   // A few identifiers appear on more than one archive record, which listed the
@@ -98,29 +91,8 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
     onSelectTrack(trackIndex, activeShow ?? show);
   };
 
-  const toggleFavorite = async () => {
-    try {
-      const favoriteShowsString = await SecureStore.getItemAsync(
-        FAVORITE_SHOWS
-      );
-      let favoriteShows: string[] = favoriteShowsString
-        ? JSON.parse(favoriteShowsString)
-        : [];
-
-      if (isFavorited) {
-        favoriteShows = favoriteShows.filter((date) => date !== show.date);
-        setIsFavorited(false);
-      } else {
-        favoriteShows.push(show.date);
-        setIsFavorited(true);
-      }
-      await SecureStore.setItemAsync(
-        FAVORITE_SHOWS,
-        JSON.stringify(favoriteShows)
-      );
-    } catch (error) {
-      console.error("Error updating favorite shows:", error);
-    }
+  const toggleFavorite = () => {
+    setIsFavorited(toggleFavoriteShowDate(show.date));
   };
 
   const handleNewShowSelect = (show: Show) => {
@@ -131,62 +103,22 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
   return (
     <YStack pt={insets.top} bg="$bg" flex={1} px="$3">
       {isOpen && (
-        // Bounded and scrollable: one date carries as many as 39 recordings, and
-        // an unbounded list ran off the bottom of the screen with everything
-        // below the fold unreachable.
-        <YStack
-          // White, not "$border": every palette's border token is a hairline
-          // close to its own background (darkstar's is #242742), so the picker
-          // had no visible edge and read as part of the page behind it.
-          bw={1}
-          bc="white"
-          position="absolute"
-          top={insets.top + 145}
-          left={18}
-          right={18}
-          maxHeight="55%"
-          backgroundColor="$overlay"
-          z="$4"
-          br="$3"
-          overflow="hidden"
-        >
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator
-          >
-          {selectableShows.map((show: Show, index: number) => {
-            return (
-              <Touchable
-                style={{ width: "100%" }}
-                key={`${show.showIdentifier}-${index}`}
-                onPress={() => handleNewShowSelect(show)}
-                hitSlop={5}
-              >
-                <XStack
-                  bg="$sheetBg"
-                  px="$3"
-                  py="$3"
-                  jc="center"
-                  ai="center"
-                  borderBottomWidth={1}
-                  borderBottomColor="$border"
-                >
-                  <Text
-                    z="$3"
-                    fs="$3"
-                    color="$sheetText"
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    flex={1}
-                  >
-                    {formatShowSource(show.showIdentifier)}
-                  </Text>
-                </XStack>
-              </Touchable>
-            );
-          })}
-          </ScrollView>
-        </YStack>
+        // Catches taps meant as "dismiss", which would otherwise land on the
+        // track list still live underneath the picker.
+        <Pressable
+          onPress={() => setIsOpen(false)}
+          accessibilityRole="button"
+          accessibilityLabel="Close recording picker"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.78)",
+            zIndex: BACKDROP_Z,
+          }}
+        />
       )}
       <XStack jc="space-between" ai="center">
         <Touchable onPress={() => navigation.goBack()} hitSlop={15}>
@@ -222,34 +154,92 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
       <Text fs="$3" color="$text" ta="center" mb="$3">
         {activeShow?.location}
       </Text>
-      <Touchable
-        onPress={() => setIsOpen((prevValue) => !prevValue)}
-        disabled={!doMultipleSourcesExist}
-      >
-        <XStack
-          bw={doMultipleSourcesExist ? 1 : 0}
-          bc="$border"
-          py="$2"
-          px="$4"
-          mb="$4"
-          br="$4"
-          overflow="hidden"
+      {/* Anchors the picker to the trigger: venue and location both wrap, so no
+       *  fixed offset is right for every show. Margin is here, not on the row,
+       *  so the picker hugs the button. */}
+      <YStack mb="$4" zIndex={PICKER_Z}>
+        <Touchable
+          onPress={() => setIsOpen((prevValue) => !prevValue)}
+          disabled={!doMultipleSourcesExist}
         >
-          {doMultipleSourcesExist ? (
-            <Ionicons name="chevron-down" size={22} color={theme?.text?.val} />
-          ) : null}
-          <Text
-            fs="$3"
-            ml="$3"
-            color="$text"
-            ta="center"
-            numberOfLines={1}
-            ellipsizeMode="clip"
+          <XStack
+            bw={doMultipleSourcesExist ? 1 : 0}
+            bc="$border"
+            py="$2"
+            px="$4"
+            br="$4"
+            overflow="hidden"
           >
-            {formatShowSource(activeShow?.showIdentifier)}
-          </Text>
-        </XStack>
-      </Touchable>
+            {doMultipleSourcesExist ? (
+              <Ionicons name="chevron-down" size={22} color={theme?.text?.val} />
+            ) : null}
+            <Text
+              fs="$3"
+              ml="$3"
+              color="$text"
+              ta="center"
+              numberOfLines={1}
+              ellipsizeMode="clip"
+            >
+              {formatShowSource(activeShow?.showIdentifier)}
+            </Text>
+          </XStack>
+        </Touchable>
+        {isOpen && (
+          // Bounded and scrollable: one date carries as many as 39 recordings.
+          // Sized off the window, not this wrapper, which is only button-tall.
+          <YStack
+            position="absolute"
+            top="100%"
+            left={0}
+            right={0}
+            // White, not "$border": every palette's border is a hairline close to
+            // its own background, leaving the picker with no visible edge.
+            bw={1}
+            bc="white"
+            maxHeight={windowHeight * 0.5}
+            backgroundColor="$overlay"
+            br="$3"
+            overflow="hidden"
+          >
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator
+            >
+              {selectableShows.map((show: Show, index: number) => {
+                return (
+                  <Touchable
+                    style={{ width: "100%" }}
+                    key={`${show.showIdentifier}-${index}`}
+                    onPress={() => handleNewShowSelect(show)}
+                    hitSlop={5}
+                  >
+                    <XStack
+                      bg="$sheetBg"
+                      px="$3"
+                      py="$3"
+                      jc="center"
+                      ai="center"
+                      borderBottomWidth={1}
+                      borderBottomColor="$border"
+                    >
+                      <Text
+                        fs="$3"
+                        color="$sheetText"
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        flex={1}
+                      >
+                        {formatShowSource(show.showIdentifier)}
+                      </Text>
+                    </XStack>
+                  </Touchable>
+                );
+              })}
+            </ScrollView>
+          </YStack>
+        )}
+      </YStack>
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {!activeShow?.tracks?.length ? (
           <Text fs="$3" color="$text" ta="center" mt="$5">

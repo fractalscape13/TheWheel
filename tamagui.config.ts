@@ -33,6 +33,10 @@ export type Palette = {
   trackProgress: string; // played portion of the seek bar
   trackBg: string; // unplayed portion
   icon: string;
+  // A failure the user has to act on. Deliberately not derived from
+  // `primary`: two palettes accent in red already, and a failure that shares
+  // the accent colour reads as decoration.
+  danger: string;
 };
 
 export type PaletteId =
@@ -70,6 +74,7 @@ export const palettes: { id: PaletteId; label: string; colors: Palette }[] = [
       trackProgress: "#00B0FF",
       trackBg: "#37474F",
       icon: "#90CAF9",
+      danger: "#FF6B6B",
     },
   },
   {
@@ -99,6 +104,7 @@ export const palettes: { id: PaletteId; label: string; colors: Palette }[] = [
       trackProgress: "#E0A34A",
       trackBg: "#3D3025",
       icon: "#E0A34A",
+      danger: "#E8705F",
     },
   },
   {
@@ -128,6 +134,7 @@ export const palettes: { id: PaletteId; label: string; colors: Palette }[] = [
       trackProgress: "#8B7BE8",
       trackBg: "#2A2E4D",
       icon: "#A899F0",
+      danger: "#FF7A85",
     },
   },
   {
@@ -157,6 +164,7 @@ export const palettes: { id: PaletteId; label: string; colors: Palette }[] = [
       trackProgress: "#E8735A",
       trackBg: "#3A2C29",
       icon: "#F09479",
+      danger: "#F2B544",
     },
   },
   {
@@ -186,6 +194,7 @@ export const palettes: { id: PaletteId; label: string; colors: Palette }[] = [
       trackProgress: "#4FB3A5",
       trackBg: "#27353A",
       icon: "#6FC7BA",
+      danger: "#F0736A",
     },
   },
   {
@@ -215,6 +224,7 @@ export const palettes: { id: PaletteId; label: string; colors: Palette }[] = [
       trackProgress: "#E2574F",
       trackBg: "#26362D",
       icon: "#EF7A72",
+      danger: "#EFB748",
     },
   },
 ];

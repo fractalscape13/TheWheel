@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { AppState } from "react-native";
 import { Show, Track } from "../types";
 import {
   addTracks,
@@ -16,7 +24,7 @@ import {
   previousSongAction,
 } from "../services/trackPlayer";
 import { getSelectedYearData } from "@services/yearsService";
-import { showYear } from "@services/utils";
+import { showYear, trackLengthToSeconds } from "@services/utils";
 import {
   archiveTrackUrl,
   resolveItemLocation,
@@ -44,6 +52,9 @@ type PlayerContextType = {
    *  knows if `duration` describes that track or the previous one. */
   durationIsForCurrentTrack: boolean;
   isPlaying: boolean;
+  /** The retry budget is spent and this track will not load without another
+   *  attempt. Distinct from paused: nothing is going to happen on its own. */
+  playbackFailed: boolean;
   isExpanded: boolean;
   togglePlayerSize: () => void;
   duration: number;
@@ -55,10 +66,35 @@ type PlayerContextType = {
   nextSongAction: () => Promise<void>;
   previousSongAction: () => Promise<void>;
   trackSelectAction: (index: number) => Promise<void>;
+  retryCurrentTrack: () => Promise<void>;
   loadAudioAndPlay: (show: Show, trackIndex: number) => Promise<void>;
 };
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
+
+/** Playback continues in the background, so checkpoints alone can go stale for
+ *  a long time before the app is killed. This bounds what's lost. */
+const POSITION_SAVE_INTERVAL_MS = 15000;
+
+/** Nothing is playing during a restore, so the data-node lookup is optional
+ *  there and must not hold the queue up. */
+const RESTORE_LOCATION_TIMEOUT_MS = 1500;
+
+/** Below this, seeking just forces a re-buffer for nothing. */
+const RESUME_FLOOR_SECONDS = 3;
+/** Above this the user would resume in the outro, or past the end. */
+const RESUME_END_MARGIN_SECONDS = 5;
+
+const resumePosition = (saved: number | undefined, track?: Track) => {
+  if (!saved || saved < RESUME_FLOOR_SECONDS) {
+    return 0;
+  }
+  const length = trackLengthToSeconds(track?.length);
+  if (length > 0 && saved > length - RESUME_END_MARGIN_SECONDS) {
+    return 0;
+  }
+  return saved;
+};
 
 export const PlayerProvider = ({ children }: { children: any }) => {
   const [show, setShow] = useState<Show | null>(null);
@@ -106,6 +142,12 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   // Something has been loaded by the user, so the restore below must not
   // overwrite it with whatever the native player was on at mount.
   const playbackClaimed = useRef(false);
+  // Shown until the native player reports a position of its own, which it can't
+  // until the queue is built. Tagged with its track so it expires on its own.
+  const [restoredPosition, setRestoredPosition] = useState<{
+    index: number;
+    seconds: number;
+  } | null>(null);
 
   // Read inside the player-event handler, which must not close over a stale
   // render's `show`.
@@ -113,6 +155,50 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   showRef.current = show;
 
   const progress = useProgress();
+
+  // Same reason as showRef — the listeners below run outside the render that
+  // created them.
+  const currentIndexRef = useRef<number | null>(null);
+  currentIndexRef.current = currentPlayingSongIndex;
+  // Assigned below from the resolved position, not the raw native one.
+  const positionRef = useRef(0);
+
+  // Lets the throttle skip a write when the position hasn't moved.
+  const lastWriteRef = useRef({ at: 0, position: -1 });
+
+  // Set while we drive the native player ourselves, so a checkpoint that fires
+  // mid-restore can't record a position the seek hasn't reached yet.
+  const suppressTrackWritesRef = useRef(false);
+
+  // The index we last deliberately skipped to, cleared once the player reports
+  // it. `addTracks` announces index 0 before the skip lands, and those events
+  // arrive asynchronously — so a plain time window doesn't hold, and persisting
+  // the stray 0 reset the saved track to 1. While a skip is outstanding only the
+  // matching index is believed; once reached, later changes are genuine advances.
+  const intendedIndexRef = useRef<number | null>(null);
+
+  /** Stable and render-free, so listeners can call it without invalidating. */
+  const persistNowPlaying = useCallback(
+    (overrides?: { trackIndex?: number; position?: number }) => {
+      if (suppressTrackWritesRef.current) {
+        return;
+      }
+      const current = showRef.current;
+      const trackIndex = overrides?.trackIndex ?? currentIndexRef.current;
+      if (!current?.showIdentifier || typeof trackIndex !== "number") {
+        return;
+      }
+      const position = Math.max(0, overrides?.position ?? positionRef.current);
+      lastWriteRef.current = { at: Date.now(), position };
+      saveNowPlaying({
+        date: current.date,
+        showIdentifier: current.showIdentifier,
+        trackIndex,
+        position,
+      });
+    },
+    []
+  );
 
   const events = [
     Event.PlaybackState,
@@ -145,27 +231,39 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         // change instead.
         setPlaybackFailed(false);
       }
+      // A natural checkpoint — no reason to wait for the throttle.
+      if (event.state === State.Paused) {
+        persistNowPlaying();
+      }
       setPlayerState(event.state);
     }
     // The player advances by itself at the end of a track (and from the lock
     // screen), so follow its index rather than only tracking our own taps.
     if (event.type === Event.PlaybackActiveTrackChanged) {
+      const next = event.index ?? null;
+      const previous = currentIndexRef.current;
+      const asked = intendedIndexRef.current !== null && next === intendedIndexRef.current;
+      // A stream that fails outright drops the native player back to index 0.
+      // Following that moved the user to track 1 and saved it there, so only a
+      // skip we asked for is allowed to move backwards; anything else must be
+      // the player advancing on its own.
+      if (!asked && previous !== null && next !== null && next < previous) {
+        return;
+      }
+      if (asked) {
+        intendedIndexRef.current = null;
+      }
       // A different track is a fresh problem, so give it its own retry budget —
       // one bad track must not spend the whole queue's allowance as the player
       // advances through it.
       retriesLeft.current = MAX_PLAYBACK_RETRIES;
       // The player has moved: its duration now describes what we display.
       setDurationIsForCurrentTrack(true);
-      setCurrentPlayingSongIndex(event.index ?? null);
-      // Keep the saved position in step with advances we didn't initiate —
-      // the end of a track, the lock screen, next/previous.
-      const current = showRef.current;
-      if (current?.showIdentifier && typeof event.index === "number") {
-        void saveNowPlaying({
-          date: current.date,
-          showIdentifier: current.showIdentifier,
-          trackIndex: event.index,
-        });
+      setCurrentPlayingSongIndex(next);
+      // Position is pinned to 0, not read from the ref, which still holds the
+      // outgoing track's position.
+      if (next !== null) {
+        persistNowPlaying({ trackIndex: next, position: 0 });
       }
     }
   });
@@ -175,10 +273,24 @@ export const PlayerProvider = ({ children }: { children: any }) => {
     let cancelled = false;
     const superseded = () => cancelled || playbackClaimed.current;
 
-    // 1. The native player still holds a queue and may still be playing — e.g.
-    //    Android keeping playback alive after the app was killed. Adopt it.
+    // Adopt a player that is still holding audio — e.g. Android keeping
+    // playback alive after the app was killed.
     const adoptLivePlayer = async () => {
-      const activeTrack = await getActiveTrack();
+      const [activeTrack, state] = await Promise.all([
+        getActiveTrack(),
+        getState(),
+      ]);
+      // Only a player that is actually running is worth adopting, and this has
+      // to be decided *before* touching any UI state. A JS reload leaves the
+      // outgoing queue readable for a moment while it is being torn down, and
+      // adopting that is what flashed the previous track on every reload.
+      const isLive =
+        state === State.Playing ||
+        state === State.Buffering ||
+        state === State.Loading;
+      if (!isLive) {
+        return false;
+      }
       const showDate = activeTrack?.showDate as string | undefined;
       const identifier = activeTrack?.showIdentifier as string | undefined;
       if (!showDate || !identifier) {
@@ -188,10 +300,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
       if (!restored || superseded()) {
         return false;
       }
-      const [activeIndex, state] = await Promise.all([
-        getActiveTrackIndex(),
-        getState(),
-      ]);
+      const activeIndex = await getActiveTrackIndex();
       if (superseded()) {
         return false;
       }
@@ -199,51 +308,74 @@ export const PlayerProvider = ({ children }: { children: any }) => {
       setShow(restored);
       setCurrentPlayingSongIndex(activeIndex ?? null);
       setPlayerState(state ?? null);
+      // Its own position is authoritative; drop anything the storage pass showed.
+      setRestoredPosition(null);
       return true;
     };
 
-    // 2. Nothing is loaded natively — the usual case after a JS reload, since
-    //    the old player is deliberately stopped and cleared. Rebuild from what
-    //    was last saved, and re-queue it paused so the controls work.
-    const rehydrateFromStorage = async () => {
-      const saved = await readNowPlaying();
+    // 2. Show what was saved. Everything here is local — a keychain read and an
+    //    array scan — so the bar comes back on the right track, at the right
+    //    place, without waiting on the network or the native player.
+    type Resumable = { show: Show; trackIndex: number; resumeAt: number };
+
+    const showSaved = (): Resumable | null => {
+      const saved = readNowPlaying();
       if (!saved || superseded()) {
-        return;
+        return null;
       }
       const restored = findRecording(saved.date, saved.showIdentifier);
       if (!restored?.tracks?.length || superseded()) {
-        return;
+        return null;
       }
       const trackIndex = Math.min(
         Math.max(saved.trackIndex, 0),
         restored.tracks.length - 1
       );
+      const resumeAt = resumePosition(
+        saved.position,
+        restored.tracks[trackIndex]
+      );
       setShow(restored);
       setCurrentPlayingSongIndex(trackIndex);
       setDurationIsForCurrentTrack(false);
+      setRestoredPosition({ index: trackIndex, seconds: resumeAt });
+      return { show: restored, trackIndex, resumeAt };
+    };
 
-      const queue = await toQueue(restored);
+    // Queue it up paused so the controls work; changes nothing on screen.
+    const queueSaved = async ({ show, trackIndex, resumeAt }: Resumable) => {
+      const queue = await toQueue(show, RESTORE_LOCATION_TIMEOUT_MS);
       if (!queue.length || superseded()) {
         return;
       }
-      // Load without playing: the bar comes back where it was, and the user
-      // decides whether to resume.
       await addTracks(queue);
       if (superseded()) {
         return;
       }
+      intendedIndexRef.current = trackIndex;
       await skipToTrack(trackIndex);
-      queuedIdentifier.current = restored.showIdentifier ?? null;
+      queuedIdentifier.current = show.showIdentifier ?? null;
+      if (resumeAt > 0 && !superseded()) {
+        await seekTo(resumeAt);
+      }
     };
 
     const restore = async () => {
+      suppressTrackWritesRef.current = true;
       try {
+        // Saved state first: reading the native player first rendered whatever
+        // the dying queue reported, flashing the previous track on every reload.
+        const resumable = showSaved();
         if (await adoptLivePlayer()) {
           return;
         }
-        await rehydrateFromStorage();
+        if (resumable) {
+          await queueSaved(resumable);
+        }
       } catch {
         // No player set up yet (cold start) — nothing to restore.
+      } finally {
+        suppressTrackWritesRef.current = false;
       }
     };
 
@@ -254,12 +386,53 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   }, []);
 
   const isPlaying = playerState === State.Playing;
+
+  // The native position wins once it has one; until then show where the restore
+  // is putting the user back, so the bar never reads 0:00 for a resumed track.
+  const position =
+    progress.position > 0
+      ? progress.position
+      : restoredPosition?.index === currentPlayingSongIndex
+        ? restoredPosition.seconds
+        : progress.position;
+  positionRef.current = position;
   // Not buffering once we've given up, however the native player still reports
   // itself — otherwise the bar spins forever on a track that will never load.
   const isBuffering =
     intendsToPlay &&
     !playbackFailed &&
     (playerState === State.Loading || playerState === State.Buffering);
+
+  // The last reliable moment before iOS may suspend the app. Playback continues
+  // past this, which is what the throttle below covers.
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState !== "active") {
+        persistNowPlaying();
+      }
+    });
+    return () => {
+      // Also covers the provider itself going away — a JS reload tears this
+      // context down without any AppState transition at all.
+      persistNowPlaying();
+      subscription.remove();
+    };
+  }, [persistNowPlaying]);
+
+  // No timer of its own: this rides the render useProgress already causes every
+  // second, and only writes when the position actually advanced.
+  useEffect(() => {
+    if (!isPlaying) {
+      return;
+    }
+    if (Date.now() - lastWriteRef.current.at < POSITION_SAVE_INTERVAL_MS) {
+      return;
+    }
+    if (Math.abs(progress.position - lastWriteRef.current.position) < 1) {
+      return;
+    }
+    persistNowPlaying();
+  }, [isPlaying, progress.position, persistNowPlaying]);
 
   // Everything that means "the user wants audio now": fresh retry budget, clear
   // any previous failure, and mark intent so a buffering spinner is honest.
@@ -274,14 +447,14 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   };
 
   // Shared by the load path and the mount-time restore.
-  const toQueue = async (show: Show) => {
+  const toQueue = async (show: Show, locationTimeoutMs?: number) => {
     const showIdentifier = show.showIdentifier;
     if (!showIdentifier) {
       return [];
     }
     // Which data node holds this item. Cached per item, short timeout, and falls
     // back to the /download/ URL — so this can only help, never block playback.
-    const location = await resolveItemLocation(showIdentifier);
+    const location = await resolveItemLocation(showIdentifier, locationTimeoutMs);
     return (show.tracks ?? []).map((track: Track) => ({
       artist: "Grateful Dead",
       title: track.title,
@@ -340,6 +513,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         return;
       }
       if (alreadyQueued) {
+        intendedIndexRef.current = trackIndex;
         await skipToTrack(trackIndex);
         return;
       }
@@ -348,21 +522,23 @@ export const PlayerProvider = ({ children }: { children: any }) => {
       if (!formattedTracks.length || superseded()) {
         return;
       }
-      await clearAudioFromStorage();
-      if (superseded()) {
-        return;
+      suppressTrackWritesRef.current = true;
+      try {
+        await clearAudioFromStorage();
+        if (superseded()) {
+          return;
+        }
+        await addTracks(formattedTracks);
+        if (superseded()) {
+          return;
+        }
+        intendedIndexRef.current = trackIndex;
+        await skipToTrack(trackIndex);
+        queuedIdentifier.current = show.showIdentifier ?? null;
+      } finally {
+        suppressTrackWritesRef.current = false;
       }
-      await addTracks(formattedTracks);
-      if (superseded()) {
-        return;
-      }
-      await skipToTrack(trackIndex);
-      queuedIdentifier.current = show.showIdentifier ?? null;
-      void saveNowPlaying({
-        date: show.date,
-        showIdentifier: show.showIdentifier!,
-        trackIndex,
-      });
+      persistNowPlaying({ trackIndex, position: 0 });
     });
 
     // Keep the chain alive regardless of how this load ends.
@@ -408,12 +584,33 @@ export const PlayerProvider = ({ children }: { children: any }) => {
 
   const handlePreviousSongAction = async () => {
     armPlayback();
+    // Declared, or the backwards move reads as a failure artifact and is ignored.
+    const current = currentIndexRef.current;
+    if (current !== null && current > 0) {
+      intendedIndexRef.current = current - 1;
+    }
     await previousSongAction();
   };
 
   const trackSelectAction = async (selectedTrackIndex: number) => {
     armPlayback();
+    intendedIndexRef.current = selectedTrackIndex;
     await selectTrack(selectedTrackIndex);
+  };
+
+  // `TrackPlayer.retry()` rather than `play()`: after a PlaybackError the native
+  // player is sitting on an item it has already given up on, and play() does not
+  // re-attempt it. This is the same call the automatic budget makes.
+  const retryCurrentTrack = async () => {
+    armPlayback();
+    try {
+      await retryPlayback();
+    } catch (error) {
+      // The error event won't fire for a retry that never started, so put the
+      // failure back rather than leaving the bar in a spinner it can't leave.
+      console.error("Retry could not be started:", error);
+      setPlaybackFailed(true);
+    }
   };
 
   const togglePlayPause = async () => {
@@ -431,6 +628,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
     <PlayerContext.Provider
       value={{
         isPlaying,
+        playbackFailed,
         isLoading,
         loadingTrack,
         isBuffering,
@@ -438,7 +636,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         isExpanded,
         togglePlayerSize,
         duration: progress.duration,
-        position: progress.position,
+        position,
         show,
         currentPlayingSongIndex,
         handleSeek,
@@ -446,6 +644,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         nextSongAction: handleNextSongAction,
         previousSongAction: handlePreviousSongAction,
         trackSelectAction,
+        retryCurrentTrack,
         loadAudioAndPlay,
       }}
     >

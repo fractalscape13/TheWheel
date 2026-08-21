@@ -30,6 +30,7 @@ const Player: React.FC = () => {
     position,
     isPlaying,
     isBuffering,
+    playbackFailed,
     durationIsForCurrentTrack,
     show,
     handleSeek,
@@ -37,6 +38,7 @@ const Player: React.FC = () => {
     previousSongAction,
     nextSongAction,
     trackSelectAction,
+    retryCurrentTrack,
   } = usePlayer();
   if (!show) return null;
 
@@ -91,7 +93,7 @@ const Player: React.FC = () => {
           />
         </Touchable>
         <Touchable
-          onPress={handlePlayPause}
+          onPress={playbackFailed ? retryCurrentTrack : handlePlayPause}
           hitSlop={10}
           style={{
             backgroundColor: theme?.$primary?.val,
@@ -100,10 +102,16 @@ const Player: React.FC = () => {
             marginBottom: 4,
           }}
         >
+          {/* A failed track keeps the accent circle — it is still the control to
+              press — but says what pressing it will do. `isBuffering` is forced
+              false while failed, so these three cannot collide. */}
           {isBuffering ? (
             <ActivityIndicator size="small" color="#000" />
           ) : (
-            <Ionicons name={isPlaying ? "pause" : "play"} size={20} />
+            <Ionicons
+              name={playbackFailed ? "refresh" : isPlaying ? "pause" : "play"}
+              size={20}
+            />
           )}
         </Touchable>
         <Touchable onPress={nextSongAction}>
@@ -114,11 +122,19 @@ const Player: React.FC = () => {
           />
         </Touchable>
       </XStack>
-      <Text color="$text" fs="$1" ff="$mono" alignSelf="center" mb="$1">
-        {secondsToFormattedMinutesSeconds(position)}
-        {" / "}
-        {secondsToFormattedMinutesSeconds(totalSeconds)}
-      </Text>
+      {/* Same row either way, so the bar doesn't change height on a failure —
+          and the clock reads 0:00 on a track that never loaded anyway. */}
+      {playbackFailed ? (
+        <Text color="$danger" fs="$1" alignSelf="center" mb="$1">
+          Couldn't load this track — tap to retry
+        </Text>
+      ) : (
+        <Text color="$text" fs="$1" ff="$mono" alignSelf="center" mb="$1">
+          {secondsToFormattedMinutesSeconds(position)}
+          {" / "}
+          {secondsToFormattedMinutesSeconds(totalSeconds)}
+        </Text>
+      )}
       <Slider
         w="100%"
         mt="$1"

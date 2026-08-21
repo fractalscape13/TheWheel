@@ -48,7 +48,9 @@ export const archiveDownloadUrl = (showIdentifier: string, file: string) =>
  * Cached — including failures, so a bad lookup isn't repeated per track.
  */
 export const resolveItemLocation = async (
-  showIdentifier: string
+  showIdentifier: string,
+  // Callers not about to play anything can afford to wait far less.
+  timeoutMs: number = METADATA_TIMEOUT_MS
 ): Promise<ItemLocation | null> => {
   const cached = locations.get(showIdentifier);
   if (cached) {
@@ -56,7 +58,7 @@ export const resolveItemLocation = async (
   }
 
   const timeout = new AbortController();
-  const timer = setTimeout(() => timeout.abort(), METADATA_TIMEOUT_MS);
+  const timer = setTimeout(() => timeout.abort(), timeoutMs);
   try {
     const response = await fetch(
       `${METADATA_HOST}/${encodeURIComponent(showIdentifier)}`,

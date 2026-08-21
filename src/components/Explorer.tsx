@@ -16,13 +16,8 @@ import {
   showYear,
 } from "@services/utils";
 import { Show } from "../types";
-import * as SecureStore from "expo-secure-store";
-import {
-  FAVORITE_SHOWS,
-  FAVORITES_TAB,
-  SCREEN_PADDING,
-  TODAY_TAB,
-} from "../constants";
+import { readFavoriteShowDates } from "@services/favorites";
+import { FAVORITES_TAB, SCREEN_PADDING, TODAY_TAB } from "../constants";
 import { getSelectedYearData } from "@services/yearsService";
 import { years } from "@services/utils";
 import { Ionicons } from "@expo/vector-icons";
@@ -250,40 +245,26 @@ const Explorer: React.FC<ExplorerProps> = ({
     [onThisDayShows, deferredSearchTerm]
   );
 
-  const fetchFavoriteShows = async () => {
-    try {
-      const favoriteShowDatesString = await SecureStore.getItemAsync(
-        FAVORITE_SHOWS
+  const fetchFavoriteShows = () => {
+    const foundShows: Show[] = [];
+    readFavoriteShowDates().forEach((favoritedShowDate) => {
+      const year = showYear(favoritedShowDate);
+      if (!year) {
+        return;
+      }
+      const onThatDate = getSelectedYearData(year).filter(
+        (show) => show.date === favoritedShowDate
       );
-      const favoriteShowDates: string[] = favoriteShowDatesString
-        ? JSON.parse(favoriteShowDatesString)
-        : [];
+      // Prefer a source that can actually be played, as the main list does.
+      const foundShow = onThatDate.find(isPlayable) ?? onThatDate[0];
+      if (foundShow) {
+        foundShows.push(foundShow);
+      }
+    });
 
-      const foundShows: Show[] = [];
-      favoriteShowDates.forEach((favoritedShowDate) => {
-        const year = showYear(favoritedShowDate);
-        if (!year) {
-          return;
-        }
-        const onThatDate = getSelectedYearData(year).filter(
-          (show) => show.date === favoritedShowDate
-        );
-        // Prefer a source that can actually be played, as the main list does.
-        const foundShow = onThatDate.find(isPlayable) ?? onThatDate[0];
-        if (foundShow) {
-          foundShows.push(foundShow);
-        }
-      });
-
-      // Always set: previously this only assigned when something was found, so
-      // removing your last favorite left the old list on screen.
-      setFavoriteShows(foundShows);
-      setFavoritesLoaded(true);
-    } catch (error) {
-      console.error("Error getting favorite shows:", error);
-      setFavoriteShows([]);
-      setFavoritesLoaded(true);
-    }
+    // Always set, so removing your last favorite clears the list.
+    setFavoriteShows(foundShows);
+    setFavoritesLoaded(true);
   };
 
   const hasFavorites = favoriteShows.length > 0;
