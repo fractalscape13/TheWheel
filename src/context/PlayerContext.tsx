@@ -40,6 +40,9 @@ type PlayerContextType = {
   /** Queued and waiting on the network. archive.org often takes 5s+ to first
    *  byte, and without this the bar just sits at 0:00 looking broken. */
   isBuffering: boolean;
+  /** Whether the native player is on the track being displayed, so a caller
+   *  knows if `duration` describes that track or the previous one. */
+  durationIsForCurrentTrack: boolean;
   isPlaying: boolean;
   isExpanded: boolean;
   togglePlayerSize: () => void;
@@ -93,6 +96,13 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   // restore does deliberately without playing — so intent is what decides
   // whether a buffering spinner is honest.
   const [intendsToPlay, setIntendsToPlay] = useState(false);
+  // The track index is set optimistically so the bar names the right track at
+  // once, which desynchronises it from the native player's `duration` — that
+  // still describes the track the player is really on. Until it catches up,
+  // `duration` must not be trusted, or the bar pairs a new title with the
+  // previous track's length.
+  const [durationIsForCurrentTrack, setDurationIsForCurrentTrack] =
+    useState(false);
   // Something has been loaded by the user, so the restore below must not
   // overwrite it with whatever the native player was on at mount.
   const playbackClaimed = useRef(false);
@@ -144,6 +154,8 @@ export const PlayerProvider = ({ children }: { children: any }) => {
       // one bad track must not spend the whole queue's allowance as the player
       // advances through it.
       retriesLeft.current = MAX_PLAYBACK_RETRIES;
+      // The player has moved: its duration now describes what we display.
+      setDurationIsForCurrentTrack(true);
       setCurrentPlayingSongIndex(event.index ?? null);
       // Keep the saved position in step with advances we didn't initiate —
       // the end of a track, the lock screen, next/previous.
@@ -208,6 +220,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
       );
       setShow(restored);
       setCurrentPlayingSongIndex(trackIndex);
+      setDurationIsForCurrentTrack(false);
 
       const queue = await toQueue(restored);
       if (!queue.length || superseded()) {
@@ -310,9 +323,9 @@ export const PlayerProvider = ({ children }: { children: any }) => {
     // round-trip. Only the playhead has to wait for the native player.
     setShow(show);
     setCurrentPlayingSongIndex(trackIndex);
+    setDurationIsForCurrentTrack(false);
 
-    retriesLeft.current = MAX_PLAYBACK_RETRIES;
-    setPlaybackFailed(false);
+    armPlayback();
 
     // Same recording already queued: a skip is all that's needed.
     const alreadyQueued = queuedIdentifier.current === show.showIdentifier;
@@ -421,6 +434,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         isLoading,
         loadingTrack,
         isBuffering,
+        durationIsForCurrentTrack,
         isExpanded,
         togglePlayerSize,
         duration: progress.duration,

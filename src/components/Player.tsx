@@ -30,6 +30,7 @@ const Player: React.FC = () => {
     position,
     isPlaying,
     isBuffering,
+    durationIsForCurrentTrack,
     show,
     handleSeek,
     handlePlayPause,
@@ -43,8 +44,14 @@ const Player: React.FC = () => {
   // The native duration is 0 until the remote file has buffered, so fall back to
   // the length the archive already gave us. Avoids a "0:00 / 0:00" bar on every
   // track change.
+  // Only trust the native duration once the player is on this track; until then
+  // it still describes the previous one, which paired the new title with the old
+  // track's length.
+  const knownSeconds = trackLengthToSeconds(activeTrack?.length);
   const totalSeconds =
-    duration > 0 ? duration : trackLengthToSeconds(activeTrack?.length);
+    durationIsForCurrentTrack && duration > 0
+      ? duration
+      : knownSeconds || duration;
   const sliderMax = Math.max(1, Math.floor(totalSeconds) || 1);
 
   return (
