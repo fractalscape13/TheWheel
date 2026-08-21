@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Show, Track } from "../types";
 import {
   addTracks,
@@ -9,11 +9,22 @@ import {
   reset,
   seekTo,
   selectTrack,
+  skipToTrack,
+  retryPlayback,
   handlePlayPause,
   nextSongAction,
   previousSongAction,
 } from "../services/trackPlayer";
 import { getSelectedYearData } from "@services/yearsService";
+import { showYear } from "@services/utils";
+import {
+  archiveTrackUrl,
+  resolveItemLocation,
+} from "@services/archiveUrl";
+import {
+  readNowPlaying,
+  saveNowPlaying,
+} from "@services/nowPlaying";
 import {
   useProgress,
   useTrackPlayerEvents,
@@ -23,6 +34,12 @@ import {
 
 type PlayerContextType = {
   isLoading: boolean;
+  /** Which row is mid-load, so a track list can indicate it in place rather
+   *  than unmounting itself behind a spinner. */
+  loadingTrack: { showIdentifier: string; index: number } | null;
+  /** Queued and waiting on the network. archive.org often takes 5s+ to first
+   *  byte, and without this the bar just sits at 0:00 looking broken. */
+  isBuffering: boolean;
   isPlaying: boolean;
   isExpanded: boolean;
   togglePlayerSize: () => void;
@@ -36,7 +53,6 @@ type PlayerContextType = {
   previousSongAction: () => Promise<void>;
   trackSelectAction: (index: number) => Promise<void>;
   loadAudioAndPlay: (show: Show, trackIndex: number) => Promise<void>;
-  setShow: (show: Show | null) => void;
 };
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -44,11 +60,47 @@ const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 export const PlayerProvider = ({ children }: { children: any }) => {
   const [show, setShow] = useState<Show | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingTrack, setLoadingTrack] = useState<{
+    showIdentifier: string;
+    index: number;
+  } | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentPlayingSongIndex, setCurrentPlayingSongIndex] = useState<
     number | null
   >(null);
   const [playerState, setPlayerState] = useState<State | null>(null);
+  // Increments on every load; the newest tap wins. A load that finds the counter
+  // moved on has been superseded and does nothing at all.
+  const loadToken = useRef(0);
+  // Loads run strictly one after another. Without this, a superseded load had
+  // already issued its native reset(), which could land *after* the winning
+  // load's add() — wiping the queue, so the following skip() threw
+  // "The track index is out of bounds" and the load died mid-flight.
+  const loadChain = useRef<Promise<void>>(Promise.resolve());
+  // Which recording is currently queued natively. Tapping another track in the
+  // same recording only needs a skip — not a reset and a re-add of every track.
+  const queuedIdentifier = useRef<string | null>(null);
+  // archive.org's datanodes return 5xx a large fraction of the time; measured
+  // ~50% on one item. A couple of retries turns that into a usually-works.
+  const retriesLeft = useRef(0);
+  const MAX_PLAYBACK_RETRIES = 3;
+  // Set when the retries are used up. Without it the native state stays
+  // "buffering" forever and the bar spins indefinitely on a track that has
+  // already definitively failed.
+  const [playbackFailed, setPlaybackFailed] = useState(false);
+  // Whether the user actually wants audio right now. The native player reports
+  // "loading"/"buffering" merely from preparing a queue — which the start-up
+  // restore does deliberately without playing — so intent is what decides
+  // whether a buffering spinner is honest.
+  const [intendsToPlay, setIntendsToPlay] = useState(false);
+  // Something has been loaded by the user, so the restore below must not
+  // overwrite it with whatever the native player was on at mount.
+  const playbackClaimed = useRef(false);
+
+  // Read inside the player-event handler, which must not close over a stale
+  // render's `show`.
+  const showRef = useRef<Show | null>(null);
+  showRef.current = show;
 
   const progress = useProgress();
 
@@ -60,67 +112,186 @@ export const PlayerProvider = ({ children }: { children: any }) => {
 
   useTrackPlayerEvents(events, (event) => {
     if (event.type === Event.PlaybackError) {
-      // error state, useful for analytics?
+      // Was silently swallowed, which is why a track that failed to stream was
+      // indistinguishable from one still loading.
+      if (retriesLeft.current > 0) {
+        retriesLeft.current -= 1;
+        retryPlayback().catch(() => {
+          /* the next error event will decide what happens */
+        });
+        return;
+      }
+      console.error("Playback failed after retries:", JSON.stringify(event));
+      setPlaybackFailed(true);
+      setLoadingTrack(null);
+      setIsLoading(false);
     }
     if (event.type === Event.PlaybackState) {
+      if (event.state === State.Playing) {
+        // Only clear the failure flag. Deliberately does not refill the retry
+        // budget or assert intent: a stream that flaps — plays a second, fails,
+        // plays a second, fails — would top the budget up on every recovery and
+        // retry forever. The budget is refilled per user action and per track
+        // change instead.
+        setPlaybackFailed(false);
+      }
       setPlayerState(event.state);
     }
     // The player advances by itself at the end of a track (and from the lock
     // screen), so follow its index rather than only tracking our own taps.
     if (event.type === Event.PlaybackActiveTrackChanged) {
+      // A different track is a fresh problem, so give it its own retry budget —
+      // one bad track must not spend the whole queue's allowance as the player
+      // advances through it.
+      retriesLeft.current = MAX_PLAYBACK_RETRIES;
       setCurrentPlayingSongIndex(event.index ?? null);
+      // Keep the saved position in step with advances we didn't initiate —
+      // the end of a track, the lock screen, next/previous.
+      const current = showRef.current;
+      if (current?.showIdentifier && typeof event.index === "number") {
+        void saveNowPlaying({
+          date: current.date,
+          showIdentifier: current.showIdentifier,
+          trackIndex: event.index,
+        });
+      }
     }
   });
 
-  // The playback service survives a JS reload, so audio can still be playing
-  // while React state is empty — which hid the player controls entirely.
+  // Bring the player bar back on start-up. Two cases, in order of preference.
   useEffect(() => {
     let cancelled = false;
+    const superseded = () => cancelled || playbackClaimed.current;
 
-    const restoreFromNativePlayer = async () => {
+    // 1. The native player still holds a queue and may still be playing — e.g.
+    //    Android keeping playback alive after the app was killed. Adopt it.
+    const adoptLivePlayer = async () => {
+      const activeTrack = await getActiveTrack();
+      const showDate = activeTrack?.showDate as string | undefined;
+      const identifier = activeTrack?.showIdentifier as string | undefined;
+      if (!showDate || !identifier) {
+        return false;
+      }
+      const restored = findRecording(showDate, identifier);
+      if (!restored || superseded()) {
+        return false;
+      }
+      const [activeIndex, state] = await Promise.all([
+        getActiveTrackIndex(),
+        getState(),
+      ]);
+      if (superseded()) {
+        return false;
+      }
+      queuedIdentifier.current = restored.showIdentifier ?? null;
+      setShow(restored);
+      setCurrentPlayingSongIndex(activeIndex ?? null);
+      setPlayerState(state ?? null);
+      return true;
+    };
+
+    // 2. Nothing is loaded natively — the usual case after a JS reload, since
+    //    the old player is deliberately stopped and cleared. Rebuild from what
+    //    was last saved, and re-queue it paused so the controls work.
+    const rehydrateFromStorage = async () => {
+      const saved = await readNowPlaying();
+      if (!saved || superseded()) {
+        return;
+      }
+      const restored = findRecording(saved.date, saved.showIdentifier);
+      if (!restored?.tracks?.length || superseded()) {
+        return;
+      }
+      const trackIndex = Math.min(
+        Math.max(saved.trackIndex, 0),
+        restored.tracks.length - 1
+      );
+      setShow(restored);
+      setCurrentPlayingSongIndex(trackIndex);
+
+      const queue = await toQueue(restored);
+      if (!queue.length || superseded()) {
+        return;
+      }
+      // Load without playing: the bar comes back where it was, and the user
+      // decides whether to resume.
+      await addTracks(queue);
+      if (superseded()) {
+        return;
+      }
+      await skipToTrack(trackIndex);
+      queuedIdentifier.current = restored.showIdentifier ?? null;
+    };
+
+    const restore = async () => {
       try {
-        const activeTrack = await getActiveTrack();
-        const showDate = activeTrack?.showDate as string | undefined;
-        if (cancelled || !showDate) {
+        if (await adoptLivePlayer()) {
           return;
         }
-        const year = parseInt(showDate.split("-")[0], 10);
-        if (!year) {
-          return;
-        }
-        const restored = getSelectedYearData(year).find(
-          (candidate) =>
-            candidate.date === showDate &&
-            candidate.showIdentifier === activeTrack?.showIdentifier
-        );
-        if (!restored || cancelled) {
-          return;
-        }
-        const [activeIndex, state] = await Promise.all([
-          getActiveTrackIndex(),
-          getState(),
-        ]);
-        if (cancelled) {
-          return;
-        }
-        setShow(restored);
-        setCurrentPlayingSongIndex(activeIndex ?? null);
-        setPlayerState(state ?? null);
+        await rehydrateFromStorage();
       } catch {
         // No player set up yet (cold start) — nothing to restore.
       }
     };
 
-    restoreFromNativePlayer();
+    restore();
     return () => {
       cancelled = true;
     };
   }, []);
 
   const isPlaying = playerState === State.Playing;
+  // Not buffering once we've given up, however the native player still reports
+  // itself — otherwise the bar spins forever on a track that will never load.
+  const isBuffering =
+    intendsToPlay &&
+    !playbackFailed &&
+    (playerState === State.Loading || playerState === State.Buffering);
+
+  // Everything that means "the user wants audio now": fresh retry budget, clear
+  // any previous failure, and mark intent so a buffering spinner is honest.
+  const armPlayback = () => {
+    retriesLeft.current = MAX_PLAYBACK_RETRIES;
+    setPlaybackFailed(false);
+    setIntendsToPlay(true);
+  };
 
   const togglePlayerSize = () => {
     setIsExpanded((prev) => !prev);
+  };
+
+  // Shared by the load path and the mount-time restore.
+  const toQueue = async (show: Show) => {
+    const showIdentifier = show.showIdentifier;
+    if (!showIdentifier) {
+      return [];
+    }
+    // Which data node holds this item. Cached per item, short timeout, and falls
+    // back to the /download/ URL — so this can only help, never block playback.
+    const location = await resolveItemLocation(showIdentifier);
+    return (show.tracks ?? []).map((track: Track) => ({
+      artist: "Grateful Dead",
+      title: track.title,
+      url: archiveTrackUrl(showIdentifier, track.file, location),
+      // Carried so the native player can identify what it holds.
+      showDate: show.date,
+      showIdentifier,
+    }));
+  };
+
+  /** The archive record for a saved/queued identifier, preferring one with tracks. */
+  const findRecording = (date: string, showIdentifier: string) => {
+    const year = showYear(date);
+    if (!year) {
+      return undefined;
+    }
+    const candidates = getSelectedYearData(year).filter(
+      (candidate) =>
+        candidate.date === date && candidate.showIdentifier === showIdentifier
+    );
+    // Some identifiers appear on more than one archive record, and one of them
+    // can be a stub with no track list.
+    return candidates.find((candidate) => candidate.tracks?.length) ?? candidates[0];
   };
 
   const loadAudioAndPlay = async (show: Show, trackIndex: number) => {
@@ -129,36 +300,82 @@ export const PlayerProvider = ({ children }: { children: any }) => {
     if (!show?.showIdentifier || !show?.tracks?.length) {
       return;
     }
-    await clearAudioFromStorage();
+    const token = ++loadToken.current;
+    const superseded = () => loadToken.current !== token;
+    // Tells the mount-time restore not to overwrite this.
+    playbackClaimed.current = true;
+
+    // Everything the player bar displays is already known from the archive
+    // record, so show it now rather than after a ~100ms reset and a network
+    // round-trip. Only the playhead has to wait for the native player.
     setShow(show);
     setCurrentPlayingSongIndex(trackIndex);
-    const formattedTracks = show?.tracks?.map((track: Track) => {
-      const audioUrl = `https://archive.org/download/${show.showIdentifier}/${track.file}`;
-      return {
-        artist: "Grateful Dead",
-        title: track.title,
-        url: audioUrl,
-        // Carried so state can be rebuilt after a JS reload; the native
-        // playback service keeps going but React state starts empty.
-        showDate: show.date,
-        showIdentifier: show.showIdentifier,
-      };
-    });
-    if (!formattedTracks?.length) {
-      return;
-    }
-    try {
+
+    retriesLeft.current = MAX_PLAYBACK_RETRIES;
+    setPlaybackFailed(false);
+
+    // Same recording already queued: a skip is all that's needed.
+    const alreadyQueued = queuedIdentifier.current === show.showIdentifier;
+    if (!alreadyQueued) {
+      setLoadingTrack({ showIdentifier: show.showIdentifier, index: trackIndex });
       setIsLoading(true);
+    }
+
+    const run = loadChain.current.then(async () => {
+      // Superseded while queued behind an earlier load: issue nothing.
+      if (superseded()) {
+        return;
+      }
+      if (alreadyQueued) {
+        await skipToTrack(trackIndex);
+        return;
+      }
+      queuedIdentifier.current = null;
+      const formattedTracks = await toQueue(show);
+      if (!formattedTracks.length || superseded()) {
+        return;
+      }
+      await clearAudioFromStorage();
+      if (superseded()) {
+        return;
+      }
       await addTracks(formattedTracks);
-      await selectTrack(trackIndex);
-      await playTrack();
+      if (superseded()) {
+        return;
+      }
+      await skipToTrack(trackIndex);
+      queuedIdentifier.current = show.showIdentifier ?? null;
+      void saveNowPlaying({
+        date: show.date,
+        showIdentifier: show.showIdentifier!,
+        trackIndex,
+      });
+    });
+
+    // Keep the chain alive regardless of how this load ends.
+    loadChain.current = run.then(
+      () => undefined,
+      () => undefined
+    );
+
+    try {
+      await run;
+      if (!superseded()) {
+        await playTrack();
+      }
+    } catch (error) {
+      console.error("Could not start playback:", error);
     } finally {
-      setIsLoading(false);
+      // Only the newest load owns the spinner; an older one must not clear it.
+      if (!superseded()) {
+        setLoadingTrack(null);
+        setIsLoading(false);
+      }
     }
   };
 
   const clearAudioFromStorage = async () => {
-    setCurrentPlayingSongIndex(null);
+    queuedIdentifier.current = null;
     await reset();
   };
 
@@ -166,24 +383,35 @@ export const PlayerProvider = ({ children }: { children: any }) => {
     await seekTo(value);
   };
 
+  // These deliberately do not set `currentPlayingSongIndex`. The native player
+  // owns it and reports every change through Event.PlaybackActiveTrackChanged —
+  // including advances we didn't ask for, like skipping a track that failed to
+  // stream. Writing it here too made two writers disagree: a single "next" tap
+  // could jump three tracks because the optimistic +1 raced the real index.
   const handleNextSongAction = async () => {
-    const lastIndex = (show?.tracks?.length ?? 0) - 1;
-    setCurrentPlayingSongIndex((prevIndex) =>
-      prevIndex === null ? null : Math.min(prevIndex + 1, lastIndex)
-    );
+    armPlayback();
     await nextSongAction();
   };
 
   const handlePreviousSongAction = async () => {
-    setCurrentPlayingSongIndex((prevIndex) =>
-      prevIndex === null ? null : Math.max(prevIndex - 1, 0)
-    );
+    armPlayback();
     await previousSongAction();
   };
 
   const trackSelectAction = async (selectedTrackIndex: number) => {
-    setCurrentPlayingSongIndex(selectedTrackIndex);
+    armPlayback();
     await selectTrack(selectedTrackIndex);
+  };
+
+  const togglePlayPause = async () => {
+    if (isPlaying) {
+      setIntendsToPlay(false);
+    } else {
+      // Resuming a restored queue needs its own retry budget: the archive fails
+      // a large fraction of requests, and without this the first one was fatal.
+      armPlayback();
+    }
+    await handlePlayPause();
   };
 
   return (
@@ -191,6 +419,8 @@ export const PlayerProvider = ({ children }: { children: any }) => {
       value={{
         isPlaying,
         isLoading,
+        loadingTrack,
+        isBuffering,
         isExpanded,
         togglePlayerSize,
         duration: progress.duration,
@@ -198,12 +428,11 @@ export const PlayerProvider = ({ children }: { children: any }) => {
         show,
         currentPlayingSongIndex,
         handleSeek,
-        handlePlayPause,
+        handlePlayPause: togglePlayPause,
         nextSongAction: handleNextSongAction,
         previousSongAction: handlePreviousSongAction,
         trackSelectAction,
         loadAudioAndPlay,
-        setShow,
       }}
     >
       {children}

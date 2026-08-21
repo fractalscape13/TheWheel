@@ -52,13 +52,9 @@ const App = () => {
   useEffect(() => {
     const setup = async () => {
       try {
-        const setupResult = await setupPlayer();
-        console.log(
-          "App.tsx: Player setup result =>",
-          setupResult
-        );
+        await setupPlayer();
       } catch (err) {
-        console.log("App.tsx: Error during setup:", err);
+        console.error("Player setup failed:", err);
       }
     };
     setup();

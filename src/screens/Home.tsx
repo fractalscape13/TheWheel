@@ -9,12 +9,15 @@ import { SCREEN_PADDING, TODAY_TAB } from "../constants";
 
 const Home = ({ navigation }: { navigation: any }) => {
   const insets = useSafeAreaInsets();
-  const { setShow, loadAudioAndPlay } = usePlayer();
+  const { loadAudioAndPlay } = usePlayer();
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   // Defaults to today's shows; Explorer switches to Favorites if any exist.
   const [selectedYear, setSelectedYear] = useState<number>(TODAY_TAB);
+  // No setShow here: loadAudioAndPlay sets it *after* validating that the
+  // recording is playable. Setting it up front bound the player bar to
+  // recordings that never load, leaving it showing a show and a track title
+  // unrelated to the audio actually playing.
   const handleSelectedTrack = async (selectedIndex: number, show: Show) => {
-    setShow(show);
     await loadAudioAndPlay(show, selectedIndex);
   };
   return (

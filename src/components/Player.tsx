@@ -7,8 +7,14 @@ import {
   ScrollView,
   useTheme,
 } from "tamagui";
+import { ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { formatDate, secondsToFormattedMinutesSeconds } from "@services/utils";
+import {
+  formatDate,
+  formatTrackLength,
+  secondsToFormattedMinutesSeconds,
+  trackLengthToSeconds,
+} from "@services/utils";
 import Touchable from "@components/Touchable";
 import { usePlayer } from "../context/PlayerContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,6 +29,7 @@ const Player: React.FC = () => {
     duration,
     position,
     isPlaying,
+    isBuffering,
     show,
     handleSeek,
     handlePlayPause,
@@ -31,6 +38,15 @@ const Player: React.FC = () => {
     trackSelectAction,
   } = usePlayer();
   if (!show) return null;
+
+  const activeTrack = show?.tracks?.[currentPlayingSongIndex ?? -1];
+  // The native duration is 0 until the remote file has buffered, so fall back to
+  // the length the archive already gave us. Avoids a "0:00 / 0:00" bar on every
+  // track change.
+  const totalSeconds =
+    duration > 0 ? duration : trackLengthToSeconds(activeTrack?.length);
+  const sliderMax = Math.max(1, Math.floor(totalSeconds) || 1);
+
   return (
     <YStack
       bg="$bg2"
@@ -48,7 +64,7 @@ const Player: React.FC = () => {
             </Text>
           )}
           <Text color="$text" fs="$2">
-            {show?.tracks?.[currentPlayingSongIndex ?? -1]?.title || ""}
+            {activeTrack?.title || activeTrack?.file || ""}
           </Text>
         </XStack>
         <Touchable onPress={togglePlayerSize} hitSlop={15}>
@@ -77,7 +93,11 @@ const Player: React.FC = () => {
             marginBottom: 4,
           }}
         >
-          <Ionicons name={isPlaying ? "pause" : "play"} size={20} />
+          {isBuffering ? (
+            <ActivityIndicator size="small" color="#000" />
+          ) : (
+            <Ionicons name={isPlaying ? "pause" : "play"} size={20} />
+          )}
         </Touchable>
         <Touchable onPress={nextSongAction}>
           <Ionicons
@@ -90,7 +110,7 @@ const Player: React.FC = () => {
       <Text color="$text" fs="$1" ff="$mono" alignSelf="center" mb="$1">
         {secondsToFormattedMinutesSeconds(position)}
         {" / "}
-        {secondsToFormattedMinutesSeconds(duration)}
+        {secondsToFormattedMinutesSeconds(totalSeconds)}
       </Text>
       <Slider
         w="100%"
@@ -98,9 +118,9 @@ const Player: React.FC = () => {
         mb="$3"
         size="$2"
         min={0}
-        max={Math.max(1, Math.floor(duration) || 1)}
+        max={sliderMax}
         step={1}
-        value={[Math.min(Math.floor(position), Math.max(1, Math.floor(duration) || 1))]}
+        value={[Math.min(Math.floor(position), sliderMax)]}
         onSlideEnd={(_, value) => handleSeek(value)}
       >
         <Slider.Track h={8} br={10} bg="$trackBg">
@@ -158,7 +178,7 @@ const Player: React.FC = () => {
                     ff="$mono"
                     mt="$2"
                   >
-                    {track?.length}
+                    {formatTrackLength(track?.length)}
                   </Text>
                 </XStack>
               </Touchable>

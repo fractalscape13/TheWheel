@@ -442,3 +442,48 @@ index afa6b0f..07f8105 100644
      }
  
      override fun getTaskConfig(intent: Intent?): HeadlessJsTaskConfig {
+diff --git a/node_modules/react-native-track-player/ios/RNTrackPlayer/RNTrackPlayer.swift b/node_modules/react-native-track-player/ios/RNTrackPlayer/RNTrackPlayer.swift
+index 3be1342..62be387 100644
+--- a/node_modules/react-native-track-player/ios/RNTrackPlayer/RNTrackPlayer.swift
++++ b/node_modules/react-native-track-player/ios/RNTrackPlayer/RNTrackPlayer.swift
+@@ -48,6 +48,40 @@ public class RNTrackPlayer: RCTEventEmitter, AudioSessionControllerDelegate {
+         reset(resolve: { _ in }, reject: { _, _, _  in })
+     }
+ 
++    // MARK: - RCTInvalidating
++
++    // The JS context can be torn down and rebuilt — a dev reload, or any other
++    // JS-driven restart — while this instance stays alive, retained by the shared
++    // AudioSessionController and the remote command centre. `deinit` therefore
++    // never runs. The next JS context constructs a *brand new* RNTrackPlayer with
++    // its own QueuedAudioPlayer, so unless the old one is stopped here it keeps
++    // playing: the new context reports an empty queue (so the app can't show or
++    // control it) and the next track plays on top of the orphan, two at once.
++    //
++    // RCTEventEmitter already declares RCTInvalidating, so React Native calls
++    // this on bridge teardown.
++    //
++    // This must not block. RCTTurboModuleManager invalidates modules and waits,
++    // and stopping a *playing* AVPlayer synchronously here was slow enough to
++    // trip "Timed out waiting for modules to be invalidated". So drop the event
++    // listeners (cheap, and stops us emitting into a bridge that is going away),
++    // then hand the actual teardown to the main queue and return. The closure
++    // retains the player, so it survives long enough to stop itself.
++    override public func invalidate() {
++        let orphan = player
++        orphan.event.stateChange.removeListener(self)
++        orphan.event.fail.removeListener(self)
++        orphan.event.currentItem.removeListener(self)
++        orphan.event.secondElapse.removeListener(self)
++        orphan.event.playWhenReadyChange.removeListener(self)
++        DispatchQueue.main.async {
++            orphan.stop()
++            orphan.clear()
++        }
++        hasInitialized = false
++        super.invalidate()
++    }
++
+     // MARK: - RCTEventEmitter
+ 
+     override public static func requiresMainQueueSetup() -> Bool {

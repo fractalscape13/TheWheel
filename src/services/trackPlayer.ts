@@ -7,51 +7,44 @@ import TrackPlayer, {
 } from "react-native-track-player";
 
 export const setupPlayer = async () => {
-  let isSetup = false;
   try {
+    // Throws until the player has been set up, so a successful read means
+    // there's nothing to do — e.g. after a JS reload with audio still playing.
     await TrackPlayer.getActiveTrackIndex();
-    isSetup = true;
-    console.log(`Track Player Setup: -->>> ${isSetup}`);
+    return true;
   } catch {
-    await TrackPlayer.setupPlayer();
-    await TrackPlayer.updateOptions({
-      android: {
-        appKilledPlaybackBehavior:
-          AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
-      },
-      capabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.SkipToNext,
-        Capability.SkipToPrevious,
-        Capability.Stop,
-      ],
-      compactCapabilities: [Capability.Play, Capability.Pause],
-      notificationCapabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.SkipToNext,
-        Capability.SkipToPrevious,
-      ],
-    });
-
-    isSetup = true;
-    console.log(`Track Player Setup: -->>> ${isSetup}`);
-  } finally {
-    return isSetup;
+    // Not set up yet. Fall through; a failure below is a real failure and must
+    // reach the caller rather than be reported as `false`.
   }
+
+  await TrackPlayer.setupPlayer();
+  await TrackPlayer.updateOptions({
+    android: {
+      appKilledPlaybackBehavior:
+        AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+    },
+    capabilities: [
+      Capability.Play,
+      Capability.Pause,
+      Capability.SkipToNext,
+      Capability.SkipToPrevious,
+      Capability.Stop,
+    ],
+    compactCapabilities: [Capability.Play, Capability.Pause],
+    notificationCapabilities: [
+      Capability.Play,
+      Capability.Pause,
+      Capability.SkipToNext,
+      Capability.SkipToPrevious,
+    ],
+  });
+
+  return true;
 };
 
 export const playbackService = async () => {
-  console.log("Track Player ::: Setting up playback service");
-  TrackPlayer.addEventListener(Event.RemotePlay, () => {
-    console.log("Track Player ::: Remote play event received");
-    TrackPlayer.play();
-  });
-  TrackPlayer.addEventListener(Event.RemotePause, () => {
-    console.log("Track Player ::: Remote pause event received");
-    TrackPlayer.pause();
-  });
+  TrackPlayer.addEventListener(Event.RemotePlay, () => TrackPlayer.play());
+  TrackPlayer.addEventListener(Event.RemotePause, () => TrackPlayer.pause());
 };
 
 /** Reads back what the native player is currently on, for rehydrating after a
@@ -87,6 +80,18 @@ export const previousSongAction = async () => {
 export const selectTrack = async (selectedTrackIndex: number) => {
   await TrackPlayer.skip(selectedTrackIndex);
   return await TrackPlayer.play();
+};
+
+/** Re-attempt the current track after a playback error. archive.org's datanodes
+ *  fail intermittently, so a failed stream is often fine on a second try. */
+export const retryPlayback = async () => {
+  await TrackPlayer.retry();
+};
+
+/** Skip without starting playback, so a caller can finish preparing the queue
+ *  before handing off to the player. */
+export const skipToTrack = async (selectedTrackIndex: number) => {
+  await TrackPlayer.skip(selectedTrackIndex);
 };
 
 export const getState = async () => {

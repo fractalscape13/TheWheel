@@ -10,7 +10,11 @@ import React, {
 import { FlatList } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Touchable from "@components/Touchable";
-import { formatDate } from "@services/utils";
+import {
+  formatDate,
+  normalizeShowDate,
+  showYear,
+} from "@services/utils";
 import { Show } from "../types";
 import * as SecureStore from "expo-secure-store";
 import {
@@ -152,9 +156,12 @@ const Explorer: React.FC<ExplorerProps> = ({
     // so prefer a source that can actually be played; Map keeps date order.
     const byDate = new Map<string, Show>();
     shows.forEach((show) => {
-      const existing = byDate.get(show.date);
+      // Key on the canonical date: a few records spell the same performance
+      // differently ("03/21/90" vs "1990-03-21") and would otherwise list twice.
+      const key = normalizeShowDate(show.date);
+      const existing = byDate.get(key);
       if (!existing || (!isPlayable(existing) && isPlayable(show))) {
-        byDate.set(show.date, show);
+        byDate.set(key, show);
       }
     });
     return Array.from(byDate.values());
@@ -174,18 +181,20 @@ const Explorer: React.FC<ExplorerProps> = ({
   }, [activeCollection, deferredSearchTerm]);
 
   const handleShowSelect = useCallback((show: Show) => {
+    const target = normalizeShowDate(show.date);
     const allAvailableShowsOnSelectedDate = activeCollection.filter(
-      (unfilteredShow) => unfilteredShow.date === show.date
+      (unfilteredShow) => normalizeShowDate(unfilteredShow.date) === target
     );
     return goToShow(show, allAvailableShowsOnSelectedDate);
   }, [activeCollection, goToShow]);
 
   const handleFavoriteShowSelect = useCallback((show: Show) => {
-    const year = parseInt(show.date.split("-")[0]) || null;
+    const year = showYear(show.date);
     if (year) {
       const collection = getSelectedYearData(year);
+      const target = normalizeShowDate(show.date);
       const allAvailableShowsOnSelectedDate = collection.filter(
-        (unfilteredShow) => unfilteredShow.date === show.date
+        (unfilteredShow) => normalizeShowDate(unfilteredShow.date) === target
       );
       return goToShow(show, allAvailableShowsOnSelectedDate);
     }
@@ -227,7 +236,8 @@ const Explorer: React.FC<ExplorerProps> = ({
     const matches: Show[] = [];
     years.forEach((year) => {
       getSelectedYearData(year).forEach((show) => {
-        if (show.date.endsWith(monthDay)) {
+        // Normalised, so oddly-formatted dates can still match this calendar day.
+        if (normalizeShowDate(show.date).endsWith(monthDay)) {
           matches.push(show);
         }
       });
@@ -251,7 +261,7 @@ const Explorer: React.FC<ExplorerProps> = ({
 
       const foundShows: Show[] = [];
       favoriteShowDates.forEach((favoritedShowDate) => {
-        const year = parseInt(favoritedShowDate.split("-")[0], 10);
+        const year = showYear(favoritedShowDate);
         if (!year) {
           return;
         }
