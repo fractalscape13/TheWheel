@@ -1,3 +1,23 @@
+import { Show } from "../types";
+
+/** A recording that has everything the player needs, proven by `isPlayableShow`. */
+export type PlayableShow = Show & {
+  showIdentifier: string;
+  tracks: NonNullable<Show["tracks"]>;
+};
+
+/**
+ * Whether a recording can actually be played: an identifier to build URLs from,
+ * and a track list to build them for. The archive has one record with tracks but
+ * no identifier and a handful with an identifier but no tracks, and both kinds
+ * used to be offered as if they were playable.
+ *
+ * A type predicate, so a caller that has checked no longer has to re-assert what
+ * the check already established.
+ */
+export const isPlayableShow = (show?: Show | null): show is PlayableShow =>
+  Boolean(show?.showIdentifier && show?.tracks?.length);
+
 export const secondsToFormattedMinutesSeconds = (seconds: number) => {
   // Round to whole seconds first, so 59.9s formats as 1:00 rather than 0:60.
   const totalSeconds = Math.max(0, Math.round(seconds));

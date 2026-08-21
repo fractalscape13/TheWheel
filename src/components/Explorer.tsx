@@ -12,6 +12,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Touchable from "@components/Touchable";
 import {
   formatDate,
+  isPlayableShow,
   normalizeShowDate,
   showYear,
 } from "@services/utils";
@@ -143,9 +144,6 @@ const Explorer: React.FC<ExplorerProps> = ({
     );
   };
 
-  const isPlayable = (show: Show) =>
-    Boolean(show.showIdentifier && show.tracks?.length);
-
   const getUniqueByDate = (shows: Show[]) => {
     // One row per date. A few dates list an incomplete source first (no tracks),
     // so prefer a source that can actually be played; Map keeps date order.
@@ -155,7 +153,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       // differently ("03/21/90" vs "1990-03-21") and would otherwise list twice.
       const key = normalizeShowDate(show.date);
       const existing = byDate.get(key);
-      if (!existing || (!isPlayable(existing) && isPlayable(show))) {
+      if (!existing || (!isPlayableShow(existing) && isPlayableShow(show))) {
         byDate.set(key, show);
       }
     });
@@ -256,7 +254,7 @@ const Explorer: React.FC<ExplorerProps> = ({
         (show) => show.date === favoritedShowDate
       );
       // Prefer a source that can actually be played, as the main list does.
-      const foundShow = onThatDate.find(isPlayable) ?? onThatDate[0];
+      const foundShow = onThatDate.find(isPlayableShow) ?? onThatDate[0];
       if (foundShow) {
         foundShows.push(foundShow);
       }

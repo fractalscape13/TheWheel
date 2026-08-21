@@ -24,7 +24,11 @@ import {
   previousSongAction,
 } from "../services/trackPlayer";
 import { getSelectedYearData } from "@services/yearsService";
-import { showYear, trackLengthToSeconds } from "@services/utils";
+import {
+  isPlayableShow,
+  showYear,
+  trackLengthToSeconds,
+} from "@services/utils";
 import {
   archiveTrackUrl,
   resolveItemLocation,
@@ -480,7 +484,7 @@ export const PlayerProvider = ({ children }: { children: any }) => {
   const loadAudioAndPlay = async (show: Show, trackIndex: number) => {
     // A few archive records have no identifier or no track list; without this the
     // URL becomes ".../undefined/..." and the player fails silently.
-    if (!show?.showIdentifier || !show?.tracks?.length) {
+    if (!isPlayableShow(show)) {
       return;
     }
     const token = ++loadToken.current;

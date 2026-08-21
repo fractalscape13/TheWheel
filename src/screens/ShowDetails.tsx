@@ -2,7 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, useWindowDimensions } from "react-native";
 import { ScrollView, Text, YStack, XStack, useTheme } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
-import { formatDate, formatTrackLength } from "@services/utils";
+import {
+  formatDate,
+  formatTrackLength,
+  isPlayableShow,
+} from "@services/utils";
 import {
   isFavorited as isShowFavorited,
   toggleFavoriteShowDate,
@@ -87,7 +91,13 @@ const ShowDetails: React.FC<ShowDetailsProps> = ({ route, navigation }) => {
         byIdentifier.set(key, candidate);
       }
     });
-    return Array.from(byIdentifier.values());
+    const deduped = Array.from(byIdentifier.values());
+    // A recording the player will refuse still rendered a complete, convincing
+    // track list here, where every row was a silent no-op. Don't offer one —
+    // unless it is all this date has, since an empty picker tells the user even
+    // less than a dead one.
+    const playable = deduped.filter(isPlayableShow);
+    return playable.length ? playable : deduped;
   }, [availableShowsOnSelectedDate]);
 
   const doMultipleSourcesExist = useMemo(() => {
